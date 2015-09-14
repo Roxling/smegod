@@ -10,35 +10,96 @@ const int width = 800;
 const int height = 600;
 const string name = "Window";
 
+static void error_callback(int error, const char* description)
+{
+	cerr << description << endl;
+}
+
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	}
+}
+
+void main_loop(GLFWwindow* window) {
+	double time_start = glfwGetTime();
+	double time_end = time_start;
+	double time_delta = 0;
+	double sum = 0;
+	int fps = 0;
+	while (!glfwWindowShouldClose(window)) {
+		time_delta = time_end - time_start;
+		time_start = time_end;
+		time_end = glfwGetTime();
+
+		sum += time_delta;
+		if (sum < 1) {
+			fps++;
+		}
+		else {
+			cout << fps << endl;
+			fps = 0;
+			sum = 0;
+		}
+		
+		/* START RENDER WORLD */
+
+		float ratio;
+		int width, height;
+		glfwGetFramebufferSize(window, &width, &height);
+		ratio = width / (float)height;
+		glViewport(0, 0, width, height);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+		glBegin(GL_TRIANGLES);
+		glColor3f(1.f, 0.f, 0.f);
+		glVertex3f(-0.6f, -0.4f, 0.f);
+		glColor3f(0.f, 1.f, 0.f);
+		glVertex3f(0.6f, -0.4f, 0.f);
+		glColor3f(0.f, 0.f, 1.f);
+		glVertex3f(0.f, 0.6f, 0.f);
+		glEnd();
+
+		/* END RENDER WORLD */
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+
+	}
+}
+
 int main() {
+	glfwSetErrorCallback(error_callback);
 	if (!glfwInit()) {
-		cout << "Failed to initialize GLFW" << endl;
-		return -1;
+		exit(EXIT_FAILURE);
 	}
 	GLFWwindow *window(glfwCreateWindow(width, height, name.c_str(), NULL, NULL));
 
 	if (!window) {
-		cout << "Failed to create window" << endl;
 		glfwTerminate();
-		return -1;
+		exit(EXIT_FAILURE);
 	}
 
 	glfwMakeContextCurrent(window);
 	glewExperimental = true;
 
 	if (glewInit() != GLEW_OK) {
-		cout << "Failed to initialize GLEW" << endl;
-		return -1;
+		cerr << "Failed to initialize GLEW" << endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
 	}
+	
+	glfwSetKeyCallback(window, key_callback);
 
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-
-	do {
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	} while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && !glfwWindowShouldClose(window));
+	main_loop(window);
 
 	glfwTerminate();
-	return 0;
+
+	exit(EXIT_SUCCESS);
 }
+

@@ -5,6 +5,9 @@
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 
+#include "shader_loader.h"
+#include "resource.h"
+
 using namespace std;
 
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -81,6 +84,8 @@ int main() {
 		exit(EXIT_FAILURE);
 	}
 	
+	
+	load_and_compile("basic_shader.glsl");
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 

@@ -1,6 +1,7 @@
 #include <memory>
 #include <iostream>
 
+#define GLEW_STATIC
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 
@@ -50,6 +51,7 @@ void main_loop(GLFWwindow* window) {
 		glfwGetFramebufferSize(window, &width, &height);
 		ratio = width / (float)height;
 		glViewport(0, 0, width, height);
+		glClearColor(1.f, .7f, .7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -78,7 +80,7 @@ int main() {
 	if (!glfwInit()) {
 		exit(EXIT_FAILURE);
 	}
-	GLFWwindow *window(glfwCreateWindow(width, height, name.c_str(), NULL, NULL));
+	GLFWwindow *window(glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr));
 
 	if (!window) {
 		glfwTerminate();

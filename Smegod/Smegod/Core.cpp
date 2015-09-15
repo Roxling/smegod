@@ -7,14 +7,9 @@
 
 using namespace std;
 
-const int width = 800;
-const int height = 600;
-const string name = "Window";
+const GLuint WIDTH = 800, HEIGHT = 600;
 
-static void error_callback(int error, const char* description)
-{
-	cerr << description << endl;
-}
+const string name = "Window";
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -46,27 +41,9 @@ void main_loop(GLFWwindow* window) {
 		
 		/* START RENDER WORLD */
 
-		float ratio;
-		int width, height;
-		glfwGetFramebufferSize(window, &width, &height);
-		ratio = width / (float)height;
-		glViewport(0, 0, width, height);
 		glClearColor(1.f, .7f, .7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-		glBegin(GL_TRIANGLES);
-		glColor3f(1.f, 0.f, 0.f);
-		glVertex3f(-0.6f, -0.4f, 0.f);
-		glColor3f(0.f, 1.f, 0.f);
-		glVertex3f(0.6f, -0.4f, 0.f);
-		glColor3f(0.f, 0.f, 1.f);
-		glVertex3f(0.f, 0.6f, 0.f);
-		glEnd();
+		
 
 		/* END RENDER WORLD */
 		glfwSwapBuffers(window);
@@ -76,27 +53,36 @@ void main_loop(GLFWwindow* window) {
 }
 
 int main() {
-	glfwSetErrorCallback(error_callback);
+
 	if (!glfwInit()) {
+		cerr << "Failed to initialize GLFW" << endl;
 		exit(EXIT_FAILURE);
 	}
-	GLFWwindow *window(glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr));
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	if (!window) {
+
+	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, name.c_str(), nullptr, nullptr);
+
+	if (window == nullptr) {
+		cerr << "Failed to create window" << endl;
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
-
 	glfwMakeContextCurrent(window);
-	glewExperimental = true;
+	glfwSetKeyCallback(window, key_callback);
 
+	glewExperimental = true;
 	if (glewInit() != GLEW_OK) {
 		cerr << "Failed to initialize GLEW" << endl;
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 	
-	glfwSetKeyCallback(window, key_callback);
+
+	glViewport(0, 0, WIDTH, HEIGHT);
 
 	main_loop(window);
 

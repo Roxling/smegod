@@ -11,12 +11,12 @@ void Camera::translateLocal(float dx, float dy, float dz)
 	position = position + dz*glm::normalize(front) +
 						  dy*glm::normalize(up) +
 						  dx*glm::normalize(glm::cross(front,up));
-	std::cout << position.x <<" "<< position.y << " " << position.z << std::endl;
 }
 
 
 void Camera::rotate(float deg, glm::vec3 axis)
 {
+	//somethings fishy here!
 	glm::mat3 rot = glm::mat3(glm::rotate(identity, glm::radians(deg), axis));
 	up = rot * up;
 	front = rot * front;

@@ -128,17 +128,20 @@
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="geometries.cpp" />
     <ClCompile Include="shaders.cpp" />
+    <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="geometries.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="shaders.h" />
     <ClInclude Include="static_data.h" />
+    <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\basic_pixel_shader.glsl" />
-    <None Include="Shaders\basic_vertex_shader.glsl" />
     <None Include="Shaders\projection_vertex_shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

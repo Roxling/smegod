@@ -7,6 +7,8 @@
 
 #include "shaders.h"
 
+#include "static_data.h"
+
 using namespace std;
 
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -26,6 +28,26 @@ void main_loop(GLFWwindow* window) {
 	double time_delta = 0;
 	double sum = 0;
 	int fps = 0;
+
+	GLuint VBO, VAO, EBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(c_vertices), c_vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(c_indices), c_indices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+	glBindVertexArray(0);
+
 	while (!glfwWindowShouldClose(window)) {
 		time_delta = time_end - time_start;
 		time_start = time_end;
@@ -46,6 +68,9 @@ void main_loop(GLFWwindow* window) {
 		glClearColor(1.f, .7f, .7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, sizeof(c_indices) + size(c_vertices), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
 
 		/* END RENDER WORLD */
 		glfwSwapBuffers(window);

@@ -5,8 +5,7 @@
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 
-#include "shader_loader.h"
-#include "resource.h"
+#include "shaders.h"
 
 using namespace std;
 
@@ -84,8 +83,32 @@ int main() {
 		exit(EXIT_FAILURE);
 	}
 	
-	
-	load_and_compile("basic_shader.glsl");
+	auto shader_program = glCreateProgram();
+	if(1){ /* Scope for clearing shaders after load*/
+		VertexShader basic_vertex ("basic_vertex_shader.glsl");
+		basic_vertex.compile();
+		basic_vertex.attachTo(shader_program);
+		
+		PixelShader basic_pixel ("basic_pixel_shader.glsl");
+		basic_pixel.compile();
+		basic_pixel.attachTo(shader_program);
+
+		glLinkProgram(shader_program);
+
+		GLint success;
+		glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
+		if (!success) {
+			const int logSize = 512;
+			GLchar log[logSize];
+
+			glGetProgramInfoLog(shader_program, logSize, NULL, log);
+			cout << "Shader program failed to link." << endl << log << endl;
+		}
+		else {
+			glUseProgram(shader_program);
+		}
+	}
+
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 

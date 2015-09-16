@@ -127,17 +127,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
-    <ClCompile Include="shader_loader.cpp" />
+    <ClCompile Include="shaders.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="shader_loader.h" />
+    <ClInclude Include="shaders.h" />
+    <ClInclude Include="static_data.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Smegod.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\basic_shader.glsl" />
+    <None Include="Shaders\basic_pixel_shader.glsl" />
+    <None Include="Shaders\basic_vertex_shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

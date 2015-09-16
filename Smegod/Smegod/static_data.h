@@ -2,14 +2,14 @@
 #include "GL\glew.h"
 
 /* Cube vertices+indices defined in CCL order */
-GLfloat c_vertices[] = {-.5f, .5f,-.5f,
+GLfloat c_vertices[] = {-.5f, .5f, .5f,
+						 .5f, .5f, .5f,
+						 .5f,-.5f, .5f,
+						-.5f,-.5f, .5f,
+						-.5f, .5f,-.5f,
 						 .5f, .5f,-.5f,
 						 .5f,-.5f,-.5f,
-						-.5f,-.5f,-.5f,
-						-.5f, .5f,-1.5f,
-						 .5f, .5f,-1.5f,
-						 .5f,-.5f,-1.5f,
-						-.5f,-.5f,-1.5f, };
+						-.5f,-.5f,-.5f, };
 
 GLuint c_indices[] = {	0,2,1, 0,3,2,
 						1,6,5, 1,2,6,

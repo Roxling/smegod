@@ -35,11 +35,17 @@ bool Shader::compile() {
 	return compiled;
 }
 
-void Shader::attachTo(GLuint program) {
+void Shader::attachTo(GLuint nprogram) {
 	if (compiled) {
-		glAttachShader(program, shader);
+		glAttachShader(nprogram, shader);
+		program = nprogram;
 	}
 	else {
 		cout << "Tried to attach uncompiled shader." << endl;
 	}
+}
+
+GLuint Shader::getProgram()
+{
+	return program;
 }

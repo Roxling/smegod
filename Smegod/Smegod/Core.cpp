@@ -4,8 +4,12 @@
 #define GLEW_STATIC
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
+#include <GLM\glm.hpp>
+#include "GLM/gtc/matrix_transform.hpp"
+#include "GLM/gtc/type_ptr.hpp"
 
 #include "shaders.h"
+#include "camera.h"
 
 #include "static_data.h"
 
@@ -15,14 +19,75 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 
 const string name = "Window";
 
+unique_ptr<Camera> camera;
+
+
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
+	switch (key)
+	{
+	case GLFW_KEY_A :
+		camera->translateLocal(-0.1f, 0, 0);
+		break;
+	case GLFW_KEY_D:
+		camera->translateLocal(0.1f, 0, 0);
+		break;
+	case GLFW_KEY_W:
+		camera->translateLocal(0, 0, 0.1f);
+		break;
+	case GLFW_KEY_S:
+		camera->translateLocal(0, 0, -0.1f);
+		break;
+	case GLFW_KEY_LEFT:
+		camera->rotate(5.f, { 0,1,0 });
+		break;
+	case GLFW_KEY_RIGHT:
+		camera->rotate(-5.f, { 0,1,0 });
+		break;
+	case GLFW_KEY_UP:
+		camera->rotate(5.f, { 1,0,0 });
+		break;
+	case GLFW_KEY_DOWN:
+		camera->rotate(-5.f, { 1,0,0 });
+		break;
+	default:
+		break;
+	}
 }
 
 void main_loop(GLFWwindow* window) {
+	auto shader_program = glCreateProgram();
+
+	PixelShader basic_pixel("basic_pixel_shader.glsl");
+	basic_pixel.compile();
+	basic_pixel.attachTo(shader_program);
+
+	VertexShader projection = VertexShader("projection_vertex_shader.glsl");
+	projection.compile();
+	projection.attachTo(shader_program);
+
+	glLinkProgram(shader_program);
+
+	GLint success;
+	glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
+	if (!success) {
+		const int logSize = 512;
+		GLchar log[logSize];
+
+		glGetProgramInfoLog(shader_program, logSize, NULL, log);
+		cout << "Shader program failed to link." << endl << log << endl;
+	}
+	else {
+		glUseProgram(shader_program);
+	}
+
+
+	camera = make_unique<Camera>(45.f, WIDTH, HEIGHT, 0.1f, 100.f);
+	
+
 	double time_start = glfwGetTime();
 	double time_end = time_start;
 	double time_delta = 0;
@@ -65,11 +130,20 @@ void main_loop(GLFWwindow* window) {
 		
 		/* START RENDER WORLD */
 
+		/* Camera */
+
+		GLint projection_location = glGetUniformLocation(shader_program, "projection");
+		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(camera->projection));
+		GLint view_location = glGetUniformLocation(shader_program, "view");
+		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(camera->getView()));
+
+		/* Camera end */
+
 		glClearColor(1.f, .7f, .7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, sizeof(c_indices) + size(c_vertices), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES,(GLsizei) (sizeof(c_indices) + size(c_vertices)), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		/* END RENDER WORLD */
@@ -108,33 +182,7 @@ int main() {
 		exit(EXIT_FAILURE);
 	}
 	
-	auto shader_program = glCreateProgram();
-	if(1){ /* Scope for clearing shaders after load*/
-		VertexShader basic_vertex ("basic_vertex_shader.glsl");
-		basic_vertex.compile();
-		basic_vertex.attachTo(shader_program);
-		
-		PixelShader basic_pixel ("basic_pixel_shader.glsl");
-		basic_pixel.compile();
-		basic_pixel.attachTo(shader_program);
-
-		glLinkProgram(shader_program);
-
-		GLint success;
-		glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
-		if (!success) {
-			const int logSize = 512;
-			GLchar log[logSize];
-
-			glGetProgramInfoLog(shader_program, logSize, NULL, log);
-			cout << "Shader program failed to link." << endl << log << endl;
-		}
-		else {
-			glUseProgram(shader_program);
-		}
-	}
-
-
+	
 	glViewport(0, 0, WIDTH, HEIGHT);
 
 	main_loop(window);

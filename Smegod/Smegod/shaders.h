@@ -14,13 +14,15 @@ private:
 
 	GLuint shader;
 	bool compiled;
+
+	GLuint program;
 protected:
 	Shader(GLenum mtype, string mfile);
 	~Shader();
 
 public:
 	bool compile();
-
+	GLuint getProgram();
 	void attachTo(GLuint program);
 };
 

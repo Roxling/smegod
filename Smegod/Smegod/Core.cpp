@@ -27,34 +27,38 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
-	switch (key)
-	{
-	case GLFW_KEY_A :
-		camera->translateLocal(-0.1f, 0, 0);
-		break;
-	case GLFW_KEY_D:
-		camera->translateLocal(0.1f, 0, 0);
-		break;
-	case GLFW_KEY_W:
-		camera->translateLocal(0, 0, 0.1f);
-		break;
-	case GLFW_KEY_S:
-		camera->translateLocal(0, 0, -0.1f);
-		break;
-	case GLFW_KEY_LEFT:
-		camera->rotate(5.f, { 0,1,0 });
-		break;
-	case GLFW_KEY_RIGHT:
-		camera->rotate(-5.f, { 0,1,0 });
-		break;
-	case GLFW_KEY_UP:
-		camera->rotate(5.f, { 1,0,0 });
-		break;
-	case GLFW_KEY_DOWN:
-		camera->rotate(-5.f, { 1,0,0 });
-		break;
-	default:
-		break;
+
+	if (action != GLFW_RELEASE) {
+
+		switch (key)
+		{
+		case GLFW_KEY_A :
+			camera->translateLocal(-0.1f, 0, 0);
+			break;
+		case GLFW_KEY_D:
+			camera->translateLocal(0.1f, 0, 0);
+			break;
+		case GLFW_KEY_W:
+			camera->translateLocal(0, 0, 0.1f);
+			break;
+		case GLFW_KEY_S:
+			camera->translateLocal(0, 0, -0.1f);
+			break;
+		case GLFW_KEY_LEFT:
+			camera->rotateLocalY(5.f);
+			break;
+		case GLFW_KEY_RIGHT:
+			camera->rotateLocalY(-5.f);
+			break;
+		case GLFW_KEY_UP:
+			camera->rotateLocalX(5.f);
+			break;
+		case GLFW_KEY_DOWN:
+			camera->rotateLocalX(-5.f);
+			break;
+		default:
+			break;
+		}
 	}
 }
 

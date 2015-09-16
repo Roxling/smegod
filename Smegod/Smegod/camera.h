@@ -16,6 +16,8 @@ public:
 	Camera(float fov, int width, int height, float near, float far);
 	void rotate(float deg, glm::vec3 axis);
 
+	void rotateLocalX(float deg);
+	void rotateLocalY(float deg);
 	void translateLocal(float dx, float dy, float dz);
 	glm::mat4& getView();
 };

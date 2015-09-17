@@ -1,5 +1,6 @@
 #include "camera.h"
 #include <iostream>
+#include "shaders.h"
 
 Camera::Camera(float fov, int width, int height, float near, float far)
 {
@@ -40,4 +41,21 @@ glm::mat4 & Camera::getView()
 	world = glm::lookAt(position, position + front, up);
 	return world;
 }
+
+void Camera::setupShader(GLuint program)
+{
+	VertexShader projection = VertexShader("projection_vertex_shader.glsl");
+	projection.compile();
+	projection.attachTo(program);
+	shader_program = program;
+}
+
+void Camera::render()
+{
+	GLint projection_location = glGetUniformLocation(shader_program, "projection");
+	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+	GLint view_location = glGetUniformLocation(shader_program, "view");
+	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(getView()));
+}
+
 

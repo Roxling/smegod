@@ -1,15 +1,13 @@
 #include "input_handling.h"
-#include "GLFW\glfw3.h"
 
 void InputHandler::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
-	shared_ptr<Camera> camera = world->active_camera;
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
-	if (action != GLFW_RELEASE) {
-
+	shared_ptr<Camera> camera = world->active_camera;
+	if (action != GLFW_RELEASE && camera != nullptr) {
 		switch (key)
 		{
 		case GLFW_KEY_A:

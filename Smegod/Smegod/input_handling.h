@@ -1,6 +1,6 @@
 #pragma once
+#include "gl_dep.h"
 #include <memory>
-#include "GLFW\glfw3.h"
 #include "world.h"
 class InputHandler {
 private:

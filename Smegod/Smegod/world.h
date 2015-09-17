@@ -1,7 +1,7 @@
 #pragma once
+#include "gl_dep.h"
 #include <memory>
 #include "camera.h"
-#include "GLM\glm.hpp"
 
 using namespace std;
 
@@ -24,8 +24,10 @@ private:
 	shared_ptr<Node> head;
 public:
 	shared_ptr<Camera> active_camera;
+	GLuint active_shader_program;
 	World();
-	void setActiveCamera(shared_ptr<Camera> &cam);
+	void setActiveCamera(shared_ptr<Camera> cam);
 	virtual void update();
+	virtual void initiate();
 	void render();
 };

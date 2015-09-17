@@ -1,8 +1,8 @@
 #pragma once
+#include "gl_dep.h"
 #include <vector>
 #include <memory>
 #include "world.h"
-#include "GL\glew.h"
 
 class Geometry : Group {
 protected:

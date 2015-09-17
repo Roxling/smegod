@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="geometries.h" />
+    <ClInclude Include="gl_dep.h" />
     <ClInclude Include="input_handling.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="shaders.h" />

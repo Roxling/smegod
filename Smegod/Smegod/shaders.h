@@ -1,6 +1,6 @@
 #pragma once
+#include "gl_dep.h"
 #include <string>
-#include "GL\glew.h"
 
 using namespace std;
 

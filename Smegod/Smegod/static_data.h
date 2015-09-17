@@ -1,8 +1,9 @@
 #pragma once
-#include "GL\glew.h"
+#include "gl_dep.h"
+const GLuint WIDTH = 800, HEIGHT = 600;
 
 /* Cube vertices+indices defined in CCL order */
-GLfloat c_vertices[] = {-.5f, .5f, .5f,
+static GLfloat c_vertices[] = {-.5f, .5f, .5f,
 						 .5f, .5f, .5f,
 						 .5f,-.5f, .5f,
 						-.5f,-.5f, .5f,
@@ -11,7 +12,7 @@ GLfloat c_vertices[] = {-.5f, .5f, .5f,
 						 .5f,-.5f,-.5f,
 						-.5f,-.5f,-.5f, };
 
-GLuint c_indices[] = {	0,2,1, 0,3,2,
+static GLuint c_indices[] = {	0,2,1, 0,3,2,
 						1,6,5, 1,2,6,
 						5,7,4, 5,6,7,
 						4,3,0, 4,7,3,

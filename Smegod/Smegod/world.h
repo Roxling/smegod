@@ -1,6 +1,7 @@
 #pragma once
 #include "gl_dep.h"
 #include <memory>
+#include <vector>
 #include "camera.h"
 
 using namespace std;
@@ -8,10 +9,14 @@ using namespace std;
 class Node abstract {
 protected:
 	glm::mat4 world;
+	vector<shared_ptr<Node>> children;
 
 public:
-	void setTranslation(float x, float y, float z);
-	virtual void render() {}
+	void translate(float dx, float dy, float dz);
+	void render(GLuint shader_program);
+	virtual void renderSelf() {};
+
+	void attach(shared_ptr<Node> child);
 };
 
 class Group : public Node {

@@ -4,14 +4,18 @@
 #include <memory>
 #include "world.h"
 
-class Geometry : Group {
+class Geometry : public Group {
 protected:
+	GLuint VBO, VAO, EBO;
+
 	std::vector<GLfloat> vertices;
 	std::vector<GLuint> indices;
 };
 
-class Cube : Geometry {
+class Cube : public Geometry {
+
 public:
 	Cube();
+	void renderSelf() override;
 };
 

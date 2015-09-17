@@ -7,9 +7,16 @@ World::World()
 
 void World::setActiveCamera(shared_ptr<Camera>& cam)
 {
-	camera = cam;
+	active_camera = cam;
 }
 
+void World::update()
+{
+}
+
+void World::render()
+{
+}
 
 void Node::setTranslation(float x, float y, float z)
 {

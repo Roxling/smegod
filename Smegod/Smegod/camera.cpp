@@ -32,7 +32,7 @@ void Camera::rotate(float deg, glm::vec3 axis)
 	//somethings fishy here!
 	glm::mat3 rot = glm::mat3(glm::rotate(identity, glm::radians(deg), axis));
 	front = rot * front;
-	up = rot * up;
+	//up = rot * up;
 }
 
 glm::mat4 & Camera::getView()

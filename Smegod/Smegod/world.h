@@ -11,6 +11,7 @@ protected:
 
 public:
 	void setTranslation(float x, float y, float z);
+	virtual void render() {}
 };
 
 class Group : public Node {
@@ -20,9 +21,11 @@ public:
 
 class World {
 private:
-	shared_ptr<Camera> camera;
 	shared_ptr<Node> head;
 public:
+	shared_ptr<Camera> active_camera;
 	World();
 	void setActiveCamera(shared_ptr<Camera> &cam);
+	virtual void update();
+	void render();
 };

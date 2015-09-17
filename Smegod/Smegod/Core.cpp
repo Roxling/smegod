@@ -8,10 +8,14 @@
 #include "GLM/gtc/matrix_transform.hpp"
 #include "GLM/gtc/type_ptr.hpp"
 
+#include "input_handling.h"
 #include "shaders.h"
 #include "camera.h"
+#include "world.h"
 
 #include "static_data.h"
+
+
 
 using namespace std;
 
@@ -19,47 +23,14 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 
 const string name = "Window";
 
-unique_ptr<Camera> camera;
+shared_ptr<Camera> camera;
+shared_ptr<World> world;
+unique_ptr<InputHandler> input;
 
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	}
-
-	if (action != GLFW_RELEASE) {
-
-		switch (key)
-		{
-		case GLFW_KEY_A :
-			camera->translateLocal(-0.1f, 0, 0);
-			break;
-		case GLFW_KEY_D:
-			camera->translateLocal(0.1f, 0, 0);
-			break;
-		case GLFW_KEY_W:
-			camera->translateLocal(0, 0, 0.1f);
-			break;
-		case GLFW_KEY_S:
-			camera->translateLocal(0, 0, -0.1f);
-			break;
-		case GLFW_KEY_LEFT:
-			camera->rotateLocalY(5.f);
-			break;
-		case GLFW_KEY_RIGHT:
-			camera->rotateLocalY(-5.f);
-			break;
-		case GLFW_KEY_UP:
-			camera->rotateLocalX(5.f);
-			break;
-		case GLFW_KEY_DOWN:
-			camera->rotateLocalX(-5.f);
-			break;
-		default:
-			break;
-		}
-	}
+	input->key_callback(window, key, scancode, action, mods);
 }
 
 void main_loop(GLFWwindow* window) {
@@ -89,7 +60,6 @@ void main_loop(GLFWwindow* window) {
 	}
 
 
-	camera = make_unique<Camera>(45.f, WIDTH, HEIGHT, 0.1f, 100.f);
 	
 
 	double time_start = glfwGetTime();
@@ -176,6 +146,11 @@ int main() {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
+	camera = make_shared<Camera>(45.f, WIDTH, HEIGHT, 0.1f, 100.f);
+	world = make_shared<World>();
+	world->setActiveCamera(camera);
+	input = make_unique<InputHandler>(world);
+
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
 

@@ -129,12 +129,14 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="geometries.cpp" />
+    <ClCompile Include="input_handling.cpp" />
     <ClCompile Include="shaders.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="geometries.h" />
+    <ClInclude Include="input_handling.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="shaders.h" />
     <ClInclude Include="static_data.h" />

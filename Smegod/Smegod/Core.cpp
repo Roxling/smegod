@@ -118,7 +118,11 @@ int main() {
 		exit(EXIT_FAILURE);
 	}
 	
-	
+
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+
 	glViewport(0, 0, WIDTH, HEIGHT);
 
 	main_loop(window);

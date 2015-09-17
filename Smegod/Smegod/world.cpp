@@ -33,12 +33,12 @@ void World::initiate()
 	basic_pixel.compile();
 	basic_pixel.attachTo(active_shader_program);
 
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			for (int k = 0; k < 3; k++) {
-
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			for (int k = 0; k < 10; k++) {
+				float distance = 5;
 				shared_ptr<Cube> c = make_shared<Cube>();
-				c->translate(1.5f*i, 1.5f*j, 1.5f*k);
+				c->translate(distance*i, distance*j, distance*k);
 				head->attach(c);
 			}
 		}

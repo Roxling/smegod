@@ -71,7 +71,7 @@ void main_loop(GLFWwindow* window) {
 		double delta = get_delta();
 		
 		glClearColor(1.f, .7f, .7f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		/* START RENDER WORLD */
 		world->update();
@@ -118,7 +118,7 @@ int main() {
 		exit(EXIT_FAILURE);
 	}
 	
-
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);

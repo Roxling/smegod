@@ -1,4 +1,5 @@
 #include "geometries.h"
+#include <iostream>
 
 static GLfloat c_vertices[] = { -.5f, .5f, .5f,
 .5f, .5f, .5f,
@@ -55,8 +56,11 @@ Cube::Cube()
 	glBindVertexArray(0);
 }
 
-void Cube::renderSelf()
+void Cube::renderSelf(GLuint shader_program)
 {
+	GLint color_location = glGetUniformLocation(shader_program, "incolor");
+	glUniform3fv(color_location, 1, glm::value_ptr(color));
+
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, (GLsizei)(sizeof(c_indices) + size(c_vertices)), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);

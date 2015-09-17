@@ -5,6 +5,8 @@
 #include "world.h"
 
 class Geometry : public Group {
+public:
+	glm::vec3 color;
 protected:
 	GLuint VBO, VAO, EBO;
 
@@ -16,6 +18,6 @@ class Cube : public Geometry {
 
 public:
 	Cube();
-	void renderSelf() override;
+	void renderSelf(GLuint shader_program) override;
 };
 

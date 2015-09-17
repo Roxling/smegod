@@ -14,7 +14,7 @@ protected:
 public:
 	void translate(float dx, float dy, float dz);
 	void render(GLuint shader_program);
-	virtual void renderSelf() {};
+	virtual void renderSelf(GLuint shader_program) {};
 
 	void attach(shared_ptr<Node> child);
 };

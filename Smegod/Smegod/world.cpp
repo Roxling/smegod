@@ -33,12 +33,14 @@ void World::initiate()
 	basic_pixel.compile();
 	basic_pixel.attachTo(active_shader_program);
 
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 10; j++) {
-			for (int k = 0; k < 10; k++) {
-				float distance = 5;
+	int max = 10;
+	for (int i = 0; i < max; i++) {
+		for (int j = 0; j < max; j++) {
+			for (int k = 0; k < max; k++) {
+				float distance = 3;
 				shared_ptr<Cube> c = make_shared<Cube>();
 				c->translate(distance*i, distance*j, distance*k);
+				c->color = { (float)i / (float) max ,(float)j / (float)max ,(float)k / (float)max };
 				head->attach(c);
 			}
 		}
@@ -60,7 +62,7 @@ void Node::render(GLuint shader_program)
 {
 	GLint world_location = glGetUniformLocation(shader_program, "world");
 	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(world));
-	renderSelf();
+	renderSelf(shader_program);
 	for (auto it = children.begin(); it != children.end(); ++it) {
 		(*it)->render(shader_program);
 	}

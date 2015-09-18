@@ -7,25 +7,26 @@
 using namespace std;
 
 class Node abstract {
-protected:
+public:
+	
 	glm::mat4 world;
 	vector<shared_ptr<Node>> children;
 
 public:
 	void translate(float dx, float dy, float dz);
-	void render(GLuint shader_program);
-	virtual void renderSelf(GLuint shader_program) {};
+	void render(glm::mat4 combined_transforms);
+	virtual void renderSelf(glm::mat4 combined_transform) {};
 
 	void attach(shared_ptr<Node> child);
 };
 
 class Group : public Node {
-public:
-	Group() {};
+	//TODO: what should we have here?
 };
 
 class World {
 private:
+	glm::mat4 world_pos;
 	shared_ptr<Node> head;
 public:
 	shared_ptr<Camera> active_camera;

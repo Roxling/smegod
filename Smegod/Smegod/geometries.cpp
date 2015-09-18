@@ -1,6 +1,13 @@
 #include "geometries.h"
 #include <iostream>
 
+void Geometry::renderSelf(glm::mat4 combined_transform)
+{
+	GLint world_location = glGetUniformLocation(shader_program, "world");
+	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
+	render();
+}
+
 static GLfloat c_vertices[] = { -.5f, .5f, .5f,
 .5f, .5f, .5f,
 .5f,-.5f, .5f,
@@ -18,7 +25,7 @@ static GLuint c_indices[] = { 0,2,1, 0,3,2,
 3,6,2, 3,7,6 };
 
 
-Cube::Cube()
+Cube::Cube(GLuint mshader_program) : Geometry(mshader_program)
 {
 	vertices = vector<GLfloat>{
 		-.5f, .5f, .5f,
@@ -56,8 +63,9 @@ Cube::Cube()
 	glBindVertexArray(0);
 }
 
-void Cube::renderSelf(GLuint shader_program)
+void Cube::render()
 {
+
 	GLint color_location = glGetUniformLocation(shader_program, "incolor");
 	glUniform3fv(color_location, 1, glm::value_ptr(color));
 

@@ -13,14 +13,26 @@ void World::setActiveCamera(shared_ptr<Camera> cam)
 	active_camera = cam;
 }
 
+vector<shared_ptr<Group>> cube_groups;
+int max = 10;
+float offset = 50.f;
+float dist = 3.f;
+
 void World::update()
 {
+	
+	for (int i = 0; i < max; i++) {
+		for (int j = 0; j < max; j++) {
+			cube_groups[i*max+j]->world = glm::translate(world_pos, { 0,glm::sin(glfwGetTime() + i*glm::radians(offset) + j*glm::radians(offset)) , 0 } );
+		}
+	}
 }
 
 void World::render()
 {
 	active_camera->render();
-	head->render(active_shader_program);
+	
+	head->render(world_pos);
 }
 
 void World::initiate()
@@ -33,16 +45,18 @@ void World::initiate()
 	basic_pixel.compile();
 	basic_pixel.attachTo(active_shader_program);
 
-	int max = 10;
 	for (int i = 0; i < max; i++) {
 		for (int j = 0; j < max; j++) {
+			shared_ptr<Group> g = make_shared<Group>();
 			for (int k = 0; k < max; k++) {
-				float distance = 3;
-				shared_ptr<Cube> c = make_shared<Cube>();
-				c->translate(distance*i, distance*j, distance*k);
-				c->color = { (float)i / (float) max ,(float)j / (float)max ,(float)k / (float)max };
-				head->attach(c);
+				
+				shared_ptr<Cube> c = make_shared<Cube>(active_shader_program);
+				c->translate(dist*i, dist*k, dist * j);
+				c->color = { (float)i / (float) max , (float)k / (float)max, (float)j / (float)max };
+				g->attach(c);
 			}
+			cube_groups.push_back(g);
+			head->attach(g);
 		}
 	}
 
@@ -58,12 +72,11 @@ void Node::attach(shared_ptr<Node> child)
 	children.push_back(child);
 }
 
-void Node::render(GLuint shader_program)
+void Node::render(glm::mat4 combined_transforms)
 {
-	GLint world_location = glGetUniformLocation(shader_program, "world");
-	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(world));
-	renderSelf(shader_program);
+	glm::mat4 result = combined_transforms * world;
+	renderSelf(result);
 	for (auto it = children.begin(); it != children.end(); ++it) {
-		(*it)->render(shader_program);
+		(*it)->render(result);
 	}
 }

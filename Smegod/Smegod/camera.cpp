@@ -21,13 +21,21 @@ void Camera::translateLocal(float dx, float dy, float dz)
 						  dx*glm::normalize(glm::cross(front,up));
 }
 
+float eps = 0.1f;
 void Camera::rotateLocalX(float deg)
 {
-	auto vec = glm::cross(up,front);
-	if (glm::length(vec) > 0) {
-
-		rotate(deg, vec);
+	auto ang = glm::degrees(glm::acos(glm::dot(up, front)));
+	if (ang + deg < min_angle){
+		deg = -ang + eps;
+		return;
 	}
+	else if (ang + deg > max_angle) {
+		deg = max_angle - ang - eps;
+		return;
+	}
+	auto vec = glm::cross(up, front);
+	vec = glm::length(vec) > 0 ? vec : right;
+	rotate(deg, vec);
 
 }
 void Camera::rotateLocalY(float deg)
@@ -40,7 +48,7 @@ void Camera::rotate(float deg, glm::vec3 axis)
 	//somethings fishy here!
 	glm::mat3 rot = glm::mat3(glm::rotate(identity, glm::radians(deg), axis));
 	front = rot * front;
-	//up = rot * up;
+	right = rot * right;
 }
 
 glm::mat4 & Camera::getView()

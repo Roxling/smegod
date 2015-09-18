@@ -7,7 +7,11 @@ private:
 	glm::vec3 position = { 0,0,1 };
 	glm::vec3 up = { 0,1.f,0 };
 	glm::vec3 front = { 0,0, -1.f };
+	glm::vec3 right = glm::cross(up, front);
 	glm::mat4 world;
+
+	float min_angle = 0;
+	float max_angle = 180;
 	const glm::mat4 identity = glm::mat4();
 
 	GLuint shader_program;

@@ -1,38 +1,45 @@
 #include "input_handling.h"
 
-void InputHandler::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+void InputHandler::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods, double delta)
 {
+
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
 	shared_ptr<Camera> camera = world->active_camera;
 	if (action != GLFW_RELEASE && camera != nullptr) {
+		float d = (float)delta;
+
+		float speed = camera->speed;
+		float transSpeed = 1.f * speed * d;
+		float rotSpeed = 50.f * speed * d;
+
 		switch (key)
 		{
 		case GLFW_KEY_A:
-			camera->translateLocal(-0.1f, 0, 0);
+			camera->translateLocal(-transSpeed, 0, 0);
 			break;
 		case GLFW_KEY_D:
-			camera->translateLocal(0.1f, 0, 0);
+			camera->translateLocal(transSpeed, 0, 0);
 			break;
 		case GLFW_KEY_W:
-			camera->translateLocal(0, 0, 0.1f);
+			camera->translateLocal(0, 0, transSpeed);
 			break;
 		case GLFW_KEY_S:
-			camera->translateLocal(0, 0, -0.1f);
+			camera->translateLocal(0, 0, -transSpeed);
 			break;
 		case GLFW_KEY_LEFT:
-			camera->rotateLocalY(5.f);
+			camera->rotateLocalY(rotSpeed);
 			break;
 		case GLFW_KEY_RIGHT:
-			camera->rotateLocalY(-5.f);
+			camera->rotateLocalY(-rotSpeed);
 			break;
 		case GLFW_KEY_UP:
-			camera->rotateLocalX(5.f);
+			camera->rotateLocalX(rotSpeed);
 			break;
 		case GLFW_KEY_DOWN:
-			camera->rotateLocalX(-5.f);
+			camera->rotateLocalX(-rotSpeed);
 			break;
 		default:
 			break;

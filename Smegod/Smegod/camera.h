@@ -3,6 +3,7 @@
 
 class Camera {
 private:
+
 	glm::vec3 position = { 0,0,1 };
 	glm::vec3 up = { 0,1.f,0 };
 	glm::vec3 front = { 0,0, -1.f };
@@ -15,6 +16,7 @@ private:
 
 
 public:
+	float speed;
 	glm::mat4 projection;
 	Camera(float fov, int width, int height, float near, float far, GLuint mshader_program);
 	void rotate(float deg, glm::vec3 axis);

@@ -16,10 +16,6 @@ shared_ptr<World> world;
 unique_ptr<InputHandler> input;
 
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	input->key_callback(window, key, scancode, action, mods);
-}
 
 double time_start = glfwGetTime();
 double time_end = time_start;
@@ -44,11 +40,16 @@ static double get_delta() {
 	return time_delta;
 }
 
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	input->key_callback(window, key, scancode, action, mods, time_delta);
+}
 
 
 void main_loop(GLFWwindow* window) {
 	
 	world->initiate();
+	
 	while (!glfwWindowShouldClose(window)) {
 		double delta = get_delta();
 		
@@ -101,6 +102,8 @@ int main() {
 	}
 	
 	glEnable(GL_DEPTH_TEST);
+
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Uncomment for wireframe
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);

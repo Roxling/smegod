@@ -68,8 +68,6 @@ void World::initiate()
 	link_shader_program(active_shader_program); //only link when all shaders are created and attached.
 
 	setActiveCamera(make_shared<Camera>(45.f, WIDTH, HEIGHT, 0.1f, 100.f, active_shader_program));
-	active_camera->setupShader(active_shader_program);
-
 
 	for (int i = 0; i < max; i++) {
 		for (int j = 0; j < max; j++) {

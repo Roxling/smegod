@@ -8,7 +8,8 @@ Camera::Camera(float fov, int width, int height, float near, float far, GLuint m
 	shader_program = mshader_program;
 	projection_location = glGetUniformLocation(shader_program, "projection");
 	view_location = glGetUniformLocation(shader_program, "view");
-	cout << projection_location <<" : " << view_location << endl;
+
+	speed = 10.f;
 }
 
 void Camera::translateLocal(float dx, float dy, float dz)

@@ -1,29 +1,18 @@
 #include "geometries.h"
 #include <iostream>
 
+
+Geometry::Geometry(GLuint mshader_program) : shader_program(mshader_program)
+{
+	world_location = glGetUniformLocation(shader_program, "world");
+	color_location = glGetUniformLocation(shader_program, "incolor");
+}
+
 void Geometry::renderSelf(glm::mat4 combined_transform)
 {
-	GLint world_location = glGetUniformLocation(shader_program, "world");
 	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
 	render();
 }
-
-static GLfloat c_vertices[] = { -.5f, .5f, .5f,
-.5f, .5f, .5f,
-.5f,-.5f, .5f,
--.5f,-.5f, .5f,
--.5f, .5f,-.5f,
-.5f, .5f,-.5f,
-.5f,-.5f,-.5f,
--.5f,-.5f,-.5f, };
-
-static GLuint c_indices[] = { 0,2,1, 0,3,2,
-1,6,5, 1,2,6,
-5,7,4, 5,6,7,
-4,3,0, 4,7,3,
-4,1,5, 4,0,1,
-3,6,2, 3,7,6 };
-
 
 Cube::Cube(GLuint mshader_program) : Geometry(mshader_program)
 {
@@ -42,7 +31,7 @@ Cube::Cube(GLuint mshader_program) : Geometry(mshader_program)
 		5, 7, 4,  5, 6, 7,
 		4, 3, 0,  4, 7, 3,
 		4, 1, 5,  4, 0, 1,
-		3, 6, 2,  3, 7, 6};
+		3, 6, 2,  3, 7, 6 };
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -50,10 +39,10 @@ Cube::Cube(GLuint mshader_program) : Geometry(mshader_program)
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(c_vertices), c_vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(c_indices), c_indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
@@ -66,10 +55,9 @@ Cube::Cube(GLuint mshader_program) : Geometry(mshader_program)
 void Cube::render()
 {
 
-	GLint color_location = glGetUniformLocation(shader_program, "incolor");
 	glUniform3fv(color_location, 1, glm::value_ptr(color));
 
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, (GLsizei)(sizeof(c_indices) + size(c_vertices)), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, (GLsizei)(sizeof(indices[0]) * indices.size() + sizeof(vertices[0]) * vertices.size()), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }

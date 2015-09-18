@@ -2,6 +2,7 @@
 #include "static_data.h"
 #include "shaders.h"
 #include "geometries.h"
+#include <iostream>
 
 World::World()
 {
@@ -35,15 +36,40 @@ void World::render()
 	head->render(world_pos);
 }
 
+void link_shader_program(GLuint shader_program) {
+	glLinkProgram(shader_program);
+
+	GLint success;
+	glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
+	if (!success) {
+		const int logSize = 512;
+		GLchar log[logSize];
+
+		glGetProgramInfoLog(shader_program, logSize, NULL, log);
+		cout << "Shader program failed to link." << endl << log << endl;
+	}
+	else {
+		glUseProgram(shader_program);
+	}
+}
+
 void World::initiate()
 {
 	active_shader_program = glCreateProgram();
-	setActiveCamera(make_shared<Camera>(45.f, WIDTH, HEIGHT, 0.1f, 100.f));
-	active_camera->setupShader(active_shader_program);
+
+	VertexShader projection = VertexShader("projection_vertex_shader.glsl");
+	projection.compile();
+	projection.attachTo(active_shader_program);
 
 	PixelShader basic_pixel("basic_pixel_shader.glsl");
 	basic_pixel.compile();
 	basic_pixel.attachTo(active_shader_program);
+
+	link_shader_program(active_shader_program); //only link when all shaders are created and attached.
+
+	setActiveCamera(make_shared<Camera>(45.f, WIDTH, HEIGHT, 0.1f, 100.f, active_shader_program));
+	active_camera->setupShader(active_shader_program);
+
 
 	for (int i = 0; i < max; i++) {
 		for (int j = 0; j < max; j++) {
@@ -61,6 +87,7 @@ void World::initiate()
 	}
 
 }
+
 
 void Node::translate(float dx, float dy, float dz)
 {

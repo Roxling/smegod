@@ -6,7 +6,7 @@
 
 class Geometry abstract : public Group {
 public:
-	Geometry(GLuint mshader_program) : shader_program(mshader_program) {}
+	Geometry(GLuint mshader_program);
 	glm::vec3 color;
 	void renderSelf(glm::mat4 combined_transform) override;
 	virtual void render() = 0;
@@ -15,6 +15,9 @@ protected:
 	GLuint VBO, VAO, EBO;
 	std::vector<GLfloat> vertices;
 	std::vector<GLuint> indices;
+	GLint color_location;
+private:
+	GLint world_location;
 };
 
 class Cube : public Geometry {

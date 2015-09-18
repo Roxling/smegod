@@ -10,10 +10,13 @@ private:
 	const glm::mat4 identity = glm::mat4();
 
 	GLuint shader_program;
+	GLint projection_location;
+	GLint view_location;
+
 
 public:
 	glm::mat4 projection;
-	Camera(float fov, int width, int height, float near, float far);
+	Camera(float fov, int width, int height, float near, float far, GLuint mshader_program);
 	void rotate(float deg, glm::vec3 axis);
 
 	void rotateLocalX(float deg);

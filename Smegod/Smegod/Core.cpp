@@ -44,29 +44,11 @@ static double get_delta() {
 	return time_delta;
 }
 
-void link_shader_program() {
-	auto shader_program = world->active_shader_program;
-	glLinkProgram(shader_program);
 
-	GLint success;
-	glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
-	if (!success) {
-		const int logSize = 512;
-		GLchar log[logSize];
-
-		glGetProgramInfoLog(shader_program, logSize, NULL, log);
-		cout << "Shader program failed to link." << endl << log << endl;
-	}
-	else {
-		glUseProgram(shader_program);
-	}
-}
 
 void main_loop(GLFWwindow* window) {
-
+	
 	world->initiate();
-	link_shader_program();
-
 	while (!glfwWindowShouldClose(window)) {
 		double delta = get_delta();
 		

@@ -14,9 +14,10 @@ private:
 	GLint projection_location;
 	GLint view_location;
 
+	float translation_speed;
+	float rotation_speed;
 
 public:
-	float speed;
 	glm::mat4 projection;
 	Camera(float fov, int width, int height, float near, float far, GLuint mshader_program);
 	void rotate(float deg, glm::vec3 axis);
@@ -27,4 +28,5 @@ public:
 	glm::mat4& getView();
 
 	void render();
+	void update(double delta);
 };

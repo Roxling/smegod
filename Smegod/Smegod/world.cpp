@@ -19,9 +19,10 @@ int max = 10;
 float offset = 50.f;
 float dist = 3.f;
 
-void World::update()
+void World::update(double delta)
 {
-	
+	active_camera->update(delta);
+
 	for (int i = 0; i < max; i++) {
 		for (int j = 0; j < max; j++) {
 			cube_groups[i*max+j]->world = glm::translate(world_pos, { 0,glm::sin(glfwGetTime() + i*glm::radians(offset) + j*glm::radians(offset)) , 0 } );

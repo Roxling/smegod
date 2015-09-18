@@ -33,7 +33,7 @@ public:
 	GLuint active_shader_program;
 	World();
 	void setActiveCamera(shared_ptr<Camera> cam);
-	virtual void update();
+	virtual void update(double delta);
 	virtual void initiate();
 	void render();
 };

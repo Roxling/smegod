@@ -13,8 +13,6 @@ using namespace std;
 
 const string name = "Window";
 shared_ptr<World> world;
-unique_ptr<InputHandler> input;
-
 
 
 double time_start = glfwGetTime();
@@ -23,7 +21,7 @@ double time_delta = 0;
 double sum = 0;
 int fps = 0;
 
-static double get_delta() {
+static void update_delta_and_print_fps() {
 	time_delta = time_end - time_start;
 	time_start = time_end;
 	time_end = glfwGetTime();
@@ -37,13 +35,8 @@ static double get_delta() {
 		fps = 0;
 		sum = 0;
 	}
-	return time_delta;
 }
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	input->key_callback(window, key, scancode, action, mods, time_delta);
-}
 
 
 void main_loop(GLFWwindow* window) {
@@ -51,13 +44,13 @@ void main_loop(GLFWwindow* window) {
 	world->initiate();
 	
 	while (!glfwWindowShouldClose(window)) {
-		double delta = get_delta();
+		update_delta_and_print_fps();
 		
 		glClearColor(1.f, .7f, .7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		/* START RENDER WORLD */
-		world->update();
+		world->update(time_delta);
 		world->render();
 		/* END RENDER WORLD */
 
@@ -89,10 +82,9 @@ int main() {
 	}
 
 	world = make_shared<World>();
-	input = make_unique<InputHandler>(world);
 
 	glfwMakeContextCurrent(window);
-	glfwSetKeyCallback(window, key_callback);
+	glfwSetKeyCallback(window, &InputHandler::key_callback);
 
 	glewExperimental = true;
 	if (glewInit() != GLEW_OK) {

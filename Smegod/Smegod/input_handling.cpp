@@ -1,13 +1,27 @@
 #include "input_handling.h"
 
-void InputHandler::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods, double delta)
-{
+unique_ptr<vector<int>> InputHandler::keystate = make_unique<vector<int>>(GLFW_KEY_LAST, GLFW_RELEASE);
 
+void InputHandler::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+{
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
+	if (key == GLFW_KEY_UNKNOWN) {
+		std::cout << "Unknown key" << std::endl;
+		return;
+	}
+
+	(*keystate)[key] = action;
+
+	/*
 	shared_ptr<Camera> camera = world->active_camera;
+
+	if (action == GLFW_RELEASE) {
+
+	}
+
 	if (action != GLFW_RELEASE && camera != nullptr) {
 		float d = (float)delta;
 
@@ -44,5 +58,11 @@ void InputHandler::key_callback(GLFWwindow * window, int key, int scancode, int 
 		default:
 			break;
 		}
-	}
+	}*/
+}
+
+
+const int InputHandler::getKeystate(int key)
+{
+	return (*keystate)[key];
 }

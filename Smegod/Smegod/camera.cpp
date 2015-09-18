@@ -46,11 +46,6 @@ glm::mat4 & Camera::getView()
 	return world;
 }
 
-void Camera::setupShader(GLuint program)
-{
-	
-}
-
 void Camera::render()
 {
 	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));

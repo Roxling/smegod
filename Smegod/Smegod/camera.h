@@ -24,6 +24,5 @@ public:
 	void translateLocal(float dx, float dy, float dz);
 	glm::mat4& getView();
 
-	void setupShader(GLuint shader_program);
 	void render();
 };

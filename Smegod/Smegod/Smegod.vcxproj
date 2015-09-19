@@ -152,6 +152,7 @@
   <ItemGroup>
     <None Include="Shaders\basic_pixel_shader.glsl" />
     <None Include="Shaders\projection_vertex_shader.glsl" />
+    <None Include="Shaders\texture_pixel_shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

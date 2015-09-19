@@ -76,5 +76,8 @@
     <None Include="Shaders\projection_vertex_shader.glsl">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\texture_pixel_shader.glsl">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

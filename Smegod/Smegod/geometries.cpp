@@ -56,7 +56,7 @@ void Cube::render()
 {
 
 	glUniform3fv(color_location, 1, glm::value_ptr(color));
-
+	glBindTexture(GL_TEXTURE_2D, texture->texture_id);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, (GLsizei)(sizeof(indices[0]) * indices.size() + sizeof(vertices[0]) * vertices.size()), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);

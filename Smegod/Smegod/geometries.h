@@ -1,6 +1,7 @@
 #pragma once
 #include "smegod_dep.h"
 #include "world.h"
+#include "textures.h"
 
 class Geometry abstract : public Group {
 public:
@@ -8,6 +9,7 @@ public:
 	glm::vec3 color;
 	void renderSelf(glm::mat4 combined_transform) override;
 	virtual void render() = 0;
+	shared_ptr<Texture> texture = nullptr;
 protected:
 	GLuint shader_program;
 	GLuint VBO, VAO, EBO;

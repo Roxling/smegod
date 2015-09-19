@@ -2,6 +2,7 @@
 #include "static_data.h"
 #include "shaders.h"
 #include "geometries.h"
+#include "textures.h"
 
 World::World()
 {
@@ -61,13 +62,21 @@ void World::initiate()
 	projection.compile();
 	projection.attachTo(active_shader_program);
 
-	PixelShader basic_pixel("basic_pixel_shader.glsl");
+	
+	/* PixelShader basic_pixel("basic_pixel_shader.glsl");
 	basic_pixel.compile();
-	basic_pixel.attachTo(active_shader_program);
+	basic_pixel.attachTo(active_shader_program); */
+
+	PixelShader texture_pixel("texture_pixel_shader.glsl");
+	texture_pixel.compile();
+	texture_pixel.attachTo(active_shader_program);
 
 	link_shader_program(active_shader_program); //only link when all shaders are created and attached.
 
 	setActiveCamera(make_shared<Camera>(45.f, WIDTH, HEIGHT, 0.1f, 100.f, active_shader_program));
+
+	shared_ptr<Texture> tex = make_shared<Texture>("wood.jpg");
+
 
 	for (int i = 0; i < max; i++) {
 		for (int j = 0; j < max; j++) {
@@ -77,6 +86,7 @@ void World::initiate()
 				shared_ptr<Cube> c = make_shared<Cube>(active_shader_program);
 				c->translate(dist*i, dist*k, dist * j);
 				c->color = { (float)i / (float) max , (float)k / (float)max, (float)j / (float)max };
+				c->texture = tex;
 				g->attach(c);
 			}
 			cube_groups.push_back(g);

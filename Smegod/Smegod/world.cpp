@@ -52,6 +52,7 @@ void link_shader_program(GLuint shader_program) {
 	else {
 		glUseProgram(shader_program);
 	}
+
 }
 
 void World::initiate()

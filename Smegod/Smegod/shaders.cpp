@@ -9,6 +9,7 @@ using namespace std;
 Shader::Shader(GLenum mtype, string mfile) : type(mtype), file(mfile) {
 	ifstream stream(FOLDER + file);
 	code = string((istreambuf_iterator<char>(stream)), istreambuf_iterator<char>());
+	stream.close();
 }
 
 Shader::~Shader() {

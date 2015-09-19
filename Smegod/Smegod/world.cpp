@@ -2,7 +2,6 @@
 #include "static_data.h"
 #include "shaders.h"
 #include "geometries.h"
-#include <iostream>
 
 World::World()
 {

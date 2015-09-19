@@ -1,6 +1,5 @@
 #pragma once
-#include "gl_dep.h"
-#include <string>
+#include "smegod_dep.h"
 
 using namespace std;
 

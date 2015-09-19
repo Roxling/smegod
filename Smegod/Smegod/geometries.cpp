@@ -1,5 +1,5 @@
 #include "geometries.h"
-#include <iostream>
+
 
 
 Geometry::Geometry(GLuint mshader_program) : shader_program(mshader_program)

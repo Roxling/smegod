@@ -1,7 +1,5 @@
 #pragma once
-#include "gl_dep.h"
-#include <memory>
-#include <vector>
+#include "smegod_dep.h"
 #include "camera.h"
 
 using namespace std;

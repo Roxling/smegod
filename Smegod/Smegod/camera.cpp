@@ -1,5 +1,4 @@
 #include "camera.h"
-#include <iostream>
 #include "shaders.h"
 #include "input_handling.h"
 

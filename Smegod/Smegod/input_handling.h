@@ -1,7 +1,5 @@
 #pragma once
-#include "gl_dep.h"
-#include <iostream>
-#include <memory>
+#include "smegod_dep.h"
 #include "world.h"
 class InputHandler {
 private:

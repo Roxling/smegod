@@ -1,5 +1,5 @@
 #pragma once
-#include "gl_dep.h"
+#include "smegod_dep.h"
 
 class Camera {
 private:

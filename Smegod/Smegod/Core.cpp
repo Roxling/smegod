@@ -1,6 +1,5 @@
-#include "gl_dep.h"
-#include <memory>
-#include <iostream>
+#include "smegod_dep.h"
+
 #include "static_data.h"
 #include "shaders.h"
 #include "input_handling.h"
@@ -8,8 +7,6 @@
 #include "world.h"
 
 
-
-using namespace std;
 
 const string name = "Window";
 shared_ptr<World> world;

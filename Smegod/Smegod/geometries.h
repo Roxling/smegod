@@ -1,7 +1,5 @@
 #pragma once
-#include "gl_dep.h"
-#include <vector>
-#include <memory>
+#include "smegod_dep.h"
 #include "world.h"
 
 class Geometry abstract : public Group {

@@ -21,7 +21,9 @@ void Node::render(glm::mat4 combined_transforms)
 
 WorldObject::WorldObject(shared_ptr<ShaderGroup> mshader_group) : shader_group(mshader_group)
 {
-	world_location = glGetUniformLocation(shader_group->getProgram(), "world");
+	if (shader_group != nullptr) {
+		world_location = glGetUniformLocation(shader_group->getProgram(), "world");
+	}
 }
 
 void WorldObject::renderSelf(glm::mat4 combined_transform)

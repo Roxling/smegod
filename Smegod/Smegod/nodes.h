@@ -5,7 +5,7 @@
 class Node {
 public:
 
-	glm::mat4 world;
+	glm::mat4 world = glm::mat4();
 	vector<shared_ptr<Node>> children;
 
 public:
@@ -25,5 +25,4 @@ public:
 	WorldObject(shared_ptr<ShaderGroup> mshader_group);
 	void renderSelf(glm::mat4 combined_transform) override;
 	virtual void render() = 0;
-	//TODO: what should we have here?
 };

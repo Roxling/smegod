@@ -154,7 +154,8 @@
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\basic_pixel_shader.glsl" />
+    <None Include="Shaders\light_pixel_shader.glsl" />
+    <None Include="Shaders\light_vertex_shader.glsl" />
     <None Include="Shaders\projection_vertex_shader.glsl" />
     <None Include="Shaders\texture_pixel_shader.glsl" />
   </ItemGroup>

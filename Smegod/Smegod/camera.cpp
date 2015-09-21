@@ -2,14 +2,17 @@
 #include "shaders.h"
 #include "input_handling.h"
 
-Camera::Camera(float fov, int width, int height, float near, float far, shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group)
+Camera::Camera(float fov, int width, int height, float near, float far) : WorldObject(nullptr)
 {
 	projection = glm::perspective(fov, (float)width / (float)height, near, far);
-	projection_location = glGetUniformLocation(shader_group->getProgram(), "projection");
-	view_location = glGetUniformLocation(shader_group->getProgram(), "view");
 
 	translation_speed = 10.f; // units/s
 	rotation_speed = 90.f; // deg/s
+}
+
+void Camera::addShaderGroup(shared_ptr<ShaderGroup> sg)
+{
+	shader_groups.push_back(sg);
 }
 
 void Camera::translateLocal(float dx, float dy, float dz)
@@ -55,12 +58,22 @@ glm::mat4 & Camera::getView()
 	return world;
 }
 
-void Camera::render()
+void Camera::renderSelf(glm::mat4 combined_transform)
 {
-	glUseProgram(shader_group->getProgram());
-	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(getView()));
+	// should care about combined_transform if attached to something..
+	GLint projection_location;
+	GLint view_location;
+	auto mat = getView();
+	for (auto it = shader_groups.begin(); it != shader_groups.end(); ++it) {
+		auto program = (*it)->getProgram();
+		(*it)->use();
+		projection_location = glGetUniformLocation(program, "projection");
+		view_location = glGetUniformLocation(program, "view");
+		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(mat));
+	}
 }
+
 
 void Camera::update(double d)
 {
@@ -84,5 +97,6 @@ void Camera::update(double d)
 	rotateLocalY((rotateLeft + rotateRight)*rot_factor);
 	rotateLocalX((rotateUp + rotateDown)*rot_factor);
 }
+
 
 

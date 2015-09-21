@@ -82,13 +82,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\basic_pixel_shader.glsl">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="Shaders\projection_vertex_shader.glsl">
       <Filter>Shader</Filter>
     </None>
     <None Include="Shaders\texture_pixel_shader.glsl">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\light_pixel_shader.glsl">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\light_vertex_shader.glsl">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

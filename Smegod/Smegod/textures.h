@@ -1,6 +1,6 @@
 #pragma once
 #include "smegod_dep.h"
-#include "SOIL.h"
+#include <SOIL.h>
 
 class Texture {
 private:

@@ -11,7 +11,8 @@ Shader::Shader(GLenum mtype, string mfile) : type(mtype), file(mfile) {
 	stream.close();
 }
 
-Shader::~Shader() {
+Shader::~Shader()
+{
 	if (compiled) {
 		glDeleteShader(shader);
 	}
@@ -45,7 +46,40 @@ void Shader::attachTo(GLuint nprogram) {
 	}
 }
 
+
+
 GLuint Shader::getProgram()
 {
 	return program;
 }
+
+ShaderGroup::ShaderGroup(string vertexfile, string pixelfile)
+{
+	shader_program = glCreateProgram();
+
+	VertexShader vshader(vertexfile);
+	vshader.compile();
+	vshader.attachTo(shader_program);
+
+	PixelShader pshader(pixelfile);
+	pshader.compile();
+	pshader.attachTo(shader_program);
+
+	link();
+}
+void ShaderGroup::link()
+{
+	glLinkProgram(shader_program);
+
+	GLint success;
+	glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
+	if (!success) {
+		const int logSize = 512;
+		GLchar log[logSize];
+
+		glGetProgramInfoLog(shader_program, logSize, NULL, log);
+		cout << "Shader program failed to link." << endl << log << endl;
+	}
+
+}
+

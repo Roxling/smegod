@@ -2,11 +2,11 @@
 #include "shaders.h"
 #include "input_handling.h"
 
-Camera::Camera(float fov, int width, int height, float near, float far, GLuint mshader_program) : WorldObject(mshader_program)
+Camera::Camera(float fov, int width, int height, float near, float far, shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group)
 {
 	projection = glm::perspective(fov, (float)width / (float)height, near, far);
-	projection_location = glGetUniformLocation(shader_program, "projection");
-	view_location = glGetUniformLocation(shader_program, "view");
+	projection_location = glGetUniformLocation(shader_group->getProgram(), "projection");
+	view_location = glGetUniformLocation(shader_group->getProgram(), "view");
 
 	translation_speed = 10.f; // units/s
 	rotation_speed = 90.f; // deg/s
@@ -57,7 +57,7 @@ glm::mat4 & Camera::getView()
 
 void Camera::render()
 {
-	glUseProgram(shader_program);
+	glUseProgram(shader_group->getProgram());
 	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
 	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(getView()));
 }

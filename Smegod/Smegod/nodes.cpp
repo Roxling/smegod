@@ -19,14 +19,14 @@ void Node::render(glm::mat4 combined_transforms)
 	}
 }
 
-WorldObject::WorldObject(GLuint mshader_program) : shader_program(mshader_program)
+WorldObject::WorldObject(shared_ptr<ShaderGroup> mshader_group) : shader_group(mshader_group)
 {
-	world_location = glGetUniformLocation(shader_program, "world");
+	world_location = glGetUniformLocation(shader_group->getProgram(), "world");
 }
 
 void WorldObject::renderSelf(glm::mat4 combined_transform)
 {
-	glUseProgram(shader_program);
+	shader_group->use();
 	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
 	render();
 }

@@ -23,7 +23,7 @@ private:
 
 public:
 	glm::mat4 projection;
-	Camera(float fov, int width, int height, float near, float far, GLuint mshader_program);
+	Camera(float fov, int width, int height, float near, float far, shared_ptr<ShaderGroup> mshader_group);
 	void rotate(float deg, glm::vec3 axis);
 
 	void rotateLocalX(float deg);

@@ -1,5 +1,6 @@
 #pragma once
 #include "smegod_dep.h"
+#include "shaders.h"
 
 class Node {
 public:
@@ -19,9 +20,9 @@ class WorldObject : public Node {
 private:
 	GLint world_location;
 protected:
-	GLuint shader_program;
+	shared_ptr<ShaderGroup> shader_group;
 public:
-	WorldObject(GLuint mshader_program);
+	WorldObject(shared_ptr<ShaderGroup> mshader_group);
 	void renderSelf(glm::mat4 combined_transform) override;
 	virtual void render() = 0;
 	//TODO: what should we have here?

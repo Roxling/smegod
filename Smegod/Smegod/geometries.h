@@ -5,7 +5,7 @@
 
 class Geometry abstract : public WorldObject {
 public:
-	Geometry(GLuint mshader_program);
+	Geometry(shared_ptr<ShaderGroup> mshader_group);
 	glm::vec3 color;
 	shared_ptr<Texture> texture = nullptr;
 protected:
@@ -18,7 +18,7 @@ protected:
 class Cube : public Geometry {
 
 public:
-	Cube(GLuint mshader_program);
+	Cube(shared_ptr<ShaderGroup> mshader_group);
 	void render() override;
 };
 

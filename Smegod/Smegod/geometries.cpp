@@ -1,11 +1,11 @@
 #include "geometries.h"
 
-Geometry::Geometry(GLuint mshader_program) : WorldObject(mshader_program)
+Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group)
 {
-	color_location = glGetUniformLocation(shader_program, "incolor");
+	color_location = glGetUniformLocation(mshader_group->getProgram(), "incolor");
 }
 
-Cube::Cube(GLuint mshader_program) : Geometry(mshader_program)
+Cube::Cube(shared_ptr<ShaderGroup> mshader_group) : Geometry(mshader_group)
 {
 	vertices = vector<GLfloat>{
 		//Position			//Texture coord

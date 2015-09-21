@@ -17,9 +17,9 @@ private:
 	GLuint program;
 protected:
 	Shader(GLenum mtype, string mfile);
-	~Shader();
 
 public:
+	~Shader();
 	bool compile();
 	GLuint getProgram();
 	void attachTo(GLuint program);
@@ -33,4 +33,14 @@ public:
 class PixelShader : public Shader {
 public:
 	PixelShader(string file) : Shader(GL_FRAGMENT_SHADER, file) {}
+};
+
+class ShaderGroup {
+private:
+	GLuint shader_program;
+	void link();
+public:
+	ShaderGroup(string vertexfile, string pixelfile);
+	GLuint getProgram() { return shader_program; }
+	void use() { glUseProgram(shader_program); }
 };

@@ -4,6 +4,6 @@
 
 class Light : public Geometry {
 public:
-	Light(GLuint mshader_program);
+	Light(shared_ptr<ShaderGroup>);
 	void render() override;
 };

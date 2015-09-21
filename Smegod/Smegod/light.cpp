@@ -1,6 +1,6 @@
 #include "light.h"
 
-Light::Light(GLuint mshader_program) : Geometry(mshader_program)
+Light::Light(shared_ptr<ShaderGroup> mshader_group) : Geometry(mshader_group)
 {
 
 }

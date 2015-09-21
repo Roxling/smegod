@@ -1,7 +1,8 @@
 #pragma once
 #include "smegod_dep.h"
+#include "nodes.h"
 
-class Camera {
+class Camera : public WorldObject {
 private:
 
 	glm::vec3 position = { 0,0,1 };
@@ -14,7 +15,6 @@ private:
 	float max_angle = 180;
 	const glm::mat4 identity = glm::mat4();
 
-	GLuint shader_program;
 	GLint projection_location;
 	GLint view_location;
 
@@ -31,6 +31,6 @@ public:
 	void translateLocal(float dx, float dy, float dz);
 	glm::mat4& getView();
 
-	void render();
+	void render() override;
 	void update(double delta);
 };

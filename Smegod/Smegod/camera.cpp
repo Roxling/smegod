@@ -2,10 +2,9 @@
 #include "shaders.h"
 #include "input_handling.h"
 
-Camera::Camera(float fov, int width, int height, float near, float far, GLuint mshader_program)
+Camera::Camera(float fov, int width, int height, float near, float far, GLuint mshader_program) : WorldObject(mshader_program)
 {
 	projection = glm::perspective(fov, (float)width / (float)height, near, far);
-	shader_program = mshader_program;
 	projection_location = glGetUniformLocation(shader_program, "projection");
 	view_location = glGetUniformLocation(shader_program, "view");
 
@@ -58,6 +57,7 @@ glm::mat4 & Camera::getView()
 
 void Camera::render()
 {
+	glUseProgram(shader_program);
 	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
 	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(getView()));
 }

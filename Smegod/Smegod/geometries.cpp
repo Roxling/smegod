@@ -1,17 +1,8 @@
 #include "geometries.h"
 
-
-
-Geometry::Geometry(GLuint mshader_program) : shader_program(mshader_program)
+Geometry::Geometry(GLuint mshader_program) : WorldObject(mshader_program)
 {
-	world_location = glGetUniformLocation(shader_program, "world");
 	color_location = glGetUniformLocation(shader_program, "incolor");
-}
-
-void Geometry::renderSelf(glm::mat4 combined_transform)
-{
-	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
-	render();
 }
 
 Cube::Cube(GLuint mshader_program) : Geometry(mshader_program)
@@ -65,7 +56,6 @@ Cube::Cube(GLuint mshader_program) : Geometry(mshader_program)
 
 void Cube::render()
 {
-	glUseProgram(shader_program);
 	glUniform3fv(color_location, 1, glm::value_ptr(color));
 	if (texture != nullptr) {
 		glBindTexture(GL_TEXTURE_2D, texture->texture_id);

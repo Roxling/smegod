@@ -78,7 +78,7 @@ int main() {
 		exit(EXIT_FAILURE);
 	}
 
-	world = make_shared<World>();
+	world = make_shared<ExampleWorld>();
 
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, &InputHandler::key_callback);

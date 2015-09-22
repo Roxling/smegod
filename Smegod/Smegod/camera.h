@@ -6,25 +6,33 @@ class Camera : public WorldObject, public ShaderCollection {
 private:
 	glm::vec3 position = { 0,0,0 };
 	glm::vec3 up = { 0, 1.f, 0 };
+	glm::vec3 world_up = up;
 	glm::vec3 front = { 0, 0, 1.f };
-	glm::vec3 side = glm::cross(front, up);
+	glm::vec3 right;
 
 
-	float min_angle = 0;
-	float max_angle = 180;
+	float yaw;
+	float pitch;
+
+	float min_angle = -89.9f;
+	float max_angle = 89.9f;
+
 	const glm::mat4 identity = glm::mat4();
 
 	float translation_speed;
 	float rotation_speed;
+	float mouse_sensitivity;
 
+	void handleMouse(float delta);
+	void handleKeyboard(float delta);
+
+	void updateRotation(float ry, float rx);
+
+	void updateView();
 public:
 	glm::mat4 projection;
 	Camera(float fov, int width, int height, float near, float far);
-	void rotate(float deg, glm::vec3 axis);
-	void rotateLocalX(float deg);
-	void rotateLocalY(float deg);
 	void translateLocal(float dx, float dy, float dz);
-	void updateView();
 
 	void render() override {}
 	void update(double delta);

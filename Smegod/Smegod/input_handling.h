@@ -13,10 +13,10 @@ class InputHandler {
 private:
 	static unique_ptr<vector<int>> keystate;
 
-	static double mouse_x;
-	static double mouse_dx;
-	static double mouse_y;
-	static double mouse_dy;
+	static double oldx;
+	static double dx;
+	static double oldy;
+	static double dy;
 public:
 	
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

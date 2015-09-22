@@ -22,16 +22,16 @@ const int InputHandler::getKeystate(int key)
 	return (*keystate)[key];
 }
 
-double InputHandler::mouse_x;
-double InputHandler::mouse_dx;
-double InputHandler::mouse_y;
-double InputHandler::mouse_dy;
+double InputHandler::oldx;
+double InputHandler::dx;
+double InputHandler::oldy;
+double InputHandler::dy;
 
 Coordinate InputHandler::getMouseDelta()
 {
-	Coordinate c(mouse_dx, mouse_dy);
-	mouse_dx = 0;
-	mouse_dy = 0;
+	Coordinate c(dx, dy);
+	dx = 0;
+	dy = 0;
 	return c;
 }
 
@@ -40,10 +40,13 @@ void InputHandler::mouse_callback(GLFWwindow * window, double x, double y)
 	static bool first = true;
 	if (first) {
 		first = false;
-		mouse_x = x;
-		mouse_y = y;
+		oldx = x;
+		oldy = y;
 	}
 
-	mouse_dx += x - mouse_x;
-	mouse_dy += mouse_y - y;
+	dx += x - oldx;
+	dy += oldy - y;
+
+	oldx = x;
+	oldy = y;
 }

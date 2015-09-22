@@ -10,3 +10,7 @@ using namespace std;
 static void printVec4(glm::vec4 v) {
 	cout << v.x << " : " << v.y << " : " << v.z << endl;
 }
+
+static void printVec3(glm::vec3 v) {
+	cout << v.x << " : " << v.y << " : " << v.z << endl;
+}

@@ -8,48 +8,20 @@ Camera::Camera(float fov, int width, int height, float near, float far) : WorldO
 
 	translation_speed = 10.f; // units/s
 	rotation_speed = 90.f; // deg/s
+	mouse_sensitivity = 45.f;
+	updateRotation(0,0);
 }
 
 void Camera::translateLocal(float dx, float dy, float dz)
 {
 	position = position + dz*glm::normalize(front) +
 						  dy*glm::normalize(up) +
-						  dx*glm::normalize(glm::cross(front,up));
-}
-
-float eps = 0.1f;
-void Camera::rotateLocalX(float deg)
-{
-	auto ang = glm::degrees(glm::acos(glm::dot(up, front)));
-	if (ang + deg < min_angle){
-		deg = -ang + eps;
-		return;
-	}
-	else if (ang + deg > max_angle) {
-		deg = max_angle - ang - eps;
-		return;
-	}
-	auto vec = glm::cross(up, front);
-	vec = glm::length(vec) > 0 ? vec : side;
-	rotate(deg, vec);
-
-}
-void Camera::rotateLocalY(float deg)
-{
-	rotate(deg, up);
-}
-
-void Camera::rotate(float deg, glm::vec3 axis)
-{
-	//somethings fishy here!
-	glm::mat3 rot = glm::mat3(glm::rotate(identity, glm::radians(deg), axis));
-	front = rot * front;
-	side = rot * side;
+						  dx*glm::normalize(right);
 }
 
 void Camera::updateView()
 {
-	world = glm::lookAtRH(position, position + front, up);
+	world = glm::lookAt(position, position + front, up);
 }
 
 void Camera::renderSelf(glm::mat4 combined_transform)
@@ -70,7 +42,17 @@ void Camera::renderSelf(glm::mat4 combined_transform)
 
 void Camera::update(double d)
 {
-	float delta = (float) d;
+	float delta = (float)d;
+	handleKeyboard(delta);
+	handleMouse(delta);
+
+	//when all translations and rotations are done, update world matrix.
+	updateView();
+}
+
+void Camera::handleKeyboard(float delta)
+{
+
 	int moveLeft = InputHandler::getKeystate(GLFW_KEY_A) != GLFW_RELEASE ? -1 : 0;
 	int moveRight = InputHandler::getKeystate(GLFW_KEY_D) != GLFW_RELEASE ? 1 : 0;
 	int moveForward = InputHandler::getKeystate(GLFW_KEY_W) != GLFW_RELEASE ? 1 : 0;
@@ -80,23 +62,45 @@ void Camera::update(double d)
 
 	translateLocal((moveLeft + moveRight)*trans_factor, 0, (moveForward + moveBackward)*trans_factor);
 
-	int rotateLeft = InputHandler::getKeystate(GLFW_KEY_LEFT) != GLFW_RELEASE ? 1 : 0;
-	int rotateRight = InputHandler::getKeystate(GLFW_KEY_RIGHT) != GLFW_RELEASE ? -1 : 0;
-	int rotateUp = InputHandler::getKeystate(GLFW_KEY_UP) != GLFW_RELEASE ? -1 : 0;
-	int rotateDown = InputHandler::getKeystate(GLFW_KEY_DOWN) != GLFW_RELEASE ? 1 : 0;
+	int rotateLeft = InputHandler::getKeystate(GLFW_KEY_LEFT) != GLFW_RELEASE ? -1 : 0;
+	int rotateRight = InputHandler::getKeystate(GLFW_KEY_RIGHT) != GLFW_RELEASE ? 1 : 0;
+	int rotateUp = InputHandler::getKeystate(GLFW_KEY_UP) != GLFW_RELEASE ? 1 : 0;
+	int rotateDown = InputHandler::getKeystate(GLFW_KEY_DOWN) != GLFW_RELEASE ? -1 : 0;
 
 	float rot_factor = rotation_speed * delta;
 
-	rotateLocalY((rotateLeft + rotateRight)*rot_factor);
-	rotateLocalX((rotateUp + rotateDown)*rot_factor);
+	updateRotation((rotateLeft + rotateRight)*rot_factor, (rotateUp + rotateDown)*rot_factor);
+}
 
+void Camera::updateRotation(float ry, float rx)
+{
+	yaw += ry;
+	pitch += rx;
+
+	if (pitch > max_angle) {
+		pitch = max_angle;
+	}
+	else if (pitch < min_angle) {
+		pitch = min_angle;
+	}
+
+	glm::vec3 nfront;
+	nfront.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	nfront.y = sin(glm::radians(pitch));
+	nfront.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	front = glm::normalize(nfront);
+
+	right = glm::normalize(glm::cross(front, world_up));
+	up = glm::normalize(glm::cross(right, front));
+}
+
+void Camera::handleMouse(float delta)
+{
 	auto coord = InputHandler::getMouseDelta();
-	cout << coord.x << " " << coord.y << endl;
+	coord.x *= mouse_sensitivity * delta;
+	coord.y *= mouse_sensitivity * delta;
 
-	//when all translations and rotations are done, update world matrix.
-	updateView();
-	
-
+	updateRotation((float) coord.x , (float)coord.y);
 }
 
 

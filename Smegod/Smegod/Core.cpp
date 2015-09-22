@@ -82,6 +82,9 @@ int main() {
 
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, &InputHandler::key_callback);
+	glfwSetCursorPosCallback(window, &InputHandler::mouse_callback);
+
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glewExperimental = true;
 	if (glewInit() != GLEW_OK) {

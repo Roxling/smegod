@@ -90,6 +90,9 @@ void Camera::update(double d)
 	rotateLocalY((rotateLeft + rotateRight)*rot_factor);
 	rotateLocalX((rotateUp + rotateDown)*rot_factor);
 
+	auto coord = InputHandler::getMouseDelta();
+	cout << coord.x << " " << coord.y << endl;
+
 	//when all translations and rotations are done, update world matrix.
 	updateView();
 	

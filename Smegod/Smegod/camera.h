@@ -2,9 +2,8 @@
 #include "smegod_dep.h"
 #include "nodes.h"
 
-class Camera : public WorldObject {
+class Camera : public WorldObject, ShaderCollection {
 private:
-	vector<shared_ptr<ShaderGroup>> shader_groups;
 	glm::vec3 position = { 0,0,0 };
 	glm::vec3 up = { 0, 1.f, 0 };
 	glm::vec3 front = { 0, 0, 1.f };
@@ -22,7 +21,6 @@ public:
 	glm::mat4 projection;
 	Camera(float fov, int width, int height, float near, float far);
 	void rotate(float deg, glm::vec3 axis);
-	void addShaderGroup(shared_ptr<ShaderGroup> sg);
 	void rotateLocalX(float deg);
 	void rotateLocalY(float deg);
 	void translateLocal(float dx, float dy, float dz);

@@ -10,11 +10,6 @@ Camera::Camera(float fov, int width, int height, float near, float far) : WorldO
 	rotation_speed = 90.f; // deg/s
 }
 
-void Camera::addShaderGroup(shared_ptr<ShaderGroup> sg)
-{
-	shader_groups.push_back(sg);
-}
-
 void Camera::translateLocal(float dx, float dy, float dz)
 {
 	position = position + dz*glm::normalize(front) +

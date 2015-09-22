@@ -26,3 +26,10 @@ public:
 	void renderSelf(glm::mat4 combined_transform) override;
 	virtual void render() {};
 };
+
+class ShaderCollection abstract {
+protected:
+	vector<shared_ptr<ShaderGroup>> shader_groups;
+public:
+	void addShaderGroup(shared_ptr<ShaderGroup> sg) { shader_groups.push_back(sg); }
+};

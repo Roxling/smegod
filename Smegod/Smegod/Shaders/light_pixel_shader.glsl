@@ -5,5 +5,5 @@ uniform vec3 incolor;
 
 void main()
 {
-    color = vec4(1.0f);
+    color = vec4(incolor, 1.0f);
 } 

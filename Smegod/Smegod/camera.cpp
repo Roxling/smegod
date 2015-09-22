@@ -35,7 +35,7 @@ void Camera::rotateLocalX(float deg)
 		return;
 	}
 	auto vec = glm::cross(up, front);
-	vec = glm::length(vec) > 0 ? vec : right;
+	vec = glm::length(vec) > 0 ? vec : side;
 	rotate(deg, vec);
 
 }
@@ -49,28 +49,26 @@ void Camera::rotate(float deg, glm::vec3 axis)
 	//somethings fishy here!
 	glm::mat3 rot = glm::mat3(glm::rotate(identity, glm::radians(deg), axis));
 	front = rot * front;
-	right = rot * right;
+	side = rot * side;
 }
 
-glm::mat4 & Camera::getView()
+void Camera::updateView()
 {
-	world = glm::lookAt(position, position + front, up);
-	return world;
+	world = glm::lookAtRH(position, position + front, up);
 }
 
 void Camera::renderSelf(glm::mat4 combined_transform)
 {
-	// should care about combined_transform if attached to something..
+
 	GLint projection_location;
 	GLint view_location;
-	auto mat = getView();
 	for (auto it = shader_groups.begin(); it != shader_groups.end(); ++it) {
 		auto program = (*it)->getProgram();
 		(*it)->use();
 		projection_location = glGetUniformLocation(program, "projection");
 		view_location = glGetUniformLocation(program, "view");
 		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(mat));
+		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
 	}
 }
 
@@ -96,6 +94,9 @@ void Camera::update(double d)
 
 	rotateLocalY((rotateLeft + rotateRight)*rot_factor);
 	rotateLocalX((rotateUp + rotateDown)*rot_factor);
+
+	//when all translations and rotations are done, update world matrix.
+	updateView();
 }
 
 

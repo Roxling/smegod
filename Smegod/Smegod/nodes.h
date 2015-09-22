@@ -24,5 +24,5 @@ protected:
 public:
 	WorldObject(shared_ptr<ShaderGroup> mshader_group);
 	void renderSelf(glm::mat4 combined_transform) override;
-	virtual void render() = 0;
+	virtual void render() {};
 };

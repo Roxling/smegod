@@ -64,3 +64,31 @@ void Cube::render()
 	glDrawElements(GL_TRIANGLES, (GLsizei)(sizeof(indices[0]) * indices.size() + sizeof(vertices[0]) * vertices.size()), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
+
+Frame::Frame(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group)
+{
+	//X
+	auto axis = make_shared<Cube>(mshader_group);
+	axis->world = glm::scale(axis->world, glm::vec3(2.f,0.1f,0.1f));
+	axis->translate(.5f, 0, 0);
+	axis->color = { 1.f, 0, 0 };
+	attach(axis);
+	//Y
+	axis = make_shared<Cube>(mshader_group);
+	axis->world = glm::scale(axis->world, glm::vec3(0.1f, 2.f, 0.1f));
+	axis->translate(0, .5f, 0);
+	axis->color = { 0, 1.f, 0 };
+	attach(axis);
+	//Z
+	axis = make_shared<Cube>(mshader_group);
+	axis->world = glm::scale(axis->world, glm::vec3(0.1f, 0.1f, 2.f));
+	axis->translate(0, 0, .5f);
+	axis->color = { 0, 0, 1.f};
+	attach(axis);
+
+	//box
+	axis = make_shared<Cube>(mshader_group);
+	axis->world = glm::scale(axis->world, glm::vec3(.2f));
+	axis->color = glm::vec3{ 0.f };
+	attach(axis);
+}

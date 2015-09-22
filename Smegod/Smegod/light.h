@@ -5,5 +5,4 @@
 class Light : public Geometry {
 public:
 	Light(shared_ptr<ShaderGroup>);
-	void render() override;
 };

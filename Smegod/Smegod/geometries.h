@@ -22,3 +22,8 @@ public:
 	void render() override;
 };
 
+class Frame : public WorldObject {
+public:
+	Frame(shared_ptr<ShaderGroup> mshader_group);
+};
+

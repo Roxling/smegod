@@ -2,7 +2,7 @@
 #include "smegod_dep.h"
 #include "geometries.h"
 
-class Light : public Geometry, ShaderCollection {
+class Light : public Geometry, public ShaderCollection {
 public:
 	Light(shared_ptr<ShaderGroup>);
 

@@ -2,7 +2,7 @@
 #include "smegod_dep.h"
 #include "nodes.h"
 
-class Camera : public WorldObject, ShaderCollection {
+class Camera : public WorldObject, public ShaderCollection {
 private:
 	glm::vec3 position = { 0,0,0 };
 	glm::vec3 up = { 0, 1.f, 0 };

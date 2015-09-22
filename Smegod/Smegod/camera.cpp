@@ -97,7 +97,11 @@ void Camera::update(double d)
 
 	//when all translations and rotations are done, update world matrix.
 	updateView();
+	
+
 }
+
+
 
 
 

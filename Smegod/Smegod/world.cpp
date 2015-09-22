@@ -26,7 +26,7 @@ void ExampleWorld::initiate()
 	head->attach(active_camera);
 
 	
-	shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("projection_vertex_shader.glsl", "texture_pixel_shader.glsl");
+	shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("projection.vs", "texture.fs");
 	active_camera->addShaderGroup(n_shader);
 	
 	shared_ptr<Texture> tex = make_shared<Texture>("wood.jpg");
@@ -47,7 +47,7 @@ void ExampleWorld::initiate()
 		}
 	}
 	//cube_groups[0]->attach(active_camera);
-	shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light_vertex_shader.glsl", "light_pixel_shader.glsl");
+	shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
 	active_camera->addShaderGroup(l_shader);
 
 	shared_ptr<Light> light = make_shared<Light>(l_shader);

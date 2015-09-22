@@ -7,8 +7,9 @@ private:
 	vector<shared_ptr<ShaderGroup>> shader_groups;
 	glm::vec3 position = { 0,0,0 };
 	glm::vec3 up = { 0, 1.f, 0 };
-	glm::vec3 front = { 0,0, 1.f };
+	glm::vec3 front = { 0, 0, 1.f };
 	glm::vec3 side = glm::cross(front, up);
+
 
 	float min_angle = 0;
 	float max_angle = 180;

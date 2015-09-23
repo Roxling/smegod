@@ -8,20 +8,22 @@ private:
 	glm::vec3 up = { 0, 1.f, 0 };
 	glm::vec3 world_up = up;
 	glm::vec3 front = { 0, 0, 1.f };
-	glm::vec3 right;
+	glm::vec3 right = glm::normalize(glm::cross(front, world_up));;
 
 
-	float yaw;
-	float pitch;
+	float yaw = 0;
+	float pitch = 0;
 
-	float min_angle = -89.9f;
-	float max_angle = 89.9f;
+	float max_angle = 89.9999f;
+	float min_angle = -max_angle;
 
 	const glm::mat4 identity = glm::mat4();
 
-	float translation_speed;
-	float rotation_speed;
-	float mouse_sensitivity;
+	bool oldTakingCursorInput = false;
+
+	float translation_speed = 10.f;
+	float rotation_speed = 90.f;
+	float mouse_sensitivity = 45.f;
 
 	void handleMouse(float delta);
 	void handleKeyboard(float delta);

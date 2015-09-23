@@ -81,10 +81,11 @@ int main() {
 	world = make_shared<ExampleWorld>();
 
 	glfwMakeContextCurrent(window);
+	InputHandler::active_window = window;
 	glfwSetKeyCallback(window, &InputHandler::key_callback);
 	glfwSetCursorPosCallback(window, &InputHandler::mouse_callback);
+	glfwSetMouseButtonCallback(window, &InputHandler::mouse_button_callback);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glewExperimental = true;
 	if (glewInit() != GLEW_OK) {

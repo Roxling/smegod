@@ -1,5 +1,8 @@
 #include "input_handling.h"
 
+GLFWwindow* InputHandler::active_window = nullptr;
+
+//keyboard button callback
 unique_ptr<vector<int>> InputHandler::keystate = make_unique<vector<int>>(GLFW_KEY_LAST, GLFW_RELEASE);
 
 void InputHandler::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
@@ -22,10 +25,12 @@ const int InputHandler::getKeystate(int key)
 	return (*keystate)[key];
 }
 
-double InputHandler::oldx;
-double InputHandler::dx;
-double InputHandler::oldy;
-double InputHandler::dy;
+
+//mouse screen x,y callback
+double InputHandler::oldx = 0;
+double InputHandler::dx = 0;
+double InputHandler::oldy = 0;
+double InputHandler::dy = 0;
 
 Coordinate InputHandler::getMouseDelta()
 {
@@ -44,9 +49,22 @@ void InputHandler::mouse_callback(GLFWwindow * window, double x, double y)
 		oldy = y;
 	}
 
-	dx += x - oldx;
-	dy += oldy - y;
+	dx = x - oldx;
+	dy = oldy - y;
 
 	oldx = x;
 	oldy = y;
+}
+
+//mouse button callback
+unique_ptr<vector<int>> InputHandler::mouse_buttonstate = make_unique<vector<int>>(GLFW_MOUSE_BUTTON_LAST, GLFW_RELEASE);
+
+void InputHandler::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	(*mouse_buttonstate)[button] = action;
+}
+
+const int InputHandler::getMouseButtonstate(int button)
+{
+	return (*mouse_buttonstate)[button];
 }

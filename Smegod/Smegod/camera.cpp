@@ -76,7 +76,7 @@ void Camera::updateRotation(float ry, float rx)
 {
 	yaw += ry;
 	pitch += rx;
-
+	
 	if (pitch > max_angle) {
 		pitch = max_angle;
 	}
@@ -96,11 +96,18 @@ void Camera::updateRotation(float ry, float rx)
 
 void Camera::handleMouse(float delta)
 {
-	auto coord = InputHandler::getMouseDelta();
-	coord.x *= mouse_sensitivity * delta;
-	coord.y *= mouse_sensitivity * delta;
+	auto takingCursorInput = InputHandler::getMouseButtonstate(GLFW_MOUSE_BUTTON_RIGHT) != GLFW_RELEASE;
+	if (takingCursorInput != oldTakingCursorInput) {
+		oldTakingCursorInput = takingCursorInput;
+		glfwSetInputMode(InputHandler::active_window, GLFW_CURSOR, takingCursorInput ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+	}
+	if (takingCursorInput) {
+		auto coord = InputHandler::getMouseDelta();
+		coord.x *= mouse_sensitivity * delta;
+		coord.y *= mouse_sensitivity * delta;
+		updateRotation((float) coord.x , (float)coord.y);
+	}
 
-	updateRotation((float) coord.x , (float)coord.y);
 }
 
 

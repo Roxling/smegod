@@ -8,6 +8,8 @@ public:
 	Geometry(shared_ptr<ShaderGroup> mshader_group);
 	glm::vec3 color;
 	shared_ptr<Texture> texture = nullptr;
+	void renderSelf(glm::mat4 combined_transform) override;
+	virtual void render() {};
 protected:
 	GLuint VBO, VAO, EBO;
 	std::vector<GLfloat> vertices;

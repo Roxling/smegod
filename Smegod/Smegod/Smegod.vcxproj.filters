@@ -82,16 +82,22 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\projection_vertex_shader.glsl">
+    <None Include="Shaders\light.fs">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\texture_pixel_shader.glsl">
+    <None Include="Shaders\light.vs">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\light_pixel_shader.glsl">
+    <None Include="Shaders\phong.fs">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\light_vertex_shader.glsl">
+    <None Include="Shaders\phong.vs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\projection.vs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\texture.fs">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

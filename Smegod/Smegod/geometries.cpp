@@ -5,30 +5,57 @@ Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_
 	color_location = glGetUniformLocation(mshader_group->getProgram(), "incolor");
 }
 
+void Geometry::renderSelf(glm::mat4 combined_transform)
+{
+	shader_group->use();
+	auto wIT = glm::transpose(glm::inverse(combined_transform)); //is this the correct way to calculate the inverse transpose?
+	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
+	glUniformMatrix4fv(worldIT_location, 1, GL_FALSE, glm::value_ptr(wIT));
+	render();
+}
+
 Cube::Cube(shared_ptr<ShaderGroup> mshader_group) : Geometry(mshader_group)
 {
 	vertices = vector<GLfloat>{
-		//Position			//Texture coord
-		-.5f, .5f, .5f,		0.0f, 1.0f,
-		.5f, .5f, .5f,		1.0f, 1.0f,
-		.5f, -.5f, .5f,		1.0f, 0.0f,
-		-.5f, -.5f, .5f,	0.0f, 0.0f,
-		-.5f, .5f, -.5f,	1.0f, 1.0f,
-		.5f, .5f, -.5f,		0.0f, 1.0f,
-		.5f, -.5f, -.5f,	0.0f, 0.0f,
-		-.5f, -.5f, -.5f, 	1.0f, 0.0f,
-		//Redefine last 4, with different texture mapping
-		-.5f, .5f, -.5f,	0.0f, 0.0f,
-		.5f, .5f, -.5f,		1.0f, 0.0f,
-		.5f, -.5f, -.5f,	1.0f, 1.0f,
-		-.5f, -.5f, -.5f, 	0.0f, 1.0f };
+		//Position			//Texture coord		//Normal
+		//Front (0-3)
+		-.5f, .5f, .5f,		0.0f, 1.0f,			0.0f, 0.0f, 1.0f, //0
+		.5f, .5f, .5f,		1.0f, 1.0f,			0.0f, 0.0f, 1.0f, //1
+		.5f, -.5f, .5f,		1.0f, 0.0f,			0.0f, 0.0f, 1.0f, //2
+		-.5f, -.5f, .5f,	0.0f, 0.0f,			0.0f, 0.0f, 1.0f, //3
+		//Back (4-7)
+		.5f, .5f, -.5f,		0.0f, 1.0f,			0.0f, 0.0f, -1.0f, //4
+		-.5f, .5f, -.5f,	1.0f, 1.0f,			0.0f, 0.0f, -1.0f, //5
+		-.5f, -.5f, -.5f, 	1.0f, 0.0f,			0.0f, 0.0f, -1.0f, //6
+		.5f, -.5f, -.5f,	0.0f, 0.0f,			0.0f, 0.0f, -1.0f, //7
+		//Right (8-11) 
+		.5f, .5f, .5f,		0.0f, 1.0f,			1.0f, 0.0f, 0.0f, //8
+		.5f, .5f, -.5f,		1.0f, 0.0f,			1.0f, 0.0f, 0.0f,//9
+		.5f, -.5f, -.5f,	0.0f, 0.0f,			1.0f, 0.0f, 0.0f,//10
+		.5f, -.5f, .5f,		1.0f, 1.0f,			1.0f, 0.0f, 0.0f, //11
+		//Left (12-15)
+		-.5f, .5f, -.5f,	0.0f, 1.0f,			-1.0f, 0.0f, 0.0f,//12
+		-.5f, .5f, .5f,		1.0f, 1.0f,			-1.0f, 0.0f, 0.0f, //13
+		-.5f, -.5f, .5f,	1.0f, 0.0f,			-1.0f, 0.0f, 0.0f, //14
+		-.5f, -.5f, -.5f, 	0.0f, 0.0f,			-1.0f, 0.0f, 0.0f, //15
+		//Top (16-19)
+		-.5f, .5f, -.5f,	0.0f, 1.0f,			0.0f, 1.0f, 0.0f, //16
+		.5f, .5f, -.5f,		1.0f, 1.0f,			0.0f, 1.0f, 0.0f, //17
+		.5f, .5f, .5f,		1.0f, 0.0f,			0.0f, 1.0f, 0.0f, //18
+		-.5f, .5f, .5f,		0.0f, 0.0f,			0.0f, 1.0f, 0.0f, //19
+		//Bottom (20-23)
+		-.5f, -.5f, .5f,	0.0f, 1.0f,			0.0f, -1.0f, 0.0f, //20
+		.5f, -.5f, .5f,		1.0f, 1.0f,			0.0f, -1.0f, 0.0f, //21
+		.5f, -.5f, -.5f,	1.0f, 0.0f,			0.0f, -1.0f, 0.0f, //22
+		-.5f, -.5f, -.5f,	0.0f, 0.0f,			0.0f, -1.0f, 0.0f };//23
 	indices = vector<GLuint>{
-		0, 2, 1,  0, 3, 2,
-		1, 6, 5,  1, 2, 6,
-		5, 7, 4,  5, 6, 7,
-		4, 3, 0,  4, 7, 3,
-		8, 1, 9,  8, 0, 1,
-		3, 10, 2,  3, 11, 10 };
+		0, 2, 1,     0, 3, 2, //Front
+		4, 6, 5,     4, 7, 6, //Back
+		8, 10, 9,    8, 11, 10, //Right
+		12, 14, 13,  12, 15, 14,  //Left
+		16, 18, 17,  16, 19, 18, //Top
+		20, 22, 21,  20, 23, 22 //Bottom
+	};
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -42,12 +69,16 @@ Cube::Cube(shared_ptr<ShaderGroup> mshader_group) : Geometry(mshader_group)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
 	//Vertices
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
 	//Texture pos
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
+
+	//Normals
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(5 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 

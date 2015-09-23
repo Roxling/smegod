@@ -5,6 +5,5 @@
 class Light : public Geometry, public ShaderCollection {
 public:
 	Light(shared_ptr<ShaderGroup>);
-
-	void render() override;
+	void renderSelf(glm::mat4 combined_transform) override;
 };

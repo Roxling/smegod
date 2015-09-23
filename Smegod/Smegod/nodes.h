@@ -17,14 +17,14 @@ public:
 };
 
 class WorldObject : public Node {
-private:
-	GLint world_location;
 protected:
+	GLint world_location;
+	GLint worldIT_location;
 	shared_ptr<ShaderGroup> shader_group;
 public:
 	WorldObject(shared_ptr<ShaderGroup> mshader_group);
-	void renderSelf(glm::mat4 combined_transform) override;
-	virtual void render() {};
+	virtual void renderSelf(glm::mat4 combined_transform) {}
+	
 };
 
 class ShaderCollection abstract {

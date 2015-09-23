@@ -29,6 +29,8 @@ void Camera::renderSelf(glm::mat4 combined_transform)
 
 	GLint projection_location;
 	GLint view_location;
+	GLuint camera_pos_location;
+
 	for (auto it = shader_groups.begin(); it != shader_groups.end(); ++it) {
 		auto program = (*it)->getProgram();
 		(*it)->use();
@@ -36,6 +38,9 @@ void Camera::renderSelf(glm::mat4 combined_transform)
 		view_location = glGetUniformLocation(program, "view");
 		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
+
+		camera_pos_location = glGetUniformLocation(program, "camera_pos");
+		glUniform3fv(camera_pos_location, 1, glm::value_ptr(position));
 	}
 }
 

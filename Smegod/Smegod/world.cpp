@@ -16,6 +16,7 @@ void World::render()
 }
 
 vector<shared_ptr<Node>> cube_groups;
+shared_ptr<Node> light_rotator;
 int max = 10;
 float offset = 50.f;
 float dist = 3.f;
@@ -26,7 +27,7 @@ void ExampleWorld::initiate()
 	head->attach(active_camera);
 
 	
-	shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("projection.vs", "texture.fs");
+	shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
 	active_camera->addShaderGroup(n_shader);
 	
 	shared_ptr<Texture> tex = make_shared<Texture>("wood.jpg");
@@ -50,9 +51,14 @@ void ExampleWorld::initiate()
 	shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
 	active_camera->addShaderGroup(l_shader);
 
+	light_rotator = make_shared<Node>();
+	light_rotator->translate(max*dist, 0, max*dist);
 	shared_ptr<Light> light = make_shared<Light>(l_shader);
-	light->translate(-3.f, 0.f, -3.f);
-	head->attach(light);
+	light->translate(-max*2*dist, 0, -max*2*dist);
+	light_rotator->attach(light);
+	head->attach(light_rotator);
+
+	light->addShaderGroup(n_shader);
 
 	shared_ptr<Frame> f = make_shared<Frame>(l_shader);
 	head->attach(f);
@@ -61,6 +67,7 @@ void ExampleWorld::initiate()
 void ExampleWorld::update(double delta)
 {
 	active_camera->update(delta);
+	light_rotator->world = glm::rotate(world_pos,(float) glfwGetTime()/3, { 1.f,0,-1.f });
 	for (int i = 0; i < max; i++) {
 		for (int j = 0; j < max; j++) {
 			cube_groups[i*max + j]->world = glm::translate(world_pos, { 0,glm::sin(glfwGetTime() + i*glm::radians(offset) + j*glm::radians(offset)) , 0 });

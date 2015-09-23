@@ -23,12 +23,6 @@ WorldObject::WorldObject(shared_ptr<ShaderGroup> mshader_group) : shader_group(m
 {
 	if (shader_group != nullptr) {
 		world_location = glGetUniformLocation(shader_group->getProgram(), "world");
+		worldIT_location = glGetUniformLocation(shader_group->getProgram(), "worldIT");
 	}
-}
-
-void WorldObject::renderSelf(glm::mat4 combined_transform)
-{
-	shader_group->use();
-	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
-	render();
 }

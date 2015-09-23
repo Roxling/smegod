@@ -154,10 +154,12 @@
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\light_pixel_shader.glsl" />
-    <None Include="Shaders\light_vertex_shader.glsl" />
-    <None Include="Shaders\projection_vertex_shader.glsl" />
-    <None Include="Shaders\texture_pixel_shader.glsl" />
+    <None Include="Shaders\light.fs" />
+    <None Include="Shaders\light.vs" />
+    <None Include="Shaders\phong.fs" />
+    <None Include="Shaders\phong.vs" />
+    <None Include="Shaders\projection.vs" />
+    <None Include="Shaders\texture.fs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

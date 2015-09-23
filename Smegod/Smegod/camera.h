@@ -36,7 +36,6 @@ public:
 	Camera(float fov, int width, int height, float near, float far);
 	void translateLocal(float dx, float dy, float dz);
 
-	void render() override {}
 	void update(double delta);
 
 	void renderSelf(glm::mat4 combined_transform) override;

@@ -17,7 +17,7 @@ void InputHandler::key_callback(GLFWwindow * window, int key, int scancode, int 
 	}
 
 	(*keystate)[key] = action;
-
+	CommandHandler::handle(window, key, scancode, action, mods);
 }
 
 const int InputHandler::getKeystate(int key)
@@ -67,4 +67,47 @@ void InputHandler::mouse_button_callback(GLFWwindow* window, int button, int act
 const int InputHandler::getMouseButtonstate(int button)
 {
 	return (*mouse_buttonstate)[button];
+}
+
+unique_ptr<vector<pair<bool, bool>>> CommandHandler::toggle_state = make_unique<vector<pair<bool,bool>>>(GLFW_KEY_LAST, make_pair(true,true)); //{first press callback, new state on toggle}
+
+
+void CommandHandler::set_wireframe(bool state)
+{
+	cout << "Wirefram toggled " <<(state ? "ON" : "OFF") << "." << endl;
+	glPolygonMode(GL_FRONT_AND_BACK, state ? GL_LINE : GL_FILL); //Uncomment for wireframe
+}
+
+void CommandHandler::print_help()
+{
+	string help = 
+		"\t\t --HELP-- \n"
+		"Key controls: \n"
+		"\t'W,A,S,D' to translate camera. \n"
+		"'Arrow keys' or 'right click + mouse' to rotate camera. \n"
+		"'1' to toggle wireframe. \n"
+		"'H' to print help text (this). \n"
+		"\t\t --HELP-- \n";
+	cout << help;
+}
+
+void CommandHandler::handle(GLFWwindow * window, int key, int scancode, int action, int mods)
+{
+	if (action == GLFW_PRESS && (*toggle_state)[key].first) {
+
+		switch (key)
+		{
+		case GLFW_KEY_1:
+			set_wireframe((*toggle_state)[key].second);
+			break;
+		case GLFW_KEY_H:
+			print_help();
+			break;
+		default:
+			break;
+		}
+		(*toggle_state)[key].second = !(*toggle_state)[key].second;
+	}
+
+	(*toggle_state)[key].first = (action == GLFW_RELEASE);
 }

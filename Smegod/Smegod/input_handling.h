@@ -34,3 +34,12 @@ public:
 	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 	static const int getMouseButtonstate(int button);
 };
+
+class CommandHandler {
+private:
+	static unique_ptr<vector<pair<bool,bool>>> toggle_state;
+	static void set_wireframe(bool state);
+public:
+	static void print_help();
+	static void handle(GLFWwindow* window, int key, int scancode, int action, int mods);
+};

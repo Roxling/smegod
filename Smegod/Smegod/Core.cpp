@@ -37,7 +37,7 @@ static void update_delta_and_print_fps() {
 
 
 void main_loop(GLFWwindow* window) {
-	
+
 	world->initiate();
 	
 	while (!glfwWindowShouldClose(window)) {
@@ -96,7 +96,7 @@ int main() {
 	
 	glEnable(GL_DEPTH_TEST);
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Uncomment for wireframe
+
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
@@ -111,6 +111,7 @@ int main() {
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 
+	CommandHandler::print_help();
 	main_loop(window);
 
 	glfwTerminate();

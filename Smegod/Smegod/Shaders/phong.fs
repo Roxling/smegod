@@ -25,5 +25,4 @@ void main()
     vec3 specular =kspecular*pow(max(dot(V,R),0.0), shininess);
     color.xyz = (kambient + diffuse + specular)*texture*incolor;
     color.w = 1.0; 
-    //color = (2 * texture(tex, tex_coord) + vec4(incolor, 1.0f))/3;
 } 

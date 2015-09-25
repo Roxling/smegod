@@ -7,6 +7,7 @@ using namespace std;
 
 Shader::Shader(GLenum mtype, string mfile) : type(mtype), file(mfile) {
 	code = "";
+	
 }
 
 Shader::~Shader()
@@ -26,9 +27,9 @@ bool Shader::compile() {
 	}
 	else {
 		cout << "Compiling " << file << "." << endl;
+		glDeleteShader(shader);
 		code = ncode;
 	}
-
 	shader = glCreateShader(type);
 	const GLchar *glCode = code.c_str();
 	glShaderSource(shader, 1, &glCode, NULL);

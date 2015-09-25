@@ -67,7 +67,7 @@ void ExampleWorld::initiate()
 void ExampleWorld::update(double delta)
 {
 	active_camera->update(delta);
-	light_rotator->world = glm::rotate(world_pos,(float) glfwGetTime()/3, { 1.f,0,-1.f });
+	//light_rotator->world = glm::rotate(world_pos,(float) glfwGetTime()/10, { 1.f,0,-1.f });
 	for (int i = 0; i < max; i++) {
 		for (int j = 0; j < max; j++) {
 			cube_groups[i*max + j]->world = glm::translate(world_pos, { 0,glm::sin(glfwGetTime() + i*glm::radians(offset) + j*glm::radians(offset)) , 0 });

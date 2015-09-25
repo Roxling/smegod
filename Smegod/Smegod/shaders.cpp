@@ -6,9 +6,7 @@
 using namespace std;
 
 Shader::Shader(GLenum mtype, string mfile) : type(mtype), file(mfile) {
-	ifstream stream(FOLDER + file);
-	code = string((istreambuf_iterator<char>(stream)), istreambuf_iterator<char>());
-	stream.close();
+	code = "";
 }
 
 Shader::~Shader()
@@ -19,6 +17,18 @@ Shader::~Shader()
 }
 
 bool Shader::compile() {
+	ifstream stream(FOLDER + file);
+	string ncode = string((istreambuf_iterator<char>(stream)), istreambuf_iterator<char>());
+	stream.close();
+	if (code.compare(ncode) == 0) {
+		cout << "No changes on " << file << "." << endl;
+		return true;
+	}
+	else {
+		cout << "Compiling " << file << "." << endl;
+		code = ncode;
+	}
+
 	shader = glCreateShader(type);
 	const GLchar *glCode = code.c_str();
 	glShaderSource(shader, 1, &glCode, NULL);
@@ -53,24 +63,44 @@ GLuint Shader::getProgram()
 	return program;
 }
 
-ShaderGroup::ShaderGroup(string vertexfile, string pixelfile)
+
+unique_ptr<vector<ShaderGroup*>> ShaderGroup::all_groups = make_unique<vector<ShaderGroup*>>();
+void ShaderGroup::recompile_all()
 {
-	shader_program = glCreateProgram();
+	for (auto it = all_groups->begin(); it != all_groups->end(); ++it) {
+		(*it)->compile();
+	}
+}
+ShaderGroup::ShaderGroup(string vs, string fs)
+{
+	all_groups->push_back(this);
+	vshader = make_unique<VertexShader>(vs);
+	fshader = make_unique<FragmentShader>(fs);
+	compile();
+	
+}
+void ShaderGroup::compile()
+{
+	bool vs_status = vshader->compile();
+	bool fs_status = fshader->compile();
+	if (vs_status && fs_status) {
+		shader_program = glCreateProgram();
+		vshader->attachTo(shader_program);
 
-	VertexShader vshader(vertexfile);
-	vshader.compile();
-	vshader.attachTo(shader_program);
-
-	PixelShader pshader(pixelfile);
-	pshader.compile();
-	pshader.attachTo(shader_program);
-
-	link();
+		fshader->attachTo(shader_program);
+		link();
+	}
+	else {
+		if (!vs_status)
+			cout << vshader->file << " failed to compile. Fix it and try again." << endl;
+		if(!fs_status)
+			cout << fshader->file << " failed to compile. Fix it and try again." << endl;
+	}
+	
 }
 void ShaderGroup::link()
 {
 	glLinkProgram(shader_program);
-
 	GLint success;
 	glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
 	if (!success) {

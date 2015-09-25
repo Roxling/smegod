@@ -1,4 +1,5 @@
 #include "input_handling.h"
+#include "shaders.h"
 
 GLFWwindow* InputHandler::active_window = nullptr;
 
@@ -78,15 +79,22 @@ void CommandHandler::set_wireframe(bool state)
 	glPolygonMode(GL_FRONT_AND_BACK, state ? GL_LINE : GL_FILL); //Uncomment for wireframe
 }
 
+void CommandHandler::recompile_shaders()
+{
+	cout << "Recompiling shaders." << endl;
+	ShaderGroup::recompile_all();
+}
+
 void CommandHandler::print_help()
 {
 	string help = 
 		"\t\t --HELP-- \n"
 		"Key controls: \n"
-		"\t'W,A,S,D' to translate camera. \n"
+		"'W,A,S,D' to translate camera. \n"
 		"'Arrow keys' or 'right click + mouse' to rotate camera. \n"
 		"'1' to toggle wireframe. \n"
 		"'H' to print help text (this). \n"
+		"'R' to recompile shaders. \n"
 		"\t\t --HELP-- \n";
 	cout << help;
 }
@@ -103,6 +111,8 @@ void CommandHandler::handle(GLFWwindow * window, int key, int scancode, int acti
 		case GLFW_KEY_H:
 			print_help();
 			break;
+		case GLFW_KEY_R:
+			recompile_shaders();
 		default:
 			break;
 		}

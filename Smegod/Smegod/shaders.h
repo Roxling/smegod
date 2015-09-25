@@ -9,7 +9,6 @@ private:
 
 	GLenum type;
 	string code;
-	string file;
 
 	GLuint shader;
 	bool compiled;
@@ -19,6 +18,7 @@ protected:
 	Shader(GLenum mtype, string mfile);
 
 public:
+	string file;
 	~Shader();
 	bool compile();
 	GLuint getProgram();
@@ -30,17 +30,22 @@ public:
 	VertexShader(string file) : Shader(GL_VERTEX_SHADER, file) {}
 };
 
-class PixelShader : public Shader {
+class FragmentShader : public Shader {
 public:
-	PixelShader(string file) : Shader(GL_FRAGMENT_SHADER, file) {}
+	FragmentShader(string file) : Shader(GL_FRAGMENT_SHADER, file) {}
 };
 
 class ShaderGroup {
 private:
+	static unique_ptr<vector<ShaderGroup*>> all_groups;
 	GLuint shader_program;
+	unique_ptr<VertexShader> vshader;
+	unique_ptr<FragmentShader> fshader;
 	void link();
 public:
-	ShaderGroup(string vertexfile, string pixelfile);
+	static void recompile_all();
+	ShaderGroup(string vs, string fs);
 	GLuint getProgram() { return shader_program; }
+	void compile();
 	void use() { glUseProgram(shader_program); }
 };

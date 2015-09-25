@@ -18,8 +18,8 @@ public:
 
 class WorldObject : public Node {
 protected:
-	GLint world_location;
-	GLint worldIT_location;
+	GLint world_location = 0;
+	GLint worldIT_location = 0;
 	shared_ptr<ShaderGroup> shader_group;
 public:
 	WorldObject(shared_ptr<ShaderGroup> mshader_group);

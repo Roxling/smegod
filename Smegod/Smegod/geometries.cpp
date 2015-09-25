@@ -61,8 +61,8 @@ Cube::Cube(shared_ptr<ShaderGroup> mshader_group) : Geometry(mshader_group)
 		.5f, -.5f, -.5f,	1.0f, 0.0f,			0.0f, -1.0f, 0.0f, //22
 		-.5f, -.5f, -.5f,	0.0f, 0.0f,			0.0f, -1.0f, 0.0f };//23
 	indices = vector<GLuint>{
-		0, 2, 1,     0, 3, 2, //Front
-		4, 6, 5,     4, 7, 6, //Back
+		0, 2, 1,	 0, 3, 2, //Front
+		4, 6, 5,	 4, 7, 6, //Back
 		8, 10, 9,    8, 11, 10, //Right
 		12, 14, 13,  12, 15, 14,  //Left
 		16, 18, 17,  16, 19, 18, //Top
@@ -76,6 +76,7 @@ Cube::Cube(shared_ptr<ShaderGroup> mshader_group) : Geometry(mshader_group)
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(), GL_STATIC_DRAW);

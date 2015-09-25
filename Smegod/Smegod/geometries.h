@@ -13,10 +13,10 @@ public:
 	void renderSelf(glm::mat4 combined_transform) override;
 	virtual void render() {};
 protected:
-	GLuint VBO, VAO, EBO;
-	std::vector<GLfloat> vertices;
-	std::vector<GLuint> indices;
-	GLint color_location;
+	GLuint VBO = 0, VAO = 0, EBO = 0;
+	vector<GLfloat> vertices;
+	vector<GLuint> indices;
+	GLint color_location = 0;
 };
 
 class Cube : public Geometry {

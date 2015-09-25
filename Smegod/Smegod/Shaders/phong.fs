@@ -21,8 +21,8 @@ void main()
     vec3 L = normalize(fL);
     vec3 V = normalize(fV);
     vec3 R = normalize(reflect(-L,N));
-    vec3 diffuse = kdiffuse*max(dot(L,N),0.0);
-    vec3 specular =kspecular*pow(max(dot(V,R),0.0), shininess);
+    vec3 diffuse = kdiffuse * max(dot(L,N),0.0);
+    vec3 specular = kspecular * pow(max(dot(V,R),0.0), shininess);
     color.xyz = (kambient + diffuse + specular)*texture*incolor;
     color.w = 1.0; 
 } 

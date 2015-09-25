@@ -8,7 +8,7 @@ Camera::Camera(float fov, int width, int height, float near, float far) : WorldO
 
 	translation_speed = 10.f; // units/s
 	rotation_speed = 90.f; // deg/s
-	mouse_sensitivity = 45.f;
+	mouse_sensitivity = 0.3f;
 	updateRotation(0,0);
 }
 
@@ -108,8 +108,8 @@ void Camera::handleMouse(float delta)
 	}
 	if (takingCursorInput) {
 		auto coord = InputHandler::getMouseDelta();
-		coord.x *= mouse_sensitivity * delta;
-		coord.y *= mouse_sensitivity * delta;
+		coord.x *= mouse_sensitivity;
+		coord.y *= mouse_sensitivity;
 		updateRotation((float) coord.x , (float)coord.y);
 	}
 

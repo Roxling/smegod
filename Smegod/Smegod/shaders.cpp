@@ -5,10 +5,7 @@
 
 using namespace std;
 
-Shader::Shader(GLenum mtype, string mfile) : type(mtype), file(mfile) {
-	code = "";
-	
-}
+Shader::Shader(GLenum mtype, string mfile) : type(mtype), file(mfile) {}
 
 Shader::~Shader()
 {

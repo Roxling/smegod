@@ -8,17 +8,17 @@ private:
 	const string FOLDER = "Shaders/";
 
 	GLenum type;
-	string code;
+	string code = "";
 
-	GLuint shader;
-	bool compiled;
+	GLuint shader = 0;
+	bool compiled = false;
 
-	GLuint program;
+	GLuint program = 0;
 protected:
 	Shader(GLenum mtype, string mfile);
 
 public:
-	string file;
+	string file = nullptr;
 	~Shader();
 	bool compile();
 	GLuint getProgram();
@@ -38,7 +38,7 @@ public:
 class ShaderGroup {
 private:
 	static unique_ptr<vector<ShaderGroup*>> all_groups;
-	GLuint shader_program;
+	GLuint shader_program = 0;
 	unique_ptr<VertexShader> vshader;
 	unique_ptr<FragmentShader> fshader;
 	void link();

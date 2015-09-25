@@ -135,6 +135,7 @@
     <ClCompile Include="geometries.cpp" />
     <ClCompile Include="input_handling.cpp" />
     <ClCompile Include="light.cpp" />
+    <ClCompile Include="materials.cpp" />
     <ClCompile Include="nodes.cpp" />
     <ClCompile Include="shaders.cpp" />
     <ClCompile Include="textures.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="gl_dep.h" />
     <ClInclude Include="input_handling.h" />
     <ClInclude Include="light.h" />
+    <ClInclude Include="materials.h" />
     <ClInclude Include="nodes.h" />
     <ClInclude Include="shaders.h" />
     <ClInclude Include="smegod_dep.h" />

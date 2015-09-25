@@ -45,6 +45,9 @@
     <ClCompile Include="nodes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="materials.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaders.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="nodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="materials.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

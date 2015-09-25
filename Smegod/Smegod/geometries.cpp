@@ -8,9 +8,21 @@ Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_
 void Geometry::renderSelf(glm::mat4 combined_transform)
 {
 	shader_group->use();
+	auto program = shader_group->getProgram();
 	auto wIT = glm::transpose(glm::inverse(combined_transform)); //is this the correct way to calculate the inverse transpose?
 	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
 	glUniformMatrix4fv(worldIT_location, 1, GL_FALSE, glm::value_ptr(wIT));
+
+	//material
+	GLuint ambient_loc, diffuse_loc, specular_loc, shininess_loc; //for fs
+	ambient_loc = glGetUniformLocation(program, "kambient");
+	glUniform3fv(ambient_loc, 1, glm::value_ptr(material.ambient));
+	diffuse_loc = glGetUniformLocation(program, "kdiffuse");
+	glUniform3fv(diffuse_loc, 1, glm::value_ptr(material.diffuse));
+	specular_loc = glGetUniformLocation(program, "kspecular");
+	glUniform3fv(specular_loc, 1, glm::value_ptr(material.specular));
+	shininess_loc = glGetUniformLocation(program, "shininess");
+	glUniform1fv(shininess_loc, 1, (const float *)&material.shininess);
 	render();
 }
 

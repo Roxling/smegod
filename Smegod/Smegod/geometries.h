@@ -2,11 +2,13 @@
 #include "smegod_dep.h"
 #include "nodes.h"
 #include "textures.h"
+#include "materials.h"
 
 class Geometry abstract : public WorldObject {
 public:
 	Geometry(shared_ptr<ShaderGroup> mshader_group);
 	glm::vec3 color;
+	Material material = Material::DEFAULT;
 	shared_ptr<Texture> texture = nullptr;
 	void renderSelf(glm::mat4 combined_transform) override;
 	virtual void render() {};

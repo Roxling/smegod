@@ -4,6 +4,14 @@
 #include "textures.h"
 #include "materials.h"
 
+struct Vertex {
+	GLfloat
+		x, y, z,	// Coordinate
+		nx, ny, nz, // Normal
+		tx, ty, tz  // Texture Coordinate
+		;
+};
+
 class Geometry abstract : public WorldObject {
 public:
 	Geometry(shared_ptr<ShaderGroup> mshader_group);

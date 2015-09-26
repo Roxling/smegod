@@ -151,7 +151,6 @@
     <ClInclude Include="nodes.h" />
     <ClInclude Include="shaders.h" />
     <ClInclude Include="smegod_dep.h" />
-    <ClInclude Include="static_data.h" />
     <ClInclude Include="textures.h" />
     <ClInclude Include="world.h" />
   </ItemGroup>

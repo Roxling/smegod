@@ -85,6 +85,13 @@ void CommandHandler::recompile_shaders()
 	ShaderGroup::recompile_all();
 }
 
+bool Globals::DRAW_FPS = false;
+void CommandHandler::draw_fps(bool state)
+{
+	Globals::DRAW_FPS = state;
+	cout << "FPS toggled " << (state ? "ON" : "OFF") << "." << endl;
+}
+
 void CommandHandler::print_help()
 {
 	string help = 
@@ -92,9 +99,10 @@ void CommandHandler::print_help()
 		"Key controls: \n"
 		"'W,A,S,D' to translate camera. \n"
 		"'Arrow keys' or 'right click + mouse' to rotate camera. \n"
-		"'1' to toggle wireframe. \n"
+		"'1' to toggle wireframe. (Default OFF)\n"
 		"'H' to print help text (this). \n"
 		"'R' to recompile shaders. \n"
+		"'F' to toggle FPS counter. (Default OFF) \n"
 		"\t\t --HELP-- \n";
 	cout << help;
 }
@@ -107,6 +115,9 @@ void CommandHandler::handle(GLFWwindow * window, int key, int scancode, int acti
 		{
 		case GLFW_KEY_1:
 			set_wireframe((*toggle_state)[key].second);
+			break;
+		case GLFW_KEY_F:
+			draw_fps((*toggle_state)[key].second);
 			break;
 		case GLFW_KEY_H:
 			print_help();

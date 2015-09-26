@@ -40,6 +40,7 @@ private:
 	static unique_ptr<vector<pair<bool,bool>>> toggle_state;
 	static void set_wireframe(bool state);
 	static void recompile_shaders();
+	static void draw_fps(bool state);
 public:
 	static void print_help();
 	static void handle(GLFWwindow* window, int key, int scancode, int action, int mods);

@@ -1,12 +1,9 @@
 #include "smegod_dep.h"
 
-#include "static_data.h"
 #include "shaders.h"
 #include "input_handling.h"
 #include "camera.h"
 #include "world.h"
-
-
 
 const string name = "Window";
 shared_ptr<World> world;
@@ -18,7 +15,7 @@ double time_delta = 0;
 double sum = 0;
 int fps = 0;
 
-static void update_delta_and_print_fps() {
+static void update_delta() {
 	time_delta = time_end - time_start;
 	time_start = time_end;
 	time_end = glfwGetTime();
@@ -28,7 +25,9 @@ static void update_delta_and_print_fps() {
 		fps++;
 	}
 	else {
-		cout << fps << endl;
+		if (Globals::DRAW_FPS) {
+			cout << fps << endl;
+		}
 		fps = 0;
 		sum = 0;
 	}
@@ -45,8 +44,9 @@ void main_loop(GLFWwindow* window) {
 
 	world->initiate();
 	while (!glfwWindowShouldClose(window)) {
-		update_delta_and_print_fps();
-		
+		update_delta();
+
+
 		glClearColor(1.f, .7f, .7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -62,7 +62,7 @@ void main_loop(GLFWwindow* window) {
 		//prints GLerrors if any.. Not good for performance and should only be used for debug.
 		GLenum error;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			cerr << "GLerror: 0x" << hex << error << dec << endl;
+			//cerr << "GLerror: 0x" << hex << error << dec << endl;
 		}
 	}
 }
@@ -79,7 +79,7 @@ int main() {
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 
-	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, name.c_str(), nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(Globals::WIDTH, Globals::HEIGHT, name.c_str(), nullptr, nullptr);
 
 	if (window == nullptr) {
 		cerr << "Failed to create window" << endl;
@@ -119,7 +119,7 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glViewport(0, 0, WIDTH, HEIGHT);
+	glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 
 	CommandHandler::print_help();
 	main_loop(window);

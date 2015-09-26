@@ -34,12 +34,16 @@ static void update_delta_and_print_fps() {
 	}
 }
 
-
+void print_errors() {
+	for (GLenum currError = glGetError(); currError != GL_NO_ERROR; currError = glGetError())
+	{
+		cout << "ERRORS: " << currError << endl;
+	}
+}
 
 void main_loop(GLFWwindow* window) {
 
 	world->initiate();
-	
 	while (!glfwWindowShouldClose(window)) {
 		update_delta_and_print_fps();
 		
@@ -55,6 +59,11 @@ void main_loop(GLFWwindow* window) {
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
+		//prints GLerrors if any.. Not good for performance and should only be used for debug.
+		GLenum error;
+		while ((error = glGetError()) != GL_NO_ERROR) {
+			cerr << "GLerror: 0x" << hex << error << dec << endl;
+		}
 	}
 }
 
@@ -93,6 +102,7 @@ int main() {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
+	while (GLenum currError = glGetError() != GL_NO_ERROR); //poll all errors from glewInit().
 	
 	glEnable(GL_DEPTH_TEST);
 

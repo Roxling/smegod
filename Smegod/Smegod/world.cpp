@@ -23,9 +23,9 @@ float dist = 3.f;
 
 void ExampleWorld::initiate()
 {
+	
 	active_camera = make_shared<Camera>(45.f, WIDTH, HEIGHT, 0.1f, 100.f);
 	head->attach(active_camera);
-
 	
 	shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
 	shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light.vs", "light.fs");

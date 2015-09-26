@@ -1,18 +1,19 @@
 #include "geometries.h"
 
-Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group)
-{
-	color_location = glGetUniformLocation(mshader_group->getProgram(), "incolor");
-}
 
-void Geometry::renderSelf(glm::mat4 combined_transform)
+
+void Geometry::render(glm::mat4 combined_transform)
 {
 	shader_group->use();
 	auto program = shader_group->getProgram();
 	auto wIT = glm::transpose(glm::inverse(combined_transform)); //is this the correct way to calculate the inverse transpose?
+	world_location = glGetUniformLocation(shader_group->getProgram(), "world");
+	worldIT_location = glGetUniformLocation(shader_group->getProgram(), "worldIT");
 	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
 	glUniformMatrix4fv(worldIT_location, 1, GL_FALSE, glm::value_ptr(wIT));
-
+	//color
+	GLuint color_location = glGetUniformLocation(shader_group->getProgram(), "incolor");
+	glUniform3fv(color_location, 1, glm::value_ptr(color));
 	//material
 	GLuint ambient_loc, diffuse_loc, specular_loc, shininess_loc; //for fs
 	ambient_loc = glGetUniformLocation(program, "kambient");
@@ -23,7 +24,7 @@ void Geometry::renderSelf(glm::mat4 combined_transform)
 	glUniform3fv(specular_loc, 1, glm::value_ptr(material.specular));
 	shininess_loc = glGetUniformLocation(program, "shininess");
 	glUniform1fv(shininess_loc, 1, (const float *)&material.shininess);
-	render();
+	renderSelf();
 }
 
 Cube::Cube(shared_ptr<ShaderGroup> mshader_group) : Geometry(mshader_group)
@@ -96,9 +97,8 @@ Cube::Cube(shared_ptr<ShaderGroup> mshader_group) : Geometry(mshader_group)
 	glBindVertexArray(0);
 }
 
-void Cube::render()
+void Cube::renderSelf()
 {
-	glUniform3fv(color_location, 1, glm::value_ptr(color));
 	if (texture != nullptr) {
 		glBindTexture(GL_TEXTURE_2D, texture->texture_id);
 	}

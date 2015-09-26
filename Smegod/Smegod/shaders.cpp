@@ -2,33 +2,28 @@
 #include <fstream>
 #include <streambuf>
 
-
 using namespace std;
 
 Shader::Shader(GLenum mtype, string mfile) : type(mtype), file(mfile) {}
 
 Shader::~Shader()
 {
-	if (compiled) {
-		glDeleteShader(shader);
-	}
+	glDeleteShader(shader);
 }
 
-bool Shader::compile() {
+Shader::COMPILE_STATUS Shader::compile() {
 	ifstream stream(FOLDER + file);
 	string ncode = string((istreambuf_iterator<char>(stream)), istreambuf_iterator<char>());
 	stream.close();
 	if (code.compare(ncode) == 0) {
-		cout << "No changes on " << file << "." << endl;
-		return true;
+		return Shader::COMPILE_STATUS::UNCHANGED;
 	}
 	else {
 		cout << "Compiling " << file << "." << endl;
 		glDeleteShader(shader);
-		code = ncode;
 	}
 	shader = glCreateShader(type);
-	const GLchar *glCode = code.c_str();
+	const GLchar *glCode = ncode.c_str();
 	glShaderSource(shader, 1, &glCode, NULL);
 	glCompileShader(shader);
 
@@ -40,8 +35,11 @@ bool Shader::compile() {
 		glGetShaderInfoLog(shader, logSize, NULL, log);
 		cout << "Shader failed to compile (file : " << file << " )." << endl << log << endl;
 	}
+	else {
+		code = ncode;
+	}
 	compiled = success ? true : false;
-	return compiled;
+	return compiled ? Shader::COMPILE_STATUS::SUCCESS : Shader::COMPILE_STATUS::FAILED;
 }
 
 void Shader::attachTo(GLuint nprogram) {
@@ -54,13 +52,15 @@ void Shader::attachTo(GLuint nprogram) {
 	}
 }
 
-
+void Shader::detach()
+{
+	glDetachShader(program, shader);
+}
 
 GLuint Shader::getProgram()
 {
 	return program;
 }
-
 
 unique_ptr<vector<ShaderGroup*>> ShaderGroup::all_groups = make_unique<vector<ShaderGroup*>>();
 void ShaderGroup::recompile_all()
@@ -71,32 +71,47 @@ void ShaderGroup::recompile_all()
 }
 ShaderGroup::ShaderGroup(string vs, string fs)
 {
+	shader_program = glCreateProgram();
 	all_groups->push_back(this);
 	vshader = make_unique<VertexShader>(vs);
 	fshader = make_unique<FragmentShader>(fs);
 	compile();
-	
 }
 void ShaderGroup::compile()
 {
-	bool vs_status = vshader->compile();
-	bool fs_status = fshader->compile();
-	if (vs_status && fs_status) {
-		shader_program = glCreateProgram();
-		vshader->attachTo(shader_program);
+	auto vs_status = vshader->compile();
+	auto fs_status = fshader->compile();
 
-		fshader->attachTo(shader_program);
-		link();
+	if (vs_status == Shader::COMPILE_STATUS::UNCHANGED && fs_status == Shader::COMPILE_STATUS::UNCHANGED) {
+		cout << "No changes in " << vshader->file << " or " << fshader->file << "." << endl;
+		return;
 	}
-	else {
-		if (!vs_status)
+
+	if (vs_status != Shader::COMPILE_STATUS::FAILED && fs_status != Shader::COMPILE_STATUS::FAILED) {
+		
+		vshader->attachTo(shader_program);
+		fshader->attachTo(shader_program);
+		if (link()) {
+			vshader->detach();
+			fshader->detach();
+		}
+		else {
+			//glDeleteProgram(shader_program);
+		}
+		GLenum error;
+		while ((error = glGetError()) != GL_NO_ERROR) {
+			cerr << "GLerror: 0x" << hex << error << dec << endl;
+		}
+	}
+	else{
+		if (vs_status == Shader::COMPILE_STATUS::FAILED)
 			cout << vshader->file << " failed to compile. Fix it and try again." << endl;
-		if(!fs_status)
+		if(fs_status == Shader::COMPILE_STATUS::FAILED)
 			cout << fshader->file << " failed to compile. Fix it and try again." << endl;
 	}
 	
 }
-void ShaderGroup::link()
+bool ShaderGroup::link()
 {
 	glLinkProgram(shader_program);
 	GLint success;
@@ -107,7 +122,9 @@ void ShaderGroup::link()
 
 		glGetProgramInfoLog(shader_program, logSize, NULL, log);
 		cout << "Shader program failed to link." << endl << log << endl;
+		return false;
 	}
+	return true;
 
 }
 

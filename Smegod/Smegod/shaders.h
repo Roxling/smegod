@@ -18,11 +18,17 @@ protected:
 	Shader(GLenum mtype, string mfile);
 
 public:
-	string file = nullptr;
+	enum COMPILE_STATUS {
+		FAILED = -1,
+		SUCCESS = 0,
+		UNCHANGED = 1
+	};
 	~Shader();
-	bool compile();
+	string file = nullptr;
+	COMPILE_STATUS compile();
 	GLuint getProgram();
 	void attachTo(GLuint program);
+	void detach();
 };
 
 class VertexShader : public Shader {
@@ -41,7 +47,7 @@ private:
 	GLuint shader_program = 0;
 	unique_ptr<VertexShader> vshader;
 	unique_ptr<FragmentShader> fshader;
-	void link();
+	bool link();
 public:
 	static void recompile_all();
 	ShaderGroup(string vs, string fs);

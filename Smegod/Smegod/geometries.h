@@ -14,24 +14,23 @@ struct Vertex {
 
 class Geometry abstract : public WorldObject {
 public:
-	Geometry(shared_ptr<ShaderGroup> mshader_group);
+	Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group) {}
 	glm::vec3 color;
 	Material material = Material::DEFAULT;
 	shared_ptr<Texture> texture = nullptr;
-	void renderSelf(glm::mat4 combined_transform) override;
-	virtual void render() {};
+	virtual void renderSelf() {};
+	void render(glm::mat4 combined_transform) override;
 protected:
 	GLuint VBO = 0, VAO = 0, EBO = 0;
 	vector<GLfloat> vertices;
 	vector<GLuint> indices;
-	GLint color_location = 0;
 };
 
 class Cube : public Geometry {
 
 public:
 	Cube(shared_ptr<ShaderGroup> mshader_group);
-	void render() override;
+	void renderSelf() override;
 };
 
 class Frame : public WorldObject {

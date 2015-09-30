@@ -1,5 +1,7 @@
 #include "textures.h"
 
+shared_ptr<Texture> Texture::DEFAULT = make_shared<Texture>();
+
 Texture::Texture(string file)
 {
 	int width;

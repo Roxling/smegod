@@ -3,34 +3,19 @@
 #include "nodes.h"
 #include "textures.h"
 #include "materials.h"
+#include "parametric_shapes.h"
 
-struct Vertex {
-	GLfloat
-		x, y, z,	// Coordinate
-		nx, ny, nz, // Normal
-		tx, ty, tz  // Texture Coordinate
-		;
-};
-
-class Geometry abstract : public WorldObject {
+class Geometry : public WorldObject {
 public:
-	Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group) {}
-	glm::vec3 color;
+	Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group, VertexArray va);
 	Material material = Material::DEFAULT;
-	shared_ptr<Texture> texture = nullptr;
-	virtual void renderSelf() {};
+	shared_ptr<Texture> texture = Texture::DEFAULT;
+	glm::vec3 color = { 1.f,1.f,1.f };
+	virtual void renderSelf();
 	void render(glm::mat4 combined_transform) override;
 protected:
-	GLuint VBO = 0, VAO = 0, EBO = 0;
-	vector<GLfloat> vertices;
-	vector<GLuint> indices;
-};
-
-class Cube : public Geometry {
-
-public:
-	Cube(shared_ptr<ShaderGroup> mshader_group);
-	void renderSelf() override;
+	//Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group) {}
+	unique_ptr<VertexArray> vertex_array;
 };
 
 class Frame : public WorldObject {

@@ -3,6 +3,7 @@
 #include "geometries.h"
 #include "textures.h"
 #include "light.h"
+#include "parametric_shapes.h"
 
 World::World()
 {
@@ -16,7 +17,7 @@ void World::render()
 
 vector<shared_ptr<Node>> cube_groups;
 shared_ptr<Node> light_rotator;
-int max = 10;
+int max = 3;
 float offset = 50.f;
 float dist = 3.f;
 
@@ -43,9 +44,8 @@ void ExampleWorld::initiate()
 			shared_ptr<Node> g = make_shared<Node>();
 			for (int k = 0; k < max; k++) {
 
-				shared_ptr<Cube> c = make_shared<Cube>(n_shader);
+				shared_ptr<Geometry> c = make_shared<Geometry>(n_shader, ParametricShapes::createTorus(1,0.5f, 100, 100));
 				c->translate(dist*i, dist*k, dist * j);
-				c->color = { (float)i / (float)max , (float)k / (float)max, (float)j / (float)max };
 				c->texture = tex;
 				g->attach(c);
 			}

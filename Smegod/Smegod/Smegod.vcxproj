@@ -137,6 +137,7 @@
     <ClCompile Include="light.cpp" />
     <ClCompile Include="materials.cpp" />
     <ClCompile Include="nodes.cpp" />
+    <ClCompile Include="parametric_shapes.cpp" />
     <ClCompile Include="shaders.cpp" />
     <ClCompile Include="textures.cpp" />
     <ClCompile Include="world.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="light.h" />
     <ClInclude Include="materials.h" />
     <ClInclude Include="nodes.h" />
+    <ClInclude Include="parametric_shapes.h" />
     <ClInclude Include="shaders.h" />
     <ClInclude Include="smegod_dep.h" />
     <ClInclude Include="textures.h" />

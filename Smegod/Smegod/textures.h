@@ -5,8 +5,9 @@
 class Texture {
 private:
 	const string FOLDER = "Textures/";
-
 public:
-	GLuint texture_id;
+	Texture(){}
+	GLuint texture_id = 0;
 	Texture(string file);
+	static shared_ptr<Texture> DEFAULT;
 };

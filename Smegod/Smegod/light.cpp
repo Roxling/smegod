@@ -1,14 +1,14 @@
 #include "light.h"
 
-Light::Light(shared_ptr<ShaderGroup> mshader_group) : Geometry(mshader_group)
+Light::Light(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group)
 {
-	shared_ptr<Cube> source = make_shared<Cube>(mshader_group);
+	auto source = make_shared<Geometry>(mshader_group, ParametricShapes::createCube(1.f, 1));
 	source->world = glm::scale(source->world, glm::vec3(1.f));
 	source->color = glm::vec3(1.f,0,0);
 	attach(source);
 }
 
-void Light::renderSelf(glm::mat4 combined_transform)
+void Light::render(glm::mat4 combined_transform)
 {
 	GLuint light_pos;//for vs
 	for (auto it = shader_groups.begin(); it != shader_groups.end(); ++it) {

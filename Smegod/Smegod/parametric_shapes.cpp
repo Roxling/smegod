@@ -204,7 +204,41 @@ VertexArray ParametricShapes::createBlock(GLfloat width, GLfloat height, GLfloat
 	GLfloat dh = height / res;
 	GLfloat dd = depth / res;
 
-	//TODO create block
+	GLfloat W = 0;
+	GLfloat H = 0;
+	GLfloat D = 0;
+	for (int i = 0; i < res + 1; ++i) {
+		for (int j = 0; j < res + 1; ++j) {
+			Vertex v;
+			v.x = W;
+			v.y = H;
+			v.z = D;
+
+			vertices->push_back(v);
+			W += dw;
+		}
+		W = 0;
+		H += dh;
+	}
+
+	for (int i = 0; i < res; ++i) {
+		for (int j = 0; j < 2*res-1; ++j) {
+			Triangle t1, t2;
+			auto curr = i*res + j;
+			t1.a = curr;
+			t1.b = curr + res + 2;
+			t1.c = curr + res + 1;
+
+			t2.a = curr;
+			t2.b = curr + 1;
+			t2.c = curr + res + 2;
+
+			indices->push_back(t1);
+			indices->push_back(t2);
+		}
+	}
+
+
 
 	return VertexArray::CreateVertexArray(vertices, indices);
 }

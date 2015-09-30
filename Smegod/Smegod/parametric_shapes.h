@@ -5,7 +5,7 @@ struct Vertex {
 		texx, texy, texz,	/* texture coordinate */
 		nx, ny, nz,			/* normal vector */
 		tx, ty, tz,			/* tangent vector */
-		bx, by, bz;			/* binormal vector */
+		bx, by, bz = 0;			/* binormal vector */
 };
 struct Triangle
 {

@@ -26,4 +26,5 @@ public:
 	static VertexArray createTorus(GLfloat radiusA, GLfloat radiusB, GLint res_theta, GLint res_phi);
 	static VertexArray createCube(GLfloat side, GLint res);
 	static VertexArray createBlock(GLfloat width, GLfloat height, GLfloat depth, GLint res);
+	static VertexArray createSurface(GLfloat width, GLfloat height, GLint res);
 };

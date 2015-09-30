@@ -89,25 +89,25 @@ Frame::Frame(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group)
 	//X
 	auto axis = make_shared<Geometry>(mshader_group,ParametricShapes::createCube(1.f,1));
 	axis->world = glm::scale(axis->world, glm::vec3(2.f,0.1f,0.1f));
-	axis->translate(.5f, 0, 0);
+	axis->translate(.05f, 0, 0);
 	axis->color = { 1.f, 0, 0 };
 	attach(axis);
 	//Y
 	axis = make_shared<Geometry>(mshader_group, ParametricShapes::createCube(1.f, 1));
 	axis->world = glm::scale(axis->world, glm::vec3(0.1f, 2.f, 0.1f));
-	axis->translate(0, .5f, 0);
+	axis->translate(0, .05f, 0);
 	axis->color = { 0, 1.f, 0 };
 	attach(axis);
 	//Z
 	axis = make_shared<Geometry>(mshader_group, ParametricShapes::createCube(1.f, 1));
 	axis->world = glm::scale(axis->world, glm::vec3(0.1f, 0.1f, 2.f));
-	axis->translate(0, 0, .5f);
+	axis->translate(0, 0, -.05f);
 	axis->color = { 0, 0, 1.f};
 	attach(axis);
 
 	//box
 	axis = make_shared<Geometry>(mshader_group, ParametricShapes::createCube(1.f, 1));
-	axis->world = glm::scale(axis->world, glm::vec3(.2f));
+	axis->world = glm::scale(axis->world, glm::vec3(.1f));
 	axis->color = glm::vec3{ 0.f };
 	attach(axis);
 }

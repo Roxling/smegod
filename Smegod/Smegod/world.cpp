@@ -54,7 +54,7 @@ void ExampleWorld::initiate()
 		}
 	}
 
-	auto cube = make_shared<Geometry>(n_shader, ParametricShapes::createCube(2.f,1));
+	auto cube = make_shared<Geometry>(n_shader, ParametricShapes::createCube(2.f,10));
 	cube->translate(0.f, 0.f, -1.f);
 	head->attach(cube);
 

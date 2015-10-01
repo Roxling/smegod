@@ -59,6 +59,11 @@ void ExampleWorld::initiate()
 	cube->texture = tex;
 	head->attach(cube);
 
+	auto surf = make_shared<Geometry>(n_shader, ParametricShapes::createSurface(3,3, 100));
+	surf->translate(-5.f, 0.f, -5.f);
+	surf->texture = tex;
+	head->attach(surf);
+
 	light->translate(-max*2*dist, 0, -max*2*dist);
 	light_rotator->attach(light);
 	head->attach(light_rotator);

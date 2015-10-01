@@ -312,6 +312,63 @@ VertexArray ParametricShapes::createSurface(GLfloat width, GLfloat height, GLint
 	shared_ptr<vector<Vertex>> vertices = make_shared<vector<Vertex>>();
 	shared_ptr<vector<Triangle>> indices = make_shared<vector<Triangle>>();
 
-	//create surface
+	glm::vec3 normal = { 0,1,0 };
+	glm::vec3 binormal = { 1,0,0 };
+	glm::vec3 tangent = { 0,0,1 };
+
+	GLfloat dw = width / res;
+	GLfloat dh = height / res;
+
+	GLfloat W = 0;
+	GLfloat H = 0;
+	for (int i = 0; i < res + 1; ++i) {
+		for (int j = 0; j < res + 1; ++j) {
+			Vertex v;
+			v.x = W;
+			v.y = 0;
+			v.z = H;
+
+			v.nx = normal.x;
+			v.ny = normal.y;
+			v.nz = normal.z;
+
+			v.bx = binormal.x;
+			v.by = binormal.y;
+			v.bz = binormal.z;
+
+			v.tx = tangent.x;
+			v.ty = tangent.y;
+			v.tz = tangent.z;
+
+			v.texx = (GLfloat)i / (res + 1);
+			v.texy = (GLfloat)j / (res + 1);
+			v.texz = 0;
+
+			vertices->push_back(v);
+			W += dw;
+
+		}
+		W = 0;
+		H += dh;
+	}
+
+
+	for (int i = 0; i < res; ++i) {
+		for (int j = 0; j < res; ++j) {
+			Triangle t1, t2;
+			auto curr = i*(res + 1) + j;
+			t1.a = curr;
+			t1.c = curr + res + 2;
+			t1.b = curr + res + 1;
+
+			t2.a = curr;
+			t2.c = curr + 1;
+			t2.b = curr + res + 2;
+
+			indices->push_back(t1);
+			indices->push_back(t2);
+		}
+	}
+	
 	return VertexArray::CreateVertexArray(vertices, indices);
 }

@@ -22,19 +22,19 @@ VertexArray VertexArray::CreateVertexArray(shared_ptr<vector<Vertex>> vertices, 
 
 	//Texture pos
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(1 * sizeof(Vertex)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
 
 	//Normals
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(2 * sizeof(Vertex)));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
 
 	//Binormal
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(Vertex)));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(9 * sizeof(GLfloat)));
 
 	//Tangent
 	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(4 * sizeof(Vertex)));
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(12 * sizeof(GLfloat)));
 
 	va.num_indices = (GLsizei)( sizeof(Triangle) / sizeof(GLint) * indices->size());
 	glBindVertexArray(0);
@@ -222,12 +222,27 @@ VertexArray ParametricShapes::createBlock(GLfloat width, GLfloat height, GLfloat
 	signs.push_back(glm::vec3(1,0,-1));
 	signs.push_back(glm::vec3(1,0,1));
 
+	vector<glm::vec3> normals;
+	normals.push_back(glm::vec3(0, 0, 1));
+	normals.push_back(glm::vec3(0, 0, -1));
+	normals.push_back(glm::vec3(1, 0, 0));
+	normals.push_back(glm::vec3(-1, 0, 0));
+	normals.push_back(glm::vec3(0, 1, 0));
+	normals.push_back(glm::vec3(0, -1, 0));
 
-	//Front
-	glm::vec3 normal = { 0,0,1 };
-	glm::vec3 binormal = { 1,0,0 };
-	glm::vec3 tangent = { 0,1,0 };
+	vector<glm::vec3> binormals;
+	binormals.push_back(glm::vec3(1, 0, 0));
+	binormals.push_back(glm::vec3(-1, 0, 0));
+	binormals.push_back(glm::vec3(0, 0, -1));
+	binormals.push_back(glm::vec3(0, 0, 1));
+	binormals.push_back(glm::vec3(1, 0, 0));
+	binormals.push_back(glm::vec3(-1, 0, 0));
+
+
 	for (int s = 0; s < sides; ++s) {
+		glm::vec3 normal = normals[s];
+		glm::vec3 binormal = binormals[s];
+		glm::vec3 tangent = glm::cross(normal, binormal);
 		auto pos = side[s];
 		auto sign = signs[s];
 		for (int i = 0; i < res + 1; ++i) {
@@ -249,8 +264,8 @@ VertexArray ParametricShapes::createBlock(GLfloat width, GLfloat height, GLfloat
 				v.ty = tangent.y;
 				v.tz = tangent.z;
 
-				v.texx = pos.x / width;
-				v.texy = pos.x / height;
+				v.texx = (GLfloat) i / (res + 1);
+				v.texy = (GLfloat) j / (res + 1);
 				v.texz = 0;
 
 				vertices->push_back(v);

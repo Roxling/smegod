@@ -17,7 +17,7 @@ void World::render()
 
 vector<shared_ptr<Node>> cube_groups;
 shared_ptr<Node> light_rotator;
-int max = 0;
+int max = 3;
 float offset = 50.f;
 float dist = 3.f;
 
@@ -55,7 +55,8 @@ void ExampleWorld::initiate()
 	}
 
 	auto cube = make_shared<Geometry>(n_shader, ParametricShapes::createCube(2.f,10));
-	cube->translate(0.f, 0.f, -1.f);
+	cube->translate(0.f, 0.f, -2.f);
+	cube->texture = tex;
 	head->attach(cube);
 
 	light->translate(-max*2*dist, 0, -max*2*dist);

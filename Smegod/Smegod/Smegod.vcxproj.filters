@@ -109,5 +109,11 @@
     <None Include="Shaders\texture.fs">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\normal.fs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\normal.vs">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

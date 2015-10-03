@@ -159,6 +159,8 @@
   <ItemGroup>
     <None Include="Shaders\light.fs" />
     <None Include="Shaders\light.vs" />
+    <None Include="Shaders\normal.fs" />
+    <None Include="Shaders\normal.vs" />
     <None Include="Shaders\phong.fs" />
     <None Include="Shaders\phong.vs" />
     <None Include="Shaders\projection.vs" />

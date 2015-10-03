@@ -29,6 +29,8 @@ void ExampleWorld::initiate()
 	
 	shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
 	shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
+	shared_ptr<ShaderGroup> norm_shader = make_shared<ShaderGroup>("normal.vs", "normal.fs");
+	active_camera->addShaderGroup(norm_shader);
 	active_camera->addShaderGroup(n_shader);
 	active_camera->addShaderGroup(l_shader);
 
@@ -37,7 +39,8 @@ void ExampleWorld::initiate()
 	shared_ptr<Light> light = make_shared<Light>(l_shader);
 	light->addShaderGroup(n_shader);
 	
-	shared_ptr<Texture> tex = make_shared<Texture>("wood.jpg");
+	shared_ptr<Texture> tex = make_shared<Texture>("stone43_diffuse.jpg");
+	shared_ptr<Texture> bump = make_shared<Texture>("stone43_bump.jpg");
 
 	for (int i = 0; i < max; i++) {
 		for (int j = 0; j < max; j++) {
@@ -47,6 +50,7 @@ void ExampleWorld::initiate()
 				shared_ptr<Geometry> c = make_shared<Geometry>(n_shader, ParametricShapes::createTorus(1,0.5f, 100, 100));
 				c->translate(dist*i, dist*k, dist * j);
 				c->texture = tex;
+				c->bumpmap = bump;
 				g->attach(c);
 			}
 			cube_groups.push_back(g);
@@ -54,9 +58,10 @@ void ExampleWorld::initiate()
 		}
 	}
 
-	auto cube = make_shared<Geometry>(n_shader, ParametricShapes::createCube(2.f,10));
+	auto cube = make_shared<Geometry>(norm_shader, ParametricShapes::createCube(2.f,10));
 	cube->translate(0.f, 0.f, -2.f);
 	cube->texture = tex;
+	cube->bumpmap = bump;
 	head->attach(cube);
 
 	auto surf = make_shared<Geometry>(n_shader, ParametricShapes::createSurface(3,3, 100));

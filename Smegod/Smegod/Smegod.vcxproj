@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="Cubemap.cpp" />
     <ClCompile Include="geometries.cpp" />
     <ClCompile Include="input_handling.cpp" />
     <ClCompile Include="light.cpp" />
@@ -144,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="cubemap.h" />
     <ClInclude Include="geometries.h" />
     <ClInclude Include="gl_dep.h" />
     <ClInclude Include="input_handling.h" />

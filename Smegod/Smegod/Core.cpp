@@ -87,7 +87,8 @@ int main() {
 		exit(EXIT_FAILURE);
 	}
 
-	world = make_shared<ExampleWorld>();
+	//world = make_shared<ExampleWorld>();
+	world = make_shared<WaterWorld>();
 
 	glfwMakeContextCurrent(window);
 	InputHandler::active_window = window;

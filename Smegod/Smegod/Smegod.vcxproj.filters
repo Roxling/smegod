@@ -115,5 +115,11 @@
     <None Include="Shaders\normal.vs">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\water.fs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\water.vs">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

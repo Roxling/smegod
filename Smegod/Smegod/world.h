@@ -20,3 +20,8 @@ class ExampleWorld : public World {
 	void update(double delta) override;
 	void initiate() override;
 };
+
+class WaterWorld : public World {
+	void update(double delta) override;
+	void initiate() override;
+};

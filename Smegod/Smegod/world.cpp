@@ -87,3 +87,25 @@ void ExampleWorld::update(double delta)
 		}
 	}
 }
+
+shared_ptr<ShaderGroup> water_shader;
+void WaterWorld::initiate()
+{
+	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
+	head->attach(active_camera);
+
+	water_shader = make_shared<ShaderGroup>("water.vs", "water.fs");
+	active_camera->addShaderGroup(water_shader);
+
+	auto surf = make_shared<Geometry>(water_shader, ParametricShapes::createSurface(50, 50, 50));
+	head->attach(surf);
+}
+void WaterWorld::update(double delta)
+{
+	active_camera->update(delta);
+
+	auto time_loc = glGetUniformLocation(water_shader->getProgram(), "time");
+	float time =(float) glfwGetTime();
+	glUniform1fv(time_loc, 1, (const float *)& time);
+}
+

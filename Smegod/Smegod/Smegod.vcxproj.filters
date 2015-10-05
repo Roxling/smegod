@@ -127,5 +127,11 @@
     <None Include="Shaders\water.vs">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\cubemap.fs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\cubemap.vs">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

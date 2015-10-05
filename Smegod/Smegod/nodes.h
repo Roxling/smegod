@@ -20,8 +20,8 @@ class WorldObject : public Node {
 protected:
 	GLint world_location = 0;
 	GLint worldIT_location = 0;
-	shared_ptr<ShaderGroup> shader_group;
 public:
+	shared_ptr<ShaderGroup> shader_group;
 	WorldObject(shared_ptr<ShaderGroup> mshader_group) : shader_group(mshader_group) {}
 	void renderSelf(glm::mat4 combined_transform) override;
 	virtual void render(glm::mat4 combined_transform) {};

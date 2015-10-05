@@ -2,6 +2,7 @@
 #include "shaders.h"
 #include "geometries.h"
 #include "textures.h"
+#include "cubemap.h"
 #include "light.h"
 #include "parametric_shapes.h"
 
@@ -97,8 +98,19 @@ void WaterWorld::initiate()
 	water_shader = make_shared<ShaderGroup>("water.vs", "water.fs");
 	active_camera->addShaderGroup(water_shader);
 
+
+	//auto cubemap = make_shared<Cubemap>("Texures/cloudyhills_cubemap/cloudyhills_", ".png");
+	auto cubemap = make_shared<Cubemap>("Textures/snow_cubemap/snow_", ".jpg");
+	cout << "cube in world " << cubemap->texture_id << endl;
+	auto skybox = make_shared<Skybox>(cubemap);
+	active_camera->addShaderGroup(skybox->shader_group);
+
+	head->attach(skybox);
+
 	auto surf = make_shared<Geometry>(water_shader, ParametricShapes::createSurface(50, 50, 50));
 	head->attach(surf);
+
+
 }
 void WaterWorld::update(double delta)
 {

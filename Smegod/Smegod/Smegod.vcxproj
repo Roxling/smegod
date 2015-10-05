@@ -131,8 +131,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
-    <ClCompile Include="Core.cpp" />
-    <ClCompile Include="Cubemap.cpp" />
+    <ClCompile Include="core.cpp" />
+    <ClCompile Include="cubemap.cpp" />
     <ClCompile Include="geometries.cpp" />
     <ClCompile Include="input_handling.cpp" />
     <ClCompile Include="light.cpp" />
@@ -159,6 +159,8 @@
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\cubemap.fs" />
+    <None Include="Shaders\cubemap.vs" />
     <None Include="Shaders\light.fs" />
     <None Include="Shaders\light.vs" />
     <None Include="Shaders\normal.fs" />

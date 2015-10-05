@@ -41,7 +41,7 @@ VertexArray VertexArray::CreateVertexArray(shared_ptr<vector<Vertex>> vertices, 
 	return va;
 }
 
-VertexArray ParametricShapes::createSphere(GLfloat radius, GLint res_theta, GLint res_phi)
+VertexArray ParametricShapes::createSphere(GLfloat radius, GLint res_theta, GLint res_phi, bool inv)
 {
 	shared_ptr<vector<Vertex>> vertices = make_shared<vector<Vertex>>();
 	shared_ptr<vector<Triangle>> indices = make_shared<vector<Triangle>>();
@@ -64,7 +64,7 @@ VertexArray ParametricShapes::createSphere(GLfloat radius, GLint res_theta, GLin
 			b = glm::normalize(b);
 
 			glm::vec3 n = glm::cross(glm::vec3(radius * cosf(T), 0, -radius * sinf(T)),b);
-			
+
 			n = glm::normalize(n);
 
 			v.x = radius * sinf(T) * sinf(P);
@@ -78,7 +78,6 @@ VertexArray ParametricShapes::createSphere(GLfloat radius, GLint res_theta, GLin
 			v.bx = b.x;
 			v.by = b.y;
 			v.bz = b.z;
-
 
 			v.nx = n.x;
 			v.ny = n.y;
@@ -101,12 +100,20 @@ VertexArray ParametricShapes::createSphere(GLfloat radius, GLint res_theta, GLin
 			Triangle t1, t2;
 			auto curr = j*res_phi + i;
 			t1.a = curr;
-			t1.b = curr + 1;
-			t1.c = curr + res_theta;
-
 			t2.a = curr + 1;
-			t2.b = curr + res_theta + 1;
-			t2.c = curr + res_theta;
+
+			if (inv) {
+				t1.c = curr + 1;
+				t1.b = curr + res_theta;
+				t2.c = curr + res_theta + 1;
+				t2.b = curr + res_theta;
+			}
+			else {
+				t1.b = curr + 1;
+				t1.c = curr + res_theta;
+				t2.b = curr + res_theta + 1;
+				t2.c = curr + res_theta;
+			}
 
 
 			indices->push_back(t1);

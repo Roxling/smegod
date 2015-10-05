@@ -2,6 +2,7 @@
 #include "smegod_dep.h"
 #include "nodes.h"
 #include "textures.h"
+#include "cubemap.h"
 #include "materials.h"
 #include "parametric_shapes.h"
 
@@ -24,3 +25,11 @@ public:
 	Frame(shared_ptr<ShaderGroup> mshader_group);
 };
 
+class Skybox : public WorldObject {
+public:
+	Skybox(shared_ptr<Cubemap> cubemap);
+	void render(glm::mat4 combined_transform) override;
+private:
+	shared_ptr<Cubemap> cubemap;
+	shared_ptr<VertexArray> skybox;
+};

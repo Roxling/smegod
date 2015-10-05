@@ -6,8 +6,6 @@ class Cubemap {
 private:
 	const string FOLDER = "Textures/";
 public:
-	Cubemap() {}
-	GLuint texture_id = 0;
-	Cubemap(string file);
-	static shared_ptr<Cubemap> DEFAULT;
+	GLuint texture_id;
+	Cubemap(string prefix, string suffix);
 };

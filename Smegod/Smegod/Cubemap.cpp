@@ -10,11 +10,12 @@ Cubemap::Cubemap(string prefix, string suffix)
 	int width, height;
 	unsigned char* image;
 
+	//TODO: ensure size = 6
+
 	glBindTexture(GL_TEXTURE_CUBE_MAP, texture_id);
-	cout << "pre load: " << texture_id << endl;
 	for (GLuint i = 0; i < textures_faces.size(); i++) {
+		//TODO: file not found warning
 		image = SOIL_load_image(textures_faces[i].c_str(), &width, &height, 0, SOIL_LOAD_RGB);
-		cout << textures_faces[i] << ":" << width << ":" << height << endl;
 		glTexImage2D(
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
 			0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image

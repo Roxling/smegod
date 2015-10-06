@@ -99,22 +99,27 @@ void WaterWorld::initiate()
 	active_camera->addShaderGroup(water_shader);
 
 
-	//auto cubemap = make_shared<Cubemap>("Texures/cloudyhills_cubemap/cloudyhills_", ".png");
-	auto cubemap = make_shared<Cubemap>("Textures/snow_cubemap/snow_", ".jpg");
-	cout << "cube in world " << cubemap->texture_id << endl;
+	auto cubemap = make_shared<Cubemap>("Textures/cloudyhills_cubemap/cloudyhills_", ".png");
+	//auto cubemap = make_shared<Cubemap>("Textures/snow_cubemap/snow_", ".jpg");
 	auto skybox = make_shared<Skybox>(cubemap);
 	active_camera->addShaderGroup(skybox->shader_group);
 
 	head->attach(skybox);
 
+	shared_ptr<Texture> bump = make_shared<Texture>("waves.png");
+
 	auto surf = make_shared<Geometry>(water_shader, ParametricShapes::createSurface(50, 50, 50));
 	head->attach(surf);
+	surf->bumpmap = bump;
 
 
 }
+
 void WaterWorld::update(double delta)
 {
 	active_camera->update(delta);
+
+	
 
 	auto time_loc = glGetUniformLocation(water_shader->getProgram(), "time");
 	float time =(float) glfwGetTime();

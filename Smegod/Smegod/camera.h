@@ -3,8 +3,9 @@
 #include "nodes.h"
 
 class Camera : public WorldObject, public ShaderCollection {
-private:
+public:
 	glm::vec3 position = { 0,0,0 };
+private:
 	glm::vec3 up = { 0, 1.f, 0 };
 	glm::vec3 world_up = up;
 	glm::vec3 front = { 0, 0, 1.f };

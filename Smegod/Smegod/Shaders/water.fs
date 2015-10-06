@@ -12,6 +12,8 @@ uniform vec3 kdiffuse;
 uniform vec3 kspecular;
 uniform float shininess;
 
+uniform vec3 camera_pos;
+
 in vec3 fN;
 in vec3 fB;
 in vec3 fT;
@@ -19,7 +21,7 @@ in vec3 fL;
 in vec3 fV;
 
 vec4 color_deep = vec4(0,0,0.1,1);
-vec4 color_shallow = vec4(0,0.5,0.5,1);
+vec4 color_shallow = vec4(0,0.2,0.2,1);
 
 vec2 tex_scale = vec2(8, 4);
 vec2 bump_speed = vec2(-0.05, 0.0);
@@ -28,7 +30,9 @@ float R0 = pow((1.0 - 1.33)/(1.0 + 1.33), 2);
 
 vec3 animateBump(float bump_time, float scalef, float speedf)
 {
-    vec2 bump_coord = vec2( (tex_coord.xy * tex_scale * scalef) + (bump_time * bump_speed * speedf) );
+    vec2 offset = vec2( camera_pos.x, camera_pos.z)/100;
+
+    vec2 bump_coord = vec2( ((tex_coord.xy + offset) * tex_scale * scalef) + (bump_time * bump_speed * speedf) );
 
     return texture(bump, bump_coord).rgb * 2 - 1;
 }
@@ -60,5 +64,5 @@ void main()
     vec4 refraction = texture(skybox, refract(-V, N, 1/1.33));
 
 
-    color = color_water+ reflection * fresnel + refraction * (1 - fresnel);// + (reflection * (fresnel)) + (refraction * (1 - fresnel));
+    color = color_water + (reflection * (fresnel)) + (refraction * (1 - fresnel));
 }

@@ -27,4 +27,6 @@ public:
 	static VertexArray createCube(GLfloat side, GLint res);
 	static VertexArray createBlock(GLfloat width, GLfloat height, GLfloat depth, GLint res);
 	static VertexArray createSurface(GLfloat width, GLfloat height, GLint res);
+	static VertexArray createInfSurface(GLfloat radius, GLint res_radius, GLint res_phi);
+	static VertexArray createInfSurface2(GLfloat side, GLint res);
 };

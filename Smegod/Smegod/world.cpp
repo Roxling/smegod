@@ -90,28 +90,37 @@ void ExampleWorld::update(double delta)
 }
 
 shared_ptr<ShaderGroup> water_shader;
+shared_ptr<Geometry> surf;
+
 void WaterWorld::initiate()
 {
-	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
+	float size = 30000;
+
+	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 200*size);
 	head->attach(active_camera);
 
 	water_shader = make_shared<ShaderGroup>("water.vs", "water.fs");
 	active_camera->addShaderGroup(water_shader);
 
 
-	auto cubemap = make_shared<Cubemap>("Textures/cloudyhills_cubemap/cloudyhills_", ".png");
-	//auto cubemap = make_shared<Cubemap>("Textures/snow_cubemap/snow_", ".jpg");
+	//auto cubemap = make_shared<Cubemap>("Textures/cloudyhills_cubemap/cloudyhills_", ".png");
+	auto cubemap = make_shared<Cubemap>("Textures/opensea_cubemap/opensea_", ".png");
 	auto skybox = make_shared<Skybox>(cubemap);
 	active_camera->addShaderGroup(skybox->shader_group);
-
 	head->attach(skybox);
+
+	//auto simple_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
+	//active_camera->addShaderGroup(simple_shader);
+	//auto surf2 = make_shared<Geometry>(simple_shader, ParametricShapes::createInfSurface2(200,100));
+	//head->attach(surf2);
 
 	shared_ptr<Texture> bump = make_shared<Texture>("waves.png");
 
-	auto surf = make_shared<Geometry>(water_shader, ParametricShapes::createSurface(50, 50, 50));
+	surf = make_shared<Geometry>(water_shader, ParametricShapes::createInfSurface(size,1200,1200));
 	head->attach(surf);
 	surf->bumpmap = bump;
 
+	//surf->translate(-size, -5.0, -size);
 
 }
 
@@ -119,6 +128,7 @@ void WaterWorld::update(double delta)
 {
 	active_camera->update(delta);
 
+	//surf->world = glm::translate(world_pos, active_camera->position);
 	
 
 	auto time_loc = glGetUniformLocation(water_shader->getProgram(), "time");

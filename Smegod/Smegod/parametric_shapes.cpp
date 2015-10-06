@@ -379,3 +379,144 @@ VertexArray ParametricShapes::createSurface(GLfloat width, GLfloat height, GLint
 	
 	return VertexArray::CreateVertexArray(vertices, indices);
 }
+
+VertexArray ParametricShapes::createInfSurface(GLfloat radius, GLint res_radius, GLint res_phi)
+{
+	shared_ptr<vector<Vertex>> vertices = make_shared<vector<Vertex>>();
+	shared_ptr<vector<Triangle>> indices = make_shared<vector<Triangle>>();
+
+	glm::vec3 normal = { 0,1,0 };
+	glm::vec3 binormal = { 1,0,0 };
+	glm::vec3 tangent = { 0,0,1 };
+
+	GLfloat pi = glm::pi<float>();
+	GLfloat dR = radius / res_radius;
+	GLfloat R = 0;
+	GLfloat dP = 2 * pi / res_phi;
+	GLfloat P = 0;
+
+
+	for (int i = 0; i < res_radius + 1; ++i) {
+		for (int j = 0; j < res_phi + 1; ++j) {
+			Vertex v;
+			v.x = cos(P)*R;
+			v.y = 0;
+			v.z = sin(P)*R;
+
+			v.nx = normal.x;
+			v.ny = normal.y;
+			v.nz = normal.z;
+
+			v.bx = binormal.x;
+			v.by = binormal.y;
+			v.bz = binormal.z;
+
+			v.tx = tangent.x;
+			v.ty = tangent.y;
+			v.tz = tangent.z;
+
+			v.texx = (GLfloat)i / (res_phi + 1);
+			v.texy = (GLfloat)j / (res_radius + 1);
+			v.texz = 0;
+
+			vertices->push_back(v);
+			P += dP;
+		}
+		P= 0;
+		R += dR *i / res_radius;
+	}
+
+
+	for (int i = 0; i < res_radius; ++i) {
+		for (int j = 0; j < res_phi; ++j) {
+			Triangle t1, t2;
+			auto curr = i*(res_phi + 1) + j;
+			t1.a = curr;
+			t1.b = curr + res_phi + 2;
+			t1.c = curr + res_phi + 1;
+
+			t2.a = curr;
+			t2.b = curr + 1;
+			t2.c = curr + res_phi + 2;
+
+			indices->push_back(t1);
+			indices->push_back(t2);
+		}
+	}
+
+	return VertexArray::CreateVertexArray(vertices, indices);
+}
+VertexArray ParametricShapes::createInfSurface2(GLfloat side, GLint res)
+{
+	shared_ptr<vector<Vertex>> vertices = make_shared<vector<Vertex>>();
+	shared_ptr<vector<Triangle>> indices = make_shared<vector<Triangle>>();
+
+	glm::vec3 normal = { 0,1,0 };
+	glm::vec3 binormal = { 1,0,0 };
+	glm::vec3 tangent = { 0,0,1 };
+
+	GLfloat dw = side / res;
+	GLfloat dh = side / res;
+
+	GLfloat inf_step = 1;
+	GLfloat inf_step_w = 1;
+
+	GLfloat W = 0;
+	GLfloat H = 0;
+	for (int i = 0; i < res + 1; ++i) {
+		inf_step_w = 1;
+		for (int j = 0; j < res + 1; ++j) {
+			Vertex v;
+			v.x = W;
+			v.y = 0;
+			v.z = H;
+
+			v.nx = normal.x;
+			v.ny = normal.y;
+			v.nz = normal.z;
+
+			v.bx = binormal.x;
+			v.by = binormal.y;
+			v.bz = binormal.z;
+
+			v.tx = tangent.x;
+			v.ty = tangent.y;
+			v.tz = tangent.z;
+
+			v.texx = (GLfloat)i / (res + 1);
+			v.texy = (GLfloat)j / (res + 1);
+			v.texz = 0;
+
+			inf_step_w +=0.5;
+
+			vertices->push_back(v);
+			W += dw * inf_step_w;
+
+		}
+		inf_step+= 0.5;
+
+		W = 0;
+		H += dh * inf_step;
+	}
+
+
+	for (int i = 0; i < res; ++i) {
+		for (int j = 0; j < res; ++j) {
+			Triangle t1, t2;
+			auto curr = i*(res + 1) + j;
+			t1.a = curr;
+			t1.c = curr + res + 2;
+			t1.b = curr + res + 1;
+
+			t2.a = curr;
+			t2.c = curr + 1;
+			t2.b = curr + res + 2;
+
+			indices->push_back(t1);
+			indices->push_back(t2);
+		}
+	}
+
+	return VertexArray::CreateVertexArray(vertices, indices);
+}
+

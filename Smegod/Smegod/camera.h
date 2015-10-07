@@ -5,7 +5,7 @@
 class Camera : public WorldObject, public ShaderCollection {
 public:
 	glm::vec3 position = { 0,0,0 };
-private:
+protected:
 	glm::vec3 up = { 0, 1.f, 0 };
 	glm::vec3 world_up = up;
 	glm::vec3 front = { 0, 0, 1.f };
@@ -14,6 +14,7 @@ private:
 
 	float yaw = 0;
 	float pitch = 0;
+
 
 	float max_angle = 89.9999f;
 	float min_angle = -max_angle;
@@ -26,8 +27,8 @@ private:
 	float rotation_speed = 90.f;
 	float mouse_sensitivity = 45.f;
 
-	void handleMouse(float delta);
-	void handleKeyboard(float delta);
+	virtual void handleMouse(float delta);
+	virtual void handleKeyboard(float delta);
 
 	void updateRotation(float ry, float rx);
 

@@ -66,8 +66,8 @@ void Camera::handleKeyboard(float delta)
 
 	int moveLeft = InputHandler::getKeystate(GLFW_KEY_A) != GLFW_RELEASE ? -1 : 0;
 	int moveRight = InputHandler::getKeystate(GLFW_KEY_D) != GLFW_RELEASE ? 1 : 0;
-	int moveForward = InputHandler::getKeystate(GLFW_KEY_W) != GLFW_RELEASE ? 1 : 0;
-	int moveBackward = InputHandler::getKeystate(GLFW_KEY_S) != GLFW_RELEASE ? -1 : 0;
+	int moveForward = InputHandler::getKeystate(GLFW_KEY_W) != GLFW_RELEASE ? -1 : 0;
+	int moveBackward = InputHandler::getKeystate(GLFW_KEY_S) != GLFW_RELEASE ? 1 : 0;
 
 	float trans_factor = translation_speed * delta;
 

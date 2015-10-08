@@ -131,7 +131,7 @@ void WaterWorld::initiate()
 	//Game geometries
 	auto light = make_shared<Light>(light_shader);
 	light->addShaderGroup(simple_shader);
-	light->translate(100, 100, 100);
+	light->translate(-100000, 100000, 90000);
 	head->attach(light);
 
 	plane = make_shared<Plane>(simple_shader);
@@ -166,6 +166,7 @@ void WaterWorld::initiate()
 void WaterWorld::update(double delta)
 {
 	active_camera->update(delta);
+
 
 	plane->propell(delta);
 	//plane->world = world_pos;

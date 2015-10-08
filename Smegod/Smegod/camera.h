@@ -16,7 +16,7 @@ protected:
 
 	float yaw = 0;
 	float pitch = 0;
-
+	float roll = 0;
 
 	float max_angle = 89.9999f;
 	float min_angle = -max_angle;

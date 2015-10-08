@@ -16,7 +16,7 @@ public:
 class FlightCamera : public Camera {
 private:
 	float speed = 0;
-	float roll = 0;
+
 protected:
 	void updateRotation(float pitch, float roll);
 	virtual void handleMouse(float delta) override;

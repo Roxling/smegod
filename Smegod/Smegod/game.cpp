@@ -144,19 +144,20 @@ Plane::Plane(shared_ptr<ShaderGroup> mshader_group) :WorldObject(mshader_group)
 void Plane::propell(double d)
 {
 	float delta = (float) d;
-	translate(delta * 100, 0, 0);
+	//translate(delta * 100, 0, 0);
 	propeller->world = glm::rotate(propeller->world, 100* delta, { propeller->world[0].x,propeller->world[0].y,propeller->world[0].z });
 }
 
 FlightCamera::FlightCamera() : Camera(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000)
 {
 	position.y = 25.f;
+	//yaw = -180;
 }
 
 void FlightCamera::updateRotation(float dx, float dy)
 {
-	pitch += dy;
-	roll += dx;
+	pitch = dy;
+	roll = dx;
 	yaw = 0;
 
 	/*glm::vec3 nfront;
@@ -166,9 +167,9 @@ void FlightCamera::updateRotation(float dx, float dy)
 	front = glm::normalize(nfront);
 	
 	*/
-	auto mat3 =glm::mat3(glm::quat({ glm::radians(roll),0, glm::radians(pitch) }));
-	up = glm::normalize(mat3[2]);
-	front = glm::normalize(mat3[0]);
+	//auto mat3 = glm::mat4(glm::quat({ glm::radians(pitch),{ glm::radians(yaw)},glm::radians(roll) }));
+	
+	//world = glm::translate(mat3,position);
 	/*right = glm::normalize(glm::cross(front, world_up));
 	auto mat2 = glm::rotate(glm::mat4(), glm::radians(pitch), right);;
 	front = glm::normalize(glm::vec3(mat2[0]));
@@ -204,6 +205,6 @@ void FlightCamera::handleKeyboard(float delta)
 
 	speed += (speedUp + speedDown) * trans_factor;
 
-	translateLocal(0, 0, speed*delta);
+	translateLocal(0, 0, -speed*delta);
 
 }

@@ -98,8 +98,8 @@ void WaterWorld::initiate()
 {
 	float size = 30000;
 
-	//active_camera = make_shared<FlightCamera>();
-	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000.f);
+	active_camera = make_shared<FlightCamera>();
+	//active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000.f);
 	
 	//head->attach(active_camera);
 
@@ -138,7 +138,7 @@ void WaterWorld::initiate()
 	plane->world = glm::rotate(plane->world, glm::radians<float>(90), { 0,1,0 });
 	plane->translate(50, -10, 0);
 
-	plane->attach(active_camera);
+	head->attach(active_camera);
 	head->attach(plane);
 
 }

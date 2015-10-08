@@ -139,5 +139,8 @@
     <None Include="Shaders\cubemap.vs">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\phongcol.fs">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

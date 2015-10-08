@@ -219,16 +219,48 @@ void FlightCamera::handleKeyboard(float delta)
 
 ConePair::ConePair(shared_ptr<ShaderGroup> mshader_group, float distance, float height) : WorldObject(mshader_group)
 {
-	float radius = height / 10;
-	float res = 20;
+	float radius = height / 20.f;
+	int res = 20;
 
 	auto cone = make_shared<Geometry>(mshader_group, ParametricShapes::createCone(radius, height, res));
 	cone->color = { 1,0,0 };
-	cone->translate(-distance/2, 0, 0);
+	cone->translate(0, 0, -distance / 2);
 	attach(cone);
 
 	cone = make_shared<Geometry>(mshader_group, ParametricShapes::createCone(radius, height, res));
 	cone->color = { 0,1,0 };
-	cone->translate(distance / 2, 0, 0);
+	cone->translate(0, 0, distance / 2);
 	attach(cone);
+}
+
+void GenerateGameWorld(shared_ptr<Node> head, shared_ptr<ShaderGroup> shader_group) {
+
+	auto pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
+	head->attach(pair);
+	pair->translate(-500, 0, 300);
+
+	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
+	head->attach(pair);
+	pair->translate(-1000, 0, 0);
+
+	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
+	head->attach(pair);
+	pair->translate(-1500, 0, 300);
+
+	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
+	head->attach(pair);
+	pair->translate(-2000, 0, 0);
+
+	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
+	head->attach(pair);
+	pair->translate(-2500, 0, 300);
+
+	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
+	head->attach(pair);
+	pair->translate(-3000, 0, 0);
+
+	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
+	head->attach(pair);
+	pair->translate(-3500, 0, 300);
+	
 }

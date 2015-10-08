@@ -62,7 +62,7 @@ void main_loop(GLFWwindow* window) {
 		//prints GLerrors if any.. Not good for performance and should only be used for debug. Will spam if error occurs every frame.
 		GLenum error;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			cerr << "GLerror: 0x" << hex << error << dec << endl;
+			//cerr << "GLerror: 0x" << hex << error << dec << endl;
 		}
 	}
 }

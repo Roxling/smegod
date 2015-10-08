@@ -131,16 +131,17 @@ void WaterWorld::initiate()
 	//Game geometries
 	auto light = make_shared<Light>(light_shader);
 	light->addShaderGroup(simple_shader);
-	light->addShaderGroup(light_shader);
-	light->translate(20, 20, 20);
+	light->translate(20000, 20000, 200);
 	head->attach(light);
 
 	plane = make_shared<Plane>(simple_shader);
 	plane->world = glm::rotate(plane->world, glm::radians<float>(90), { 0,1,0 });
 	plane->translate(50, -10, 0);
-
-	auto pair = make_shared<ConePair>(light_shader,100,500);
-	head->attach(pair);
+	
+	auto phong_col = make_shared<ShaderGroup>("phong.vs", "phongcol.fs");
+	active_camera->addShaderGroup(phong_col);
+	light->addShaderGroup(phong_col);
+	GenerateGameWorld(head, phong_col);
 
 	head->attach(active_camera);
 	active_camera->attach(plane);

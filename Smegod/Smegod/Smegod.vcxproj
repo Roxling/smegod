@@ -169,6 +169,7 @@
     <None Include="Shaders\normal.vs" />
     <None Include="Shaders\phong.fs" />
     <None Include="Shaders\phong.vs" />
+    <None Include="Shaders\phongcol.fs" />
     <None Include="Shaders\projection.vs" />
     <None Include="Shaders\texture.fs" />
     <None Include="Shaders\water.fs" />

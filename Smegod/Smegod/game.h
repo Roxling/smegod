@@ -34,3 +34,6 @@ class ConePair : public WorldObject {
 public:
 	ConePair(shared_ptr<ShaderGroup> mshader_group, float distance, float height);
 };
+
+
+void GenerateGameWorld(shared_ptr<Node> head, shared_ptr<ShaderGroup> shader_group);

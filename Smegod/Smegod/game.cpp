@@ -193,11 +193,8 @@ void FlightCamera::handleMouse(float delta)
 	if (takingCursorInput) {
 		auto coord = InputHandler::getMousePos() - mouseCenter;
 		
-		cout << coord.x << ":" << coord.y << endl;
-
-
-		coord.x *= 0.01;
-		coord.y *= 0.01;
+		coord.x *= 0.005;
+		coord.y *= 0.005;
 		updateRotation((float)coord.x, (float)-coord.y);
 	}
 }

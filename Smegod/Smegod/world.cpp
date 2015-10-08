@@ -138,6 +138,11 @@ void WaterWorld::initiate()
 	plane->world = glm::rotate(plane->world, glm::radians<float>(90), { 0,1,0 });
 	plane->translate(50, -10, 0);
 
+	auto cone = make_shared<Geometry>(simple_shader, ParametricShapes::createCone(10, 50, 10));
+	cone->texture = bump;
+
+	head->attach(cone);
+
 	head->attach(active_camera);
 	active_camera->attach(plane);
 

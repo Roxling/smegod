@@ -140,6 +140,37 @@ Plane::Plane(shared_ptr<ShaderGroup> mshader_group) :WorldObject(mshader_group)
 	propeller->attach(propeller2);
 }
 
+vector<shared_ptr<ConePair>> coneList;
+shared_ptr<ConePair> nextCone;
+bool first = true;
+int index = 0;
+
+void Plane::render(glm::mat4 combined_transform)
+{
+	if (first) {
+		first = false;
+		if (index < coneList.size()) {
+			nextCone = coneList[index++];
+			nextCone->setColor(0, 1, 0);
+		}
+	}
+	glm::vec3 pos(combined_transform[3]);
+	if (nextCone != nullptr && nextCone->contains(pos)) {
+		if (index < coneList.size()) {
+			nextCone->setColor(0, 0, 1);
+			nextCone = coneList[index++];
+			nextCone->setColor(0, 1, 0);
+		}
+		else {
+			nextCone->setColor(0, 0, 1);
+			nextCone = nullptr;
+			for (int i = 0; i < 1000; i++)
+				cout << "GAME FINISHED" << endl;
+		}
+	}
+
+}
+
 void Plane::propell(double d)
 {
 	float delta = (float) d;
@@ -219,48 +250,75 @@ void FlightCamera::handleKeyboard(float delta)
 
 ConePair::ConePair(shared_ptr<ShaderGroup> mshader_group, float distance, float height) : WorldObject(mshader_group)
 {
+	this->height = height;
+	this->distance = distance;
 	float radius = height / 20.f;
 	int res = 20;
 
-	auto cone = make_shared<Geometry>(mshader_group, ParametricShapes::createCone(radius, height, res));
-	cone->color = { 1,0,0 };
-	cone->translate(0, 0, -distance / 2);
-	attach(cone);
+	cone1 = make_shared<Geometry>(mshader_group, ParametricShapes::createCone(radius, height, res));
+	cone1->color = { 1,0,0 };
+	cone1->translate(0, 0, -distance / 2);
+	attach(cone1);
 
-	cone = make_shared<Geometry>(mshader_group, ParametricShapes::createCone(radius, height, res));
-	cone->color = { 0,1,0 };
-	cone->translate(0, 0, distance / 2);
-	attach(cone);
+	cone2 = make_shared<Geometry>(mshader_group, ParametricShapes::createCone(radius, height, res));
+	cone2->color = { 1,0,0 };
+	cone2->translate(0, 0, distance / 2);
+	attach(cone2);
 }
+
+void ConePair::setColor(float r, float g, float b)
+{
+	auto color = glm::vec3(r, g, b);
+	cone1->color = color;
+	cone2->color = color;
+}
+
+bool ConePair::contains(glm::vec3 &pos)
+{
+	auto mypos = glm::vec3(world[3]);
+	return	(glm::abs(pos.x - mypos.x)) < 10 &&
+			(pos.y < height && pos.y > 0)  &&
+			(glm::abs(pos.z - mypos.z)) < distance/2;
+
+}
+
+
 
 void GenerateGameWorld(shared_ptr<Node> head, shared_ptr<ShaderGroup> shader_group) {
 
 	auto pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
 	head->attach(pair);
 	pair->translate(-500, 0, 300);
+	coneList.push_back(pair);
 
 	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
 	head->attach(pair);
 	pair->translate(-1000, 0, 0);
+	coneList.push_back(pair);
 
 	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
 	head->attach(pair);
 	pair->translate(-1500, 0, 300);
+	coneList.push_back(pair);
 
 	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
 	head->attach(pair);
 	pair->translate(-2000, 0, 0);
+	coneList.push_back(pair);
 
 	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
 	head->attach(pair);
 	pair->translate(-2500, 0, 300);
+	coneList.push_back(pair);
 
 	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
 	head->attach(pair);
 	pair->translate(-3000, 0, 0);
+	coneList.push_back(pair);
 
 	pair = make_shared<ConePair>(shader_group, 150.f, 500.f);
 	head->attach(pair);
 	pair->translate(-3500, 0, 300);
+	coneList.push_back(pair);
 	
 }

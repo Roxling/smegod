@@ -98,8 +98,8 @@ void WaterWorld::initiate()
 {
 	float size = 30000;
 
-	//active_camera = make_shared<FlightCamera>();
-	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000.f);
+	active_camera = make_shared<FlightCamera>();
+	//active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000.f);
 	
 	//head->attach(active_camera);
 

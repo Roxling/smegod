@@ -11,6 +11,7 @@ private:
 	shared_ptr<Geometry> propeller;
 public:
 	Plane(shared_ptr<ShaderGroup> mshader_group);
+	void render(glm::mat4 combined_transform) override;
 	void propell(double time);
 };
 
@@ -31,8 +32,16 @@ public:
 };
 
 class ConePair : public WorldObject {
+private:
+	shared_ptr<Geometry> cone1;
+	shared_ptr<Geometry> cone2;
+
+	float distance = 0;
+	float height = 0;
 public:
 	ConePair(shared_ptr<ShaderGroup> mshader_group, float distance, float height);
+	void setColor(float r, float g, float b);
+	bool contains(glm::vec3 &pos);
 };
 
 

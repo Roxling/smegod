@@ -520,3 +520,71 @@ VertexArray ParametricShapes::createInfSurface2(GLfloat side, GLint res)
 	return VertexArray::CreateVertexArray(vertices, indices);
 }
 
+VertexArray ParametricShapes::createCone(GLfloat radius, GLfloat height, GLint res)
+{
+	shared_ptr<vector<Vertex>> vertices = make_shared<vector<Vertex>>();
+	shared_ptr<vector<Triangle>> indices = make_shared<vector<Triangle>>();
+
+
+	GLfloat dP = 2 * glm::pi<float>() / res;
+	GLfloat P = 0;
+	float R = radius;
+	float H = 0;
+	for (int i = 0; i < 2; ++i) {
+
+		for (int j = 0; j < res + 1; ++j) {
+			Vertex v;
+			v.x = cos(P)*R;
+			v.y = H;
+			v.z = sin(P)*R;
+
+			v.nx = v.x * height/radius;
+			v.ny = radius/height;
+			v.nz = v.z * height / radius;
+
+			glm::vec3 h_vec(0, height, 0);
+			auto binormal = h_vec - glm::vec3(v.x, 0, v.z);
+
+			v.bx = binormal.x;
+			v.by = binormal.y;
+			v.bz = binormal.z;
+
+			auto tangent = glm::cross(glm::vec3(v.nx, v.ny, v.nz), glm::vec3(v.bx, v.by, v.bz ));
+
+			v.tx = tangent.x;
+			v.ty = tangent.y;
+			v.tz = tangent.z;
+
+			v.texx = (GLfloat)i / (res + 1);
+			v.texy = (GLfloat)j / (res + 1);
+			v.texz = 0;
+
+
+			vertices->push_back(v);
+			P += dP;
+
+		}
+		P = 0;
+		H = height;
+		R = 0;
+	}
+
+
+	for (int j = 0; j < res; ++j) {
+		Triangle t1, t2;
+		auto curr = j;
+		t1.a = curr;
+		t1.c = curr + res + 1;
+		t1.b = curr + res;
+
+		t2.a = curr;
+		t2.c = curr + 1;
+		t2.b = curr + res + 1;
+
+		indices->push_back(t1);
+		indices->push_back(t2);
+	}
+
+	return VertexArray::CreateVertexArray(vertices, indices);
+}
+

@@ -3,6 +3,7 @@
 #include "geometries.h"
 #include "nodes.h"
 #include "camera.h"
+#include "input_handling.h"
 
 
 class Plane : public WorldObject {
@@ -15,7 +16,11 @@ public:
 
 class FlightCamera : public Camera {
 private:
-	float speed = 0;
+	float maxspeed = 500;
+	float minspeed = 50;
+	float speed = minspeed;
+
+	Coordinate mouseCenter;
 
 protected:
 	void updateRotation(float pitch, float roll);

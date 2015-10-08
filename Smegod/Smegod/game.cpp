@@ -1,5 +1,4 @@
 #include "game.h"
-#include "input_handling.h"
 
 Plane::Plane(shared_ptr<ShaderGroup> mshader_group) :WorldObject(mshader_group)
 {
@@ -148,7 +147,7 @@ void Plane::propell(double d)
 	propeller->world = glm::rotate(propeller->world, 100* delta, { propeller->world[0].x,propeller->world[0].y,propeller->world[0].z });
 }
 
-FlightCamera::FlightCamera() : Camera(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000)
+FlightCamera::FlightCamera() : Camera(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000), mouseCenter(Coordinate(0.0, 0.0))
 {
 	position.y = 25.f;
 	//yaw = -180;
@@ -181,18 +180,25 @@ void FlightCamera::updateRotation(float dx, float dy)
 	
 }
 
+
+
 void FlightCamera::handleMouse(float delta)
 {
 	auto takingCursorInput = InputHandler::getMouseButtonstate(GLFW_MOUSE_BUTTON_RIGHT) != GLFW_RELEASE;
 	if (takingCursorInput != oldTakingCursorInput) {
 		oldTakingCursorInput = takingCursorInput;
+		mouseCenter = InputHandler::getMousePos();
 		glfwSetInputMode(InputHandler::active_window, GLFW_CURSOR, takingCursorInput ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
 	}
 	if (takingCursorInput) {
-		auto coord = InputHandler::getMouseDelta();
-		coord.x *= mouse_sensitivity;
-		coord.y *= mouse_sensitivity;
-		updateRotation((float)coord.x, (float)coord.y);
+		auto coord = InputHandler::getMousePos() - mouseCenter;
+		
+		cout << coord.x << ":" << coord.y << endl;
+
+
+		coord.x *= 0.01;
+		coord.y *= 0.01;
+		updateRotation((float)coord.x, (float)-coord.y);
 	}
 }
 
@@ -201,9 +207,14 @@ void FlightCamera::handleKeyboard(float delta)
 	int speedUp = InputHandler::getKeystate(GLFW_KEY_W) != GLFW_RELEASE ? 1 : 0;
 	int speedDown = InputHandler::getKeystate(GLFW_KEY_S) != GLFW_RELEASE ? -1 : 0;
 
-	float trans_factor = 30 * delta;
+	float trans_factor = 100 * delta;
 
 	speed += (speedUp + speedDown) * trans_factor;
+
+	if (speed < minspeed)
+		speed = minspeed;
+	else if (speed > maxspeed)
+		speed = maxspeed;
 
 	translateLocal(0, 0, -speed*delta);
 

@@ -7,6 +7,9 @@ public:
 	double x;
 	double y;
 	Coordinate(double nx, double ny) : x(nx), y(ny) {}
+	Coordinate operator-(const Coordinate &c) {
+		return Coordinate(this->x - c.x, this->y - c.y);
+	}
 };
 
 class InputHandler {
@@ -27,6 +30,7 @@ private: //mouse coord callback
 public:
 	static void mouse_callback(GLFWwindow* window, double x, double y);
 	static Coordinate getMouseDelta();
+	static Coordinate getMousePos();
 
 private: //mouse button callback
 	static unique_ptr<vector<int>> mouse_buttonstate;

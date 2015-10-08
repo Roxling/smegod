@@ -41,6 +41,11 @@ Coordinate InputHandler::getMouseDelta()
 	return c;
 }
 
+Coordinate InputHandler::getMousePos()
+{
+	return Coordinate(oldx, oldy);
+}
+
 void InputHandler::mouse_callback(GLFWwindow * window, double x, double y)
 {
 	static bool first = true;

@@ -29,3 +29,8 @@ protected:
 public:
 	FlightCamera();
 };
+
+class ConePair : public WorldObject {
+public:
+	ConePair(shared_ptr<ShaderGroup> mshader_group, float distance, float height);
+};

@@ -216,3 +216,19 @@ void FlightCamera::handleKeyboard(float delta)
 	translateLocal(0, 0, -speed*delta);
 
 }
+
+ConePair::ConePair(shared_ptr<ShaderGroup> mshader_group, float distance, float height) : WorldObject(mshader_group)
+{
+	float radius = height / 10;
+	float res = 20;
+
+	auto cone = make_shared<Geometry>(mshader_group, ParametricShapes::createCone(radius, height, res));
+	cone->color = { 1,0,0 };
+	cone->translate(-distance/2, 0, 0);
+	attach(cone);
+
+	cone = make_shared<Geometry>(mshader_group, ParametricShapes::createCone(radius, height, res));
+	cone->color = { 0,1,0 };
+	cone->translate(distance / 2, 0, 0);
+	attach(cone);
+}

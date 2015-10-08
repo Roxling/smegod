@@ -76,13 +76,13 @@ Frame::Frame(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group)
 
 
 Skybox::Skybox(shared_ptr<Cubemap> cubemap) : WorldObject(make_shared<ShaderGroup>("cubemap.vs", "cubemap.fs")), cubemap(cubemap) {
-	skybox = make_shared<VertexArray>(ParametricShapes::createSphere(20, 4, 4, true));
+	skybox = make_shared<VertexArray>(ParametricShapes::createSphere(5, 4, 4, true));
 }
 
 void Skybox::render(glm::mat4 combined_transform) {
 	glDepthMask(GL_FALSE);
 	shader_group->use();
-
+	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(skybox->VAO);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap->texture_id);
 	glDrawElements(GL_TRIANGLES, skybox->num_indices, GL_UNSIGNED_INT, 0);

@@ -21,10 +21,11 @@ void Camera::translateLocal(float dx, float dy, float dz)
 
 void Camera::updateView()
 {
-	world = glm::lookAt(position, position + front, up);
+	view = glm::lookAt(position, position + front, up);
+	world = glm::inverse(view);
 }
 
-void Camera::renderSelf(glm::mat4 combined_transform)
+void Camera::render(glm::mat4 combined_transform)
 {
 
 	GLint projection_location;
@@ -37,10 +38,10 @@ void Camera::renderSelf(glm::mat4 combined_transform)
 		projection_location = glGetUniformLocation(program, "projection");
 		view_location = glGetUniformLocation(program, "view");
 		glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
+		glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(glm::inverse(combined_transform)));
 
 		camera_pos_location = glGetUniformLocation(program, "camera_pos");
-		glUniform3fv(camera_pos_location, 1, glm::value_ptr(position));
+		glUniform3fv(camera_pos_location, 1, glm::value_ptr(glm::vec3(combined_transform[3])));
 	}
 }
 

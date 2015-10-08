@@ -5,6 +5,8 @@
 class Camera : public WorldObject, public ShaderCollection {
 public:
 	glm::vec3 position = { 0,0,0 };
+private:
+	void attach(shared_ptr<Node> child) override {};
 protected:
 	glm::vec3 up = { 0, 1.f, 0 };
 	glm::vec3 world_up = up;
@@ -20,6 +22,7 @@ protected:
 	float min_angle = -max_angle;
 
 	const glm::mat4 identity = glm::mat4();
+	glm::mat4 view = glm::mat4();
 
 	bool oldTakingCursorInput = false;
 
@@ -40,5 +43,5 @@ public:
 
 	void update(double delta);
 
-	void renderSelf(glm::mat4 combined_transform) override;
+	void render(glm::mat4 combined_transform) override;
 };

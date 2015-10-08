@@ -10,7 +10,7 @@ private:
 	shared_ptr<Geometry> propeller;
 public:
 	Plane(shared_ptr<ShaderGroup> mshader_group);
-	void propell(float time);
+	void propell(double time);
 };
 
 class FlightCamera : public Camera {

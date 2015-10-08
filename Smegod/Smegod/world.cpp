@@ -98,8 +98,10 @@ void WaterWorld::initiate()
 {
 	float size = 30000;
 
-	active_camera = make_shared<FlightCamera>();
-	head->attach(active_camera);
+	//active_camera = make_shared<FlightCamera>();
+	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000.f);
+	
+	//head->attach(active_camera);
 
 	water_shader = make_shared<ShaderGroup>("water.vs", "water.fs");
 	active_camera->addShaderGroup(water_shader);
@@ -133,9 +135,10 @@ void WaterWorld::initiate()
 	head->attach(light);
 
 	plane = make_shared<Plane>(simple_shader);
-	plane->translate(0, 0, -10);
+	plane->world = glm::rotate(plane->world, glm::radians<float>(90), { 0,1,0 });
+	plane->translate(50, -10, 0);
 
-
+	plane->attach(active_camera);
 	head->attach(plane);
 
 }
@@ -145,8 +148,8 @@ void WaterWorld::update(double delta)
 	active_camera->update(delta);
 
 	plane->propell(delta);
-	plane->world = world_pos;
-	plane->translate(active_camera->position.x+50, active_camera->position.y-10, active_camera->position.z);
+	//plane->world = world_pos;
+	//plane->translate(active_camera->position.x+50, active_camera->position.y-10, active_camera->position.z);
 	//surf->world = glm::translate(world_pos, active_camera->position);
 	
 	water_shader->use();

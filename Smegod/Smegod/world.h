@@ -9,7 +9,6 @@ protected:
 	glm::mat4 world_pos;
 public:
 	shared_ptr<Camera> active_camera;
-	GLuint active_shader_program;
 	World();
 	virtual void update(double delta) = 0;
 	virtual void initiate() = 0;

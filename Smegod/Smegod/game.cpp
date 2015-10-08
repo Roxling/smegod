@@ -32,13 +32,13 @@ Plane::Plane(shared_ptr<ShaderGroup> mshader_group) :WorldObject(mshader_group)
 			pin->material = mat;
 			pin->translate(x, 0, z);
 			wing->attach(pin);
-			x = 7.6;
+			x = 7.6f;
 		}
 		x = 1;
 		z = -27;
 	}
 	float rad = 1;
-	float y = 1.9;
+	float y = 1.9f;
 	x = 1;
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -95,7 +95,7 @@ Plane::Plane(shared_ptr<ShaderGroup> mshader_group) :WorldObject(mshader_group)
 	smallwing->world = glm::scale(smallwing->world, glm::vec3(0.5f, 0.1f, 1.5));
 	wing->attach(smallwing);
 
-	auto wheel = make_shared<Geometry>(mshader_group, ParametricShapes::createSphere(0.8,10,10));
+	auto wheel = make_shared<Geometry>(mshader_group, ParametricShapes::createSphere(0.8f,10,10));
 	wheel->texture = wheeltex;
 	wheel->bumpmap = bump;
 	wheel->material = mat;
@@ -141,9 +141,11 @@ Plane::Plane(shared_ptr<ShaderGroup> mshader_group) :WorldObject(mshader_group)
 	propeller->attach(propeller2);
 }
 
-void Plane::propell(float time)
+void Plane::propell(double d)
 {
-	propeller->world = glm::rotate(propeller->world, 100*time, { propeller->world[0].x,propeller->world[0].y,propeller->world[0].z });
+	float delta = (float) d;
+	translate(delta * 100, 0, 0);
+	propeller->world = glm::rotate(propeller->world, 100* delta, { propeller->world[0].x,propeller->world[0].y,propeller->world[0].z });
 }
 
 FlightCamera::FlightCamera() : Camera(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000)
@@ -162,15 +164,19 @@ void FlightCamera::updateRotation(float dx, float dy)
 	nfront.y = sin(glm::radians(pitch));
 	nfront.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 	front = glm::normalize(nfront);
- */
-	right = glm::normalize(glm::cross(front, world_up));
-	auto mat2 =   glm::rotate(glm::mat4(), glm::radians(pitch), right);;
-	auto mat = glm::rotate(mat2, glm::radians(roll), { 1,0,0 });;
-
-
-	up = glm::normalize(glm::vec3(mat[2]));
+	
+	*/
+	auto mat3 =glm::mat3(glm::quat({ glm::radians(roll),0, glm::radians(pitch) }));
+	up = glm::normalize(mat3[2]);
+	front = glm::normalize(mat3[0]);
+	/*right = glm::normalize(glm::cross(front, world_up));
+	auto mat2 = glm::rotate(glm::mat4(), glm::radians(pitch), right);;
 	front = glm::normalize(glm::vec3(mat2[0]));
-	//right = glm::normalize(glm::cross(front, up));
+	auto mat = glm::rotate(glm::mat4(), glm::radians(roll), front);;
+	up = glm::normalize(glm::vec3(mat[2]));*/
+	
+
+	
 	
 }
 

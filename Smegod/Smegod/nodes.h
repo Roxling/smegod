@@ -13,7 +13,7 @@ public:
 	void render(glm::mat4 combined_transforms);
 	virtual void renderSelf(glm::mat4 combined_transform) {};
 
-	void attach(shared_ptr<Node> child);
+	virtual void attach(shared_ptr<Node> child);
 };
 
 class WorldObject : public Node {

@@ -9,7 +9,7 @@ using namespace std;
 
 class Globals {
 public:
-	static const GLuint WIDTH = 800, HEIGHT = 600;
+	static const GLuint WIDTH = 1280, HEIGHT = 720;
 
 	static bool DRAW_FPS;
 

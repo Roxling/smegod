@@ -8,11 +8,10 @@ public:
 private:
 	//void attach(shared_ptr<Node> child) override {};
 protected:
-	glm::vec3 up = { 0, 1.f, 0 };
-	glm::vec3 world_up = up;
-	glm::vec3 front = { 0, 0, 1.f };
-	glm::vec3 right = glm::normalize(glm::cross(front, world_up));;
 
+	float dyaw = 0;
+	float dpitch = 0;
+	float droll = 0;
 
 	float yaw = 0;
 	float pitch = 0;

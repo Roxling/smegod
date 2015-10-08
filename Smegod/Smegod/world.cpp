@@ -139,7 +139,7 @@ void WaterWorld::initiate()
 	plane->translate(50, -10, 0);
 
 	head->attach(active_camera);
-	head->attach(plane);
+	active_camera->attach(plane);
 
 }
 

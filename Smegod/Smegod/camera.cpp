@@ -23,12 +23,11 @@ void Camera::translateLocal(float dx, float dy, float dz)
 
 void Camera::updateView()
 {
-	//view = glm::lookAt(position, position + front, up);
+	
 	//world = glm::inverse(view);
 
 	auto rot = glm::mat4(glm::quat({ glm::radians(-pitch),{ glm::radians(yaw) },glm::radians(-roll) }));
 	world = world * rot;
-	//world = glm::translate(world, position);
 }
 
 void Camera::render(glm::mat4 combined_transform)

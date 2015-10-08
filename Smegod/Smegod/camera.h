@@ -6,7 +6,7 @@ class Camera : public WorldObject, public ShaderCollection {
 public:
 	glm::vec3 position = { 0,0,0 };
 private:
-	void attach(shared_ptr<Node> child) override {};
+	//void attach(shared_ptr<Node> child) override {};
 protected:
 	glm::vec3 up = { 0, 1.f, 0 };
 	glm::vec3 world_up = up;

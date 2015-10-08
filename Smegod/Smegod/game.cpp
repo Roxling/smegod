@@ -155,9 +155,9 @@ FlightCamera::FlightCamera() : Camera(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1
 
 void FlightCamera::updateRotation(float dx, float dy)
 {
-	pitch = dy;
-	roll = dx;
-	yaw = 0;
+	dpitch = dy;
+	droll = dx;
+	dyaw = 0;
 
 	/*glm::vec3 nfront;
 	nfront.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));

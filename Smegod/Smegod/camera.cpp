@@ -26,7 +26,7 @@ void Camera::updateView()
 	
 	//world = glm::inverse(view);
 
-	auto rot = glm::mat4(glm::quat({ glm::radians(-pitch),{ glm::radians(yaw) },glm::radians(-roll) }));
+	auto rot = glm::mat4(glm::quat({ glm::radians(-dpitch),{ glm::radians(dyaw) },glm::radians(-droll) }));
 	world = world * rot;
 }
 
@@ -85,24 +85,20 @@ void Camera::handleKeyboard(float delta)
 
 void Camera::updateRotation(float ry, float rx)
 {
-	yaw += ry;
-	pitch += rx;
+	pitch -= rx;
+	yaw -= ry;
 	
 	if (pitch > max_angle) {
 		pitch = max_angle;
+		rx = 0;
 	}
 	else if (pitch < min_angle) {
 		pitch = min_angle;
+		rx = 0;
 	}
 
-	glm::vec3 nfront;
-	nfront.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	nfront.y = sin(glm::radians(pitch));
-	nfront.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	front = glm::normalize(nfront);
-
-	right = glm::normalize(glm::cross(front, world_up));
-	up = glm::normalize(glm::cross(right, front));
+	dpitch = -rx;
+	dyaw = -ry;
 }
 
 void Camera::handleMouse(float delta)

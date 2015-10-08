@@ -27,7 +27,7 @@ void main()
 
 	vec3 N =  fT * bump.x + fB * bump.y + fN * bump.z;
 
-    N = normalize(worldIT * vec4(N,0)).xyz;
+    N = normalize(N);
     vec3 L = normalize(fL);
     vec3 V = normalize(fV);
     vec3 R = normalize(reflect(-L,N));

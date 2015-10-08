@@ -11,7 +11,7 @@ Plane::Plane(shared_ptr<ShaderGroup> mshader_group) :WorldObject(mshader_group)
 	glm::vec3 ambient(0.4f);
 	glm::vec3 diffuse(0.8f);
 	glm::vec3 spefular(1.f);
-	GLfloat shininess = 10;
+	GLfloat shininess = 50;
 	Material mat(ambient, diffuse, spefular, shininess);
 
 	auto wing = make_shared<Geometry>(mshader_group, ParametricShapes::createBlock(8,0.2f,30,1));

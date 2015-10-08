@@ -88,14 +88,14 @@ void Camera::updateRotation(float ry, float rx)
 	pitch -= rx;
 	yaw -= ry;
 	
-	if (pitch > max_angle) {
+	/*if (pitch > max_angle) {
 		pitch = max_angle;
 		rx = 0;
 	}
 	else if (pitch < min_angle) {
 		pitch = min_angle;
 		rx = 0;
-	}
+	}*/
 
 	dpitch = -rx;
 	dyaw = -ry;

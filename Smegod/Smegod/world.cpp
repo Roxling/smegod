@@ -98,8 +98,8 @@ void WaterWorld::initiate()
 {
 	float size = 30000;
 
-	active_camera = make_shared<FlightCamera>();
-	//active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000.f);
+	//active_camera = make_shared<FlightCamera>();
+	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000.f);
 	
 	//head->attach(active_camera);
 
@@ -131,7 +131,7 @@ void WaterWorld::initiate()
 	//Game geometries
 	auto light = make_shared<Light>(light_shader);
 	light->addShaderGroup(simple_shader);
-	light->translate(20000, 20000, 200);
+	light->translate(100, 100, 100);
 	head->attach(light);
 
 	plane = make_shared<Plane>(simple_shader);
@@ -145,6 +145,21 @@ void WaterWorld::initiate()
 
 	head->attach(active_camera);
 	active_camera->attach(plane);
+
+
+	/*auto cube = make_shared<Geometry>(phong_col, ParametricShapes::createCube(50.f, 10));
+	cube->translate(0.f, 0.f, -2.f);
+	cube->color = { 1.0, 1.0, 0.0 };
+	head->attach(cube);*/
+
+	shared_ptr<Texture> tex = make_shared<Texture>("stone43_diffuse.jpg");
+	shared_ptr<Texture> bump2 = make_shared<Texture>("stone43_bump.jpg");
+
+	auto sf = make_shared<Geometry>(simple_shader, ParametricShapes::createSphere(50.f, 100, 100));
+	sf->translate(0.f, 0.f, -2.f);
+	sf->texture = tex;
+	sf->bumpmap = bump2;
+	head->attach(sf);
 
 }
 

@@ -14,6 +14,8 @@ uniform mat4 world;
 uniform vec3 light_pos;
 uniform vec3 camera_pos;
 
+uniform mat4 worldIT;
+
 out vec3 fN;
 out vec3 fB;
 out vec3 fT;
@@ -26,9 +28,9 @@ void main()
 	tex_coord = texture_coord.xy;
 
 	vec3 world_pos = (world*vec4(position,1)).xyz;
-	fN = normal;
-	fB = binormal;
-	fT = tangent;
+	fN = vec3(worldIT * vec4(normal, 0.0));
+	fB = vec3(worldIT * vec4(binormal, 0.0));
+	fT = vec3(worldIT * vec4(tangent, 0.0));
 	fV = camera_pos - world_pos;
 	fL = light_pos - world_pos; 
 }

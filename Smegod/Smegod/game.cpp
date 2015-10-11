@@ -144,9 +144,12 @@ vector<shared_ptr<ConePair>> coneList;
 shared_ptr<ConePair> nextCone;
 bool first = true;
 int index = 0;
+bool startTime = 0;
 
 void Plane::render(glm::mat4 combined_transform)
 {
+	
+
 	if (first) {
 		first = false;
 		if (index < coneList.size()) {
@@ -156,6 +159,10 @@ void Plane::render(glm::mat4 combined_transform)
 	}
 	glm::vec3 pos(combined_transform[3]);
 	if (nextCone != nullptr && nextCone->contains(pos)) {
+		if (index == 1) {
+			cout << "Timer started" << endl;
+			startTime = Globals::GetTime();
+		}
 		if (index < coneList.size()) {
 			nextCone->setColor(0, 0, 1);
 			nextCone = coneList[index++];
@@ -164,8 +171,7 @@ void Plane::render(glm::mat4 combined_transform)
 		else {
 			nextCone->setColor(0, 0, 1);
 			nextCone = nullptr;
-			for (int i = 0; i < 1000; i++)
-				cout << "GAME FINISHED" << endl;
+			cout << "GAME FINISHED! Total time: "<<  Globals::GetTime() - startTime<< endl;
 		}
 	}
 
@@ -173,8 +179,12 @@ void Plane::render(glm::mat4 combined_transform)
 
 void Plane::propell(double d)
 {
+
 	float delta = (float) d;
-	//translate(delta * 100, 0, 0);
+	
+	if (getPosition().y < 0) {
+		world = glm::rotate(world, glm::radians(100.f*delta), { 0,0,1 });
+	}
 	propeller->world = glm::rotate(propeller->world, 100* delta, { propeller->world[0].x,propeller->world[0].y,propeller->world[0].z });
 }
 
@@ -183,7 +193,6 @@ FlightCamera::FlightCamera(shared_ptr<WorldObject> mplane) : plane(mplane), Came
 	translate(0, 10, -50);
 	rotate(180, 0, 0);
 }
-
 
 void FlightCamera::handleMouse(float delta)
 {
@@ -198,7 +207,10 @@ void FlightCamera::handleMouse(float delta)
 		
 		coord.x *= 0.0002;
 		coord.y *= 0.0002;
-		plane->rotate(0, (float)-coord.x, (float)-coord.y);
+		float roll = (float)-coord.y;
+
+		plane->rotate(0, (float)-coord.x, roll);
+
 	}
 }
 

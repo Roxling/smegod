@@ -20,4 +20,8 @@ public:
 	static void printVec3(glm::vec3 v) {
 		cout << v.x << " : " << v.y << " : " << v.z << endl;
 	}
+
+	static double GetTime() {
+		return glfwGetTime();
+	}
 };

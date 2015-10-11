@@ -98,23 +98,30 @@ void WaterWorld::initiate()
 {
 	float size = 30000;
 
-	active_camera = make_shared<FlightCamera>();
-	//active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000.f);
+	auto simple_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
+	plane = make_shared<Plane>(simple_shader);
+	plane->world = glm::rotate(plane->world, glm::radians<float>(180), { 0,1,0 });
+	plane->translate(0, 100,0);
+
+	head->attach(plane);
+
+	//active_camera = make_shared<Camera>();
+	active_camera = make_shared<FlightCamera>(plane);
+	active_camera->addShaderGroup(simple_shader);
 	
+	plane->attach(active_camera);
 	//head->attach(active_camera);
 
 	water_shader = make_shared<ShaderGroup>("water.vs", "water.fs");
 	active_camera->addShaderGroup(water_shader);
 
 
-	//auto cubemap = make_shared<Cubemap>("Textures/cloudyhills_cubemap/cloudyhills_", ".png");
+	
 	auto cubemap = make_shared<Cubemap>("Textures/opensea_cubemap/opensea_", ".png");
 	auto skybox = make_shared<Skybox>(cubemap);
 	active_camera->addShaderGroup(skybox->shader_group);
 	head->attach(skybox);
 
-	//auto surf2 = make_shared<Geometry>(simple_shader, ParametricShapes::createInfSurface2(200,100));
-	//head->attach(surf2);
 
 	shared_ptr<Texture> bump = make_shared<Texture>("waves.png");
 
@@ -124,8 +131,7 @@ void WaterWorld::initiate()
 	head->attach(surf);
 
 
-	auto simple_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
-	active_camera->addShaderGroup(simple_shader);
+	
 	auto light_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
 	active_camera->addShaderGroup(light_shader);
 	//Game geometries
@@ -134,17 +140,14 @@ void WaterWorld::initiate()
 	light->translate(-100000, 100000, 90000);
 	head->attach(light);
 
-	plane = make_shared<Plane>(simple_shader);
-	plane->world = glm::rotate(plane->world, glm::radians<float>(90), { 0,1,0 });
-	plane->translate(50, -10, 0);
+	
 	
 	auto phong_col = make_shared<ShaderGroup>("phong.vs", "phongcol.fs");
 	active_camera->addShaderGroup(phong_col);
 	light->addShaderGroup(phong_col);
 	GenerateGameWorld(head, phong_col);
 
-	head->attach(active_camera);
-	active_camera->attach(plane);
+	
 
 
 	/*auto cube = make_shared<Geometry>(phong_col, ParametricShapes::createCube(50.f, 10));
@@ -165,10 +168,10 @@ void WaterWorld::initiate()
 
 void WaterWorld::update(double delta)
 {
+	plane->propell(delta);
 	active_camera->update(delta);
 
 
-	plane->propell(delta);
 	//plane->world = world_pos;
 	//plane->translate(active_camera->position.x+50, active_camera->position.y-10, active_camera->position.z);
 	//surf->world = glm::translate(world_pos, active_camera->position);

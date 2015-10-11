@@ -16,7 +16,10 @@ public:
 };
 
 class FlightCamera : public Camera {
+public:
+	FlightCamera(shared_ptr<WorldObject> mplane);
 private:
+	shared_ptr<WorldObject> plane;
 	float maxspeed = 500;
 	float minspeed = 50;
 	float speed = minspeed;
@@ -24,11 +27,9 @@ private:
 	Coordinate mouseCenter;
 
 protected:
-	void updateRotation(float pitch, float roll);
 	virtual void handleMouse(float delta) override;
 	virtual void handleKeyboard(float delta) override;
-public:
-	FlightCamera();
+
 };
 
 class ConePair : public WorldObject {

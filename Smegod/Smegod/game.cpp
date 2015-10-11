@@ -178,39 +178,11 @@ void Plane::propell(double d)
 	propeller->world = glm::rotate(propeller->world, 100* delta, { propeller->world[0].x,propeller->world[0].y,propeller->world[0].z });
 }
 
-FlightCamera::FlightCamera() : Camera(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000), mouseCenter(Coordinate(0.0, 0.0))
+FlightCamera::FlightCamera(shared_ptr<WorldObject> mplane) : plane(mplane), Camera(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 500000), mouseCenter(Coordinate(0.0, 0.0))
 {
-	position.y = 25.f;
-	//yaw = -180;
+	translate(0, 10, -50);
+	rotate(180, 0, 0);
 }
-
-void FlightCamera::updateRotation(float dx, float dy)
-{
-	dpitch = dy;
-	droll = dx;
-	dyaw = 0;
-
-	/*glm::vec3 nfront;
-	nfront.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	nfront.y = sin(glm::radians(pitch));
-	nfront.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	front = glm::normalize(nfront);
-	
-	*/
-	//auto mat3 = glm::mat4(glm::quat({ glm::radians(pitch),{ glm::radians(yaw)},glm::radians(roll) }));
-	
-	//world = glm::translate(mat3,position);
-	/*right = glm::normalize(glm::cross(front, world_up));
-	auto mat2 = glm::rotate(glm::mat4(), glm::radians(pitch), right);;
-	front = glm::normalize(glm::vec3(mat2[0]));
-	auto mat = glm::rotate(glm::mat4(), glm::radians(roll), front);;
-	up = glm::normalize(glm::vec3(mat[2]));*/
-	
-
-	
-	
-}
-
 
 
 void FlightCamera::handleMouse(float delta)
@@ -224,9 +196,9 @@ void FlightCamera::handleMouse(float delta)
 	if (takingCursorInput) {
 		auto coord = InputHandler::getMousePos() - mouseCenter;
 		
-		coord.x *= 0.005;
-		coord.y *= 0.005;
-		updateRotation((float)coord.x, (float)-coord.y);
+		coord.x *= 0.0002;
+		coord.y *= 0.0002;
+		plane->rotate(0, (float)-coord.x, (float)-coord.y);
 	}
 }
 
@@ -244,9 +216,10 @@ void FlightCamera::handleKeyboard(float delta)
 	else if (speed > maxspeed)
 		speed = maxspeed;
 
-	translateLocal(0, 0, -speed*delta);
+	plane->translate(speed*delta, 0, 0);
 
 }
+
 
 ConePair::ConePair(shared_ptr<ShaderGroup> mshader_group, float distance, float height) : WorldObject(mshader_group)
 {

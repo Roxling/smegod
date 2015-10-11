@@ -6,10 +6,15 @@ class Node {
 public:
 
 	glm::mat4 world = glm::mat4();
+	glm::mat4 combined_world = glm::mat4();
 	vector<shared_ptr<Node>> children;
 
 public:
 	void translate(float dx, float dy, float dz);
+	void rotate(float dyaw, float dpitch, float droll);
+
+	glm::vec3 getPosition();
+
 	void render(glm::mat4 combined_transforms);
 	virtual void renderSelf(glm::mat4 combined_transform) {};
 

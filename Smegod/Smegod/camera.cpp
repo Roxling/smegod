@@ -14,25 +14,12 @@ Camera::Camera(float fov, int width, int height, float near, float far) : WorldO
 
 void Camera::translateLocal(float dx, float dy, float dz)
 {
-	/*position = position + dz*glm::normalize(front) +
-						  dy*glm::normalize(up) +
-						  dx*glm::normalize(right);*/
-
 	world = glm::translate(world, { dx,dy,dz });
-}
-
-void Camera::updateView()
-{
-	
-	//world = glm::inverse(view);
-
-	auto rot = glm::mat4(glm::quat({ glm::radians(-dpitch),{ glm::radians(dyaw) },glm::radians(-droll) }));
-	world = world * rot;
 }
 
 void Camera::render(glm::mat4 combined_transform)
 {
-
+	combined_world = combined_transform;
 	GLint projection_location;
 	GLint view_location;
 	GLuint camera_pos_location;
@@ -56,9 +43,6 @@ void Camera::update(double d)
 	float delta = (float)d;
 	handleKeyboard(delta);
 	handleMouse(delta);
-
-	//when all translations and rotations are done, update world matrix.
-	updateView();
 }
 
 void Camera::handleKeyboard(float delta)
@@ -85,20 +69,29 @@ void Camera::handleKeyboard(float delta)
 
 void Camera::updateRotation(float ry, float rx)
 {
+	yaw += ry;
 	pitch -= rx;
-	yaw -= ry;
-	
-	/*if (pitch > max_angle) {
+
+	if (pitch > max_angle) {
 		pitch = max_angle;
-		rx = 0;
 	}
 	else if (pitch < min_angle) {
 		pitch = min_angle;
-		rx = 0;
-	}*/
+	}
 
-	dpitch = -rx;
-	dyaw = -ry;
+	glm::vec3 front;
+	front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	front.y = sin(glm::radians(pitch));
+	front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	front = glm::normalize(front);
+
+	auto right = glm::normalize(glm::cross(front, world_up));
+	auto up = glm::normalize(glm::cross(right, front));
+
+
+	world[2] = glm::vec4(front,0);
+	world[0] = glm::vec4(-right, 0);
+	world[1] = glm::vec4(up, 0);
 }
 
 void Camera::handleMouse(float delta)

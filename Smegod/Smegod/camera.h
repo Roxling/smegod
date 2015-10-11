@@ -2,16 +2,11 @@
 #include "smegod_dep.h"
 #include "nodes.h"
 
-class Camera : public WorldObject, public ShaderCollection {
-public:
-	glm::vec3 position = { 0,0,0 };
+class Camera : public WorldObject, public ShaderCollection{
 private:
-	//void attach(shared_ptr<Node> child) override {};
+	void attach(shared_ptr<Node> child) override {};
 protected:
-
-	float dyaw = 0;
-	float dpitch = 0;
-	float droll = 0;
+	glm::vec3 world_up = { 0, 1.f, 0 };
 
 	float yaw = 0;
 	float pitch = 0;
@@ -34,10 +29,9 @@ protected:
 
 	void updateRotation(float ry, float rx);
 
-	void updateView();
 public:
 	glm::mat4 projection;
-	Camera(float fov, int width, int height, float near, float far);
+	Camera(float fov = 45.f, int width = Globals::WIDTH, int height = Globals::HEIGHT, float near = 0.1f, float far = 500000);
 	void translateLocal(float dx, float dy, float dz);
 
 	void update(double delta);

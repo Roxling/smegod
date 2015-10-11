@@ -185,6 +185,10 @@ void Plane::propell(double d)
 	if (getPosition().y < 0) {
 		world = glm::rotate(world, glm::radians(100.f*delta), { 0,0,1 });
 	}
+	else {
+		//Gravity
+		world[3].y -= 30*delta;
+	}
 	propeller->world = glm::rotate(propeller->world, 100* delta, { propeller->world[0].x,propeller->world[0].y,propeller->world[0].z });
 }
 

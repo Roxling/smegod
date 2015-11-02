@@ -70,7 +70,7 @@ void ExampleWorld::initiate()
 	surf->texture = tex;
 	head->attach(surf);
 
-	auto nanosuit = make_shared<Geometry>(n_shader, Model("Nanosuit2/nanosuit2.3ds"));
+	auto nanosuit = make_shared<Geometry>(n_shader, Model("nanosuit/nanosuit.obj"));
 	nanosuit->translate(0.f, 0.f, -20.f);
 	nanosuit->texture = tex;
 	nanosuit->bumpmap = bump;

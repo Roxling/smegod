@@ -199,3 +199,6 @@ FakesAssemblies/
 
 ##include everything in external
 !Smegod/external/**
+!Smegod/Smegod/Models/**
+
+Thumbs.db

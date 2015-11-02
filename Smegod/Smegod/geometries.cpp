@@ -23,13 +23,28 @@ void Geometry::render(glm::mat4 combined_transform)
 	shininess_loc = glGetUniformLocation(program, "shininess");
 	glUniform1fv(shininess_loc, 1, (const float *)&material.shininess);
 
+	//load set textur & bumpmap
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture->texture_id);
 	glUniform1i(glGetUniformLocation(shader_group->getProgram(), "tex"), 0);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, bumpmap->texture_id);
 	glUniform1i(glGetUniformLocation(shader_group->getProgram(), "bump"), 1);
-	renderSelf();
+
+	for (int i = 0; i < model->meshes.size(); i++) {
+		if (model->meshes[i].texture.texture_id != 0) { //override if model contains texture
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, model->meshes[i].texture.texture_id);
+			glUniform1i(glGetUniformLocation(shader_group->getProgram(), "tex"), 0);
+
+		}
+		if (model->meshes[i].bumpmap.texture_id != 0) { //override if model contains bumpmap
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, model->meshes[i].bumpmap.texture_id);
+			glUniform1i(glGetUniformLocation(shader_group->getProgram(), "bump"), 1);
+		}
+		renderSelf(model->meshes[i]);
+	}
 }
 
 Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group, VertexArray va) : WorldObject(mshader_group)
@@ -42,13 +57,12 @@ Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group, Model m) : WorldObject
 	model = make_unique<Model>(m);
 }
 
-void Geometry::renderSelf()
-{
-	for (int i = 0; i < model->meshes.size(); i++) {
-		glBindVertexArray(model->meshes[i].va.VAO);
-		glDrawElements(GL_TRIANGLES, model->meshes[i].va.num_indices, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-	}
+void Geometry::renderSelf(Mesh &mesh)
+{	
+	glBindVertexArray(mesh.va.VAO);
+	glDrawElements(GL_TRIANGLES, mesh.va.num_indices, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+
 }
 
 

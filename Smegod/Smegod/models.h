@@ -14,7 +14,7 @@ struct Vertex {
 };
 struct Triangle
 {
-	GLint a, b, c;		/* vertex indices */
+	GLint a, b, c = 0;		/* vertex indices */
 };
 
 class VertexArray {
@@ -27,6 +27,8 @@ public:
 class Mesh {
 public:
 	Texture texture;
+	Texture bumpmap;
+	Texture specular;
 	VertexArray va;
 };
 
@@ -37,6 +39,7 @@ public:
 	vector<Mesh> meshes;
 private:
 	const string FOLDER = "Models/";
+	string path = "";
 	void processNode(aiNode* node, const aiScene* scene);
 	void processMesh(aiMesh* mesh, const aiScene* scene);
 };

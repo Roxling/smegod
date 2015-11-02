@@ -8,6 +8,6 @@ private:
 public:
 	Texture(){}
 	GLuint texture_id = 0;
-	Texture(string file);
+	Texture(string file, bool use_defaultfolder = true);
 	static shared_ptr<Texture> DEFAULT;
 };

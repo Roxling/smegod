@@ -50,6 +50,7 @@ Model::Model(string file)
 		return;
 	}
 
+	path = FOLDER + file.substr(0, file.find_last_of('/')) + '/';
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(FOLDER + file, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
 
@@ -60,6 +61,7 @@ Model::Model(string file)
 	}
 
 	processNode(scene->mRootNode, scene);
+	
 }
 
 Model::Model(VertexArray va)
@@ -93,7 +95,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 	for (GLuint i = 0; i < mesh->mNumVertices; i++)
 	{
 		Vertex vertex;
-		vertex.x = mesh->mVertices[i].x;
+		vertex.x = mesh->mVertices[i].x; //Forced to be triangles & have normals
 		vertex.y = mesh->mVertices[i].y;
 		vertex.z = mesh->mVertices[i].z;
 
@@ -122,7 +124,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 			vertex.bz = 0;
 		}
 
-		if (mesh->mTextureCoords != nullptr) {
+		if (mesh->mTextureCoords != nullptr && mesh->mTextureCoords[0] != nullptr) {
 			vertex.texx = mesh->mTextureCoords[0][i].x;
 			vertex.texy = mesh->mTextureCoords[0][i].y;
 			vertex.texz = mesh->mTextureCoords[0][i].z;
@@ -152,7 +154,23 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		}
 	}
 
-	//TODO INCLUDE MATERIAL (textures)
+	if (mesh->mMaterialIndex >= 0)
+	{
+		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+		
+		aiString str;
+		material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
+		Texture text(path + str.C_Str(), false);
+		new_mesh.texture.texture_id = text.texture_id;
+		
+		material->GetTexture(aiTextureType_HEIGHT, 0, &str);
+		Texture bump(path + str.C_Str(), false);
+		new_mesh.bumpmap.texture_id = bump.texture_id;
+	
+		material->GetTexture(aiTextureType_SPECULAR, 0, &str);
+		Texture spec(path + str.C_Str(), false);
+		new_mesh.specular.texture_id = spec.texture_id;
+	}
 	
 	new_mesh.va = VertexArray::CreateVertexArray(vertices, indices);
 

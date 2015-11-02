@@ -1,46 +1,5 @@
 #include "parametric_shapes.h"
 
-VertexArray VertexArray::CreateVertexArray(shared_ptr<vector<Vertex>> vertices, shared_ptr<vector<Triangle>> indices)
-{
-	VertexArray va;
-
-	glGenVertexArrays(1, &va.VAO);
-	glGenBuffers(1, &va.VBO);
-	glGenBuffers(1, &va.EBO);
-	glBindVertexArray(va.VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, va.VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices->size(), vertices->data(), GL_STATIC_DRAW);
-
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, va.EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Triangle) * indices->size(), indices->data(), GL_STATIC_DRAW);
-
-	//Vertices
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
-
-	//Texture pos
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
-
-	//Normals
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
-
-	//Binormal
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(9 * sizeof(GLfloat)));
-
-	//Tangent
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(12 * sizeof(GLfloat)));
-
-	va.num_indices = (GLsizei)( sizeof(Triangle) / sizeof(GLint) * indices->size());
-	glBindVertexArray(0);
-	return va;
-}
-
 VertexArray ParametricShapes::createSphere(GLfloat radius, GLint res_theta, GLint res_phi, bool inv)
 {
 	shared_ptr<vector<Vertex>> vertices = make_shared<vector<Vertex>>();

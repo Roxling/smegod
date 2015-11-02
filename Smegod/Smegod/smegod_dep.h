@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <fstream>
 #include <string>
 
 using namespace std;
@@ -23,5 +24,11 @@ public:
 
 	static double GetTime() {
 		return glfwGetTime();
+	}
+
+	static bool File_Exists(const string fileName)
+	{
+		ifstream f(fileName.c_str());
+		return f.good();
 	}
 };

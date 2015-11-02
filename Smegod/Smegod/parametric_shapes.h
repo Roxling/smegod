@@ -1,24 +1,6 @@
 #pragma once
 #include "smegod_dep.h"
-struct Vertex {
-	GLfloat x, y, z,			/* Coordinate */
-		texx, texy, texz,	/* texture coordinate */
-		nx, ny, nz,			/* normal vector */
-		tx, ty, tz,			/* tangent vector */
-		bx, by, bz = 0;			/* binormal vector */
-};
-struct Triangle
-{
-	GLint a, b, c;		/* vertex indices */
-};
-
-class VertexArray {
-public:
-	GLuint VBO = 0, VAO = 0, EBO = 0;
-	GLsizei num_indices = 0;
-	static VertexArray CreateVertexArray(shared_ptr<vector<Vertex>> vertices, shared_ptr<vector<Triangle>> indices);
-};
-
+#include "models.h"
 
 class ParametricShapes abstract {
 public:

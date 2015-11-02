@@ -14,7 +14,10 @@ Cubemap::Cubemap(string prefix, string suffix)
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, texture_id);
 	for (GLuint i = 0; i < textures_faces.size(); i++) {
-		//TODO: file not found warning
+		if (!Globals::File_Exists(textures_faces[i])) {
+			cout << "File " << textures_faces[i] << " does not exist. Can not load texture in cubemap." << endl;
+			return;
+		}
 		image = SOIL_load_image(textures_faces[i].c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 		glTexImage2D(
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,

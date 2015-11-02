@@ -144,7 +144,7 @@ vector<shared_ptr<ConePair>> coneList;
 shared_ptr<ConePair> nextCone;
 bool first = true;
 int index = 0;
-bool startTime = 0;
+double startTime = 0;
 
 void Plane::render(glm::mat4 combined_transform)
 {
@@ -209,8 +209,8 @@ void FlightCamera::handleMouse(float delta)
 	if (takingCursorInput) {
 		auto coord = InputHandler::getMousePos() - mouseCenter;
 		
-		coord.x *= 0.0002;
-		coord.y *= 0.0002;
+		coord.x *= 0.0008;
+		coord.y *= 0.0008;
 		float roll = (float)-coord.y;
 
 		plane->rotate(0, (float)-coord.x, roll);

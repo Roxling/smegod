@@ -19,13 +19,12 @@ void World::render()
 
 vector<shared_ptr<Node>> cube_groups;
 shared_ptr<Node> light_rotator;
-int max = 3;
+int num_objects = 3;
 float offset = 50.f;
 float dist = 3.f;
 
 void ExampleWorld::initiate()
 {
-	
 	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
 	head->attach(active_camera);
 	
@@ -37,17 +36,17 @@ void ExampleWorld::initiate()
 	active_camera->addShaderGroup(l_shader);
 
 	light_rotator = make_shared<Node>();
-	light_rotator->translate(max*dist, 0, max*dist);
+	light_rotator->translate(num_objects*dist, 0, num_objects*dist);
 	shared_ptr<Light> light = make_shared<Light>(l_shader);
 	light->addShaderGroup(n_shader);
 	
 	shared_ptr<Texture> tex = make_shared<Texture>("stone43_diffuse.jpg");
 	shared_ptr<Texture> bump = make_shared<Texture>("stone43_bump.jpg");
 
-	for (int i = 0; i < max; i++) {
-		for (int j = 0; j < max; j++) {
+	for (int i = 0; i < num_objects; i++) {
+		for (int j = 0; j < num_objects; j++) {
 			shared_ptr<Node> g = make_shared<Node>();
-			for (int k = 0; k < max; k++) {
+			for (int k = 0; k < num_objects; k++) {
 
 				shared_ptr<Geometry> c = make_shared<Geometry>(n_shader, ParametricShapes::createTorus(1,0.5f, 100, 100));
 				c->translate(dist*i, dist*k, dist * j);
@@ -71,7 +70,13 @@ void ExampleWorld::initiate()
 	surf->texture = tex;
 	head->attach(surf);
 
-	light->translate(-max*2*dist, 0, -max*2*dist);
+	auto nanosuit = make_shared<Geometry>(n_shader, Model("Nanosuit2/nanosuit2.3ds"));
+	nanosuit->translate(0.f, 0.f, -20.f);
+	nanosuit->texture = tex;
+	nanosuit->bumpmap = bump;
+	head->attach(nanosuit);
+
+	light->translate(-num_objects*2*dist, 0, -num_objects*2*dist);
 	light_rotator->attach(light);
 	head->attach(light_rotator);
 
@@ -81,11 +86,12 @@ void ExampleWorld::initiate()
 }
 void ExampleWorld::update(double delta)
 {
+
 	active_camera->update(delta);
 	light_rotator->world = glm::rotate(world_pos,(float) glfwGetTime()/10, { 1.f,0,-1.f });
-	for (int i = 0; i < max; i++) {
-		for (int j = 0; j < max; j++) {
-			cube_groups[i*max + j]->world = glm::translate(world_pos, { 0,glm::sin(glfwGetTime() + i*glm::radians(offset) + j*glm::radians(offset)) , 0 });
+	for (int i = 0; i < num_objects; i++) {
+		for (int j = 0; j < num_objects; j++) {
+			cube_groups[i*num_objects + j]->world = glm::translate(world_pos, { 0,glm::sin(glfwGetTime() + i*glm::radians(offset) + j*glm::radians(offset)) , 0 });
 		}
 	}
 }

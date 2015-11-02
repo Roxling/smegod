@@ -4,6 +4,10 @@ shared_ptr<Texture> Texture::DEFAULT = make_shared<Texture>();
 
 Texture::Texture(string file)
 {
+	if (!Globals::File_Exists(FOLDER+file)) {
+		cout << "File " << FOLDER + file << " does not exist. Can not load texture." << endl;
+		return;
+	}
 	int width;
 	int height;
 	unsigned char *image = SOIL_load_image((FOLDER+file).c_str(), &width, &height, 0, SOIL_LOAD_RGB);

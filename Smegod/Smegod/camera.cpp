@@ -6,7 +6,7 @@ Camera::Camera(float fov, int width, int height, float near, float far) : WorldO
 {
 	projection = glm::perspective(fov, (float)width / (float)height, near, far);
 
-	translation_speed = 200.f; // units/s
+	translation_speed = 10.f; // units/s
 	rotation_speed = 90.f; // deg/s
 	mouse_sensitivity = 0.3f;
 	updateRotation(0,0);

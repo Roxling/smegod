@@ -20,7 +20,7 @@ protected:
 
 	bool oldTakingCursorInput = false;
 
-	float translation_speed = 10.f;
+	float translation_speed = 3.f;
 	float rotation_speed = 90.f;
 	float mouse_sensitivity = 45.f;
 

@@ -12,7 +12,12 @@ Shader::~Shader()
 }
 
 Shader::COMPILE_STATUS Shader::compile() {
+
 	ifstream stream(FOLDER + file);
+	if (!stream.good()) {
+		cout << "File " << FOLDER + file << " does not exist. Can not load (or compile) shader." << endl;
+		return Shader::COMPILE_STATUS::FAILED;
+	}
 	string ncode = string((istreambuf_iterator<char>(stream)), istreambuf_iterator<char>());
 	stream.close();
 	if (code.compare(ncode) == 0) {

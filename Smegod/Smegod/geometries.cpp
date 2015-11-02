@@ -34,15 +34,21 @@ void Geometry::render(glm::mat4 combined_transform)
 
 Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group, VertexArray va) : WorldObject(mshader_group)
 {
-	vertex_array = make_unique<VertexArray>(va);
+	model = make_unique<Model>(va);
+}
+
+Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group, Model m) : WorldObject(mshader_group)
+{
+	model = make_unique<Model>(m);
 }
 
 void Geometry::renderSelf()
 {
-	//glBindTexture(GL_TEXTURE_2D, texture->texture_id);
-	glBindVertexArray(vertex_array->VAO);
-	glDrawElements(GL_TRIANGLES, vertex_array->num_indices, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	for (int i = 0; i < model->meshes.size(); i++) {
+		glBindVertexArray(model->meshes[i].va.VAO);
+		glDrawElements(GL_TRIANGLES, model->meshes[i].va.num_indices, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+	}
 }
 
 

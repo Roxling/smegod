@@ -5,10 +5,12 @@
 #include "cubemap.h"
 #include "materials.h"
 #include "parametric_shapes.h"
+#include "models.h"
 
 class Geometry : public WorldObject {
 public:
 	Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group, VertexArray va);
+	Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group, Model model);
 	Material material = Material::DEFAULT;
 	shared_ptr<Texture> texture = Texture::DEFAULT;
 	shared_ptr<Texture> bumpmap = Texture::DEFAULT;
@@ -16,8 +18,7 @@ public:
 	virtual void renderSelf();
 	void render(glm::mat4 combined_transform) override;
 protected:
-	//Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group) {}
-	unique_ptr<VertexArray> vertex_array;
+	unique_ptr<Model> model;
 };
 
 class Frame : public WorldObject {

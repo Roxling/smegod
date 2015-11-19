@@ -1,7 +1,19 @@
 #include "textures.h"
 
-shared_ptr<Texture> Texture::DEFAULT = make_shared<Texture>();
+unique_ptr<unordered_map<string, GLuint>> Texture::cache = make_unique<unordered_map<string, GLuint>>();
 
+shared_ptr<DefaultTextures> Texture::defaultInstance;
+
+
+shared_ptr<DefaultTextures> Texture::getDefaults()
+{
+	if (!Texture::defaultInstance) {
+		Texture def("notex.png");
+		Texture def_bump("nobump.png");
+		Texture::defaultInstance = make_shared<DefaultTextures>(def.texture_id, def_bump.texture_id);
+	}
+	return Texture::defaultInstance;
+}
 
 
 Texture::Texture(string file, bool use_defaultfolder)
@@ -9,13 +21,21 @@ Texture::Texture(string file, bool use_defaultfolder)
 	if (use_defaultfolder) {
 		file = FOLDER + file;
 	}
+
+	auto lookup = cache->find(file);
+	if (lookup != cache->end()) {
+		texture_id = lookup->second;
+		return;
+	}
+
 	if (!Globals::File_Exists(file)) {
 		cout << "File " << file << " does not exist. Can not load texture." << endl;
 		return;
 	}
 	int width;
 	int height;
-	unsigned char *image = SOIL_load_image((file).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+	int channels;
+	unsigned char *image = SOIL_load_image((file).c_str(), &width, &height, &channels, SOIL_LOAD_RGB);
 
 	glGenTextures(1, &texture_id);
 	glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -30,4 +50,7 @@ Texture::Texture(string file, bool use_defaultfolder)
 
 	SOIL_free_image_data(image);
 	glBindTexture(GL_TEXTURE_2D, 0); 
+
+
+	cache->insert({ file, texture_id });
 }

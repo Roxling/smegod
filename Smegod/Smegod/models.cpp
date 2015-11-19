@@ -159,14 +159,22 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		
 		aiString str;
-		material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
-		Texture text(path + str.C_Str(), false);
-		new_mesh.texture.texture_id = text.texture_id;
+		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &str) == AI_SUCCESS) {
+			Texture text(path + str.C_Str(), false);
+			new_mesh.texture.texture_id = text.texture_id;
+		}
+		else {
+			new_mesh.texture.texture_id = Texture::getDefaults()->texture;
+		}
+
+		if (material->GetTexture(aiTextureType_HEIGHT, 0, &str) == AI_SUCCESS) {
+			Texture bump(path + str.C_Str(), false);
+			new_mesh.bumpmap.texture_id = bump.texture_id;
+		}
+		else {
+			new_mesh.bumpmap.texture_id = Texture::getDefaults()->bump;
+		}
 		
-		material->GetTexture(aiTextureType_HEIGHT, 0, &str);
-		Texture bump(path + str.C_Str(), false);
-		new_mesh.bumpmap.texture_id = bump.texture_id;
-	
 		material->GetTexture(aiTextureType_SPECULAR, 0, &str);
 		Texture spec(path + str.C_Str(), false);
 		new_mesh.specular.texture_id = spec.texture_id;

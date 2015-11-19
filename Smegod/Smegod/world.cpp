@@ -70,11 +70,12 @@ void ExampleWorld::initiate()
 	surf->texture = tex;
 	head->attach(surf);
 
-	auto nanosuit = make_shared<Geometry>(n_shader, Model("nanosuit/nanosuit.obj"));
-	nanosuit->translate(0.f, 0.f, -20.f);
-	nanosuit->texture = tex;
-	nanosuit->bumpmap = bump;
-	head->attach(nanosuit);
+	auto sponza = make_shared<Geometry>(n_shader, Model("sponza/sponza.obj"));
+	sponza->translate(0.f, 0.f, -20.f);
+	sponza->texture = tex;
+	sponza->bumpmap = bump;
+	sponza->world = glm::scale(sponza->world, { 0.01, 0.01, 0.01 });
+	head->attach(sponza);
 
 	light->translate(-num_objects*2*dist, 0, -num_objects*2*dist);
 	light_rotator->attach(light);

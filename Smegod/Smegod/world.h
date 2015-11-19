@@ -24,3 +24,8 @@ class WaterWorld : public World {
 	void update(double delta) override;
 	void initiate() override;
 };
+
+class SponzaWorld : public World {
+	void update(double delta) override;
+	void initiate() override;
+};

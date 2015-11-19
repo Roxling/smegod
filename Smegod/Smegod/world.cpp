@@ -17,6 +17,32 @@ void World::render()
 	head->render(world_pos);
 }
 
+void SponzaWorld::initiate()
+{
+	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
+	active_camera->translate(0, 5, 0);
+	head->attach(active_camera);
+	
+	shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
+	shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
+	active_camera->addShaderGroup(n_shader);
+	active_camera->addShaderGroup(l_shader);
+
+	shared_ptr<Light> light = make_shared<Light>(l_shader);
+	light->addShaderGroup(n_shader);
+	light->translate(0, 50, 0);
+	head->attach(light);
+
+	auto sponza = make_shared<Geometry>(n_shader, Model("sponza/sponza.obj"));
+	sponza->world = glm::scale(sponza->world, { 0.01, 0.01, 0.01 });
+	head->attach(sponza);
+}
+void SponzaWorld::update(double delta)
+{
+	active_camera->update(delta);
+}
+
+
 vector<shared_ptr<Node>> cube_groups;
 shared_ptr<Node> light_rotator;
 int num_objects = 3;

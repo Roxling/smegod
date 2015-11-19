@@ -86,8 +86,8 @@ int main() {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
-
-	world = make_shared<ExampleWorld>();
+	world = make_shared<SponzaWorld>();
+	//world = make_shared<ExampleWorld>();
 	//world = make_shared<WaterWorld>();
 
 	glfwMakeContextCurrent(window);

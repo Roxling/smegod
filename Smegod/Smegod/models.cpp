@@ -52,7 +52,7 @@ Model::Model(string file)
 
 	path = FOLDER + file.substr(0, file.find_last_of('/')) + '/';
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(FOLDER + file, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
+	const aiScene* scene = importer.ReadFile(FOLDER + file, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
 
 	if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{

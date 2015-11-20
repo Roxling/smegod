@@ -167,7 +167,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		else {
 			id = Texture::getDefaults()->texture;
 		}
-		new_mesh.material->textures.push_back({"tex", id});
+		new_mesh.material->textures.push_back({"diffuse_texture", id});
 
 		if (material->GetTexture(aiTextureType_HEIGHT, 0, &str) == AI_SUCCESS) {
 			Texture bump(path + str.C_Str(), false);
@@ -176,7 +176,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		else {
 			id = Texture::getDefaults()->bump;
 		}
-		new_mesh.material->textures.push_back({"bump", id});
+		new_mesh.material->textures.push_back({"normal_texture", id});
 		
 		if (material->GetTexture(aiTextureType_SPECULAR, 0, &str) == AI_SUCCESS) {
 			Texture spec(path + str.C_Str(), false);
@@ -186,7 +186,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 			id = 0; //TODO load default specmap.
 		}
 
-		new_mesh.material->textures.push_back({"spec", id});
+		new_mesh.material->textures.push_back({"specular_texture", id});
 	}
 	
 	new_mesh.va = VertexArray::CreateVertexArray(vertices, indices);

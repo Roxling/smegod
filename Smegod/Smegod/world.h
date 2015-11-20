@@ -11,21 +11,21 @@ public:
 	shared_ptr<Camera> active_camera;
 	World();
 	virtual void update(double delta) = 0;
-	virtual void initiate() = 0;
+	virtual void initiate(shared_ptr<ShaderGroup> gShader = nullptr) = 0;
 	void render();
 };
 
 class ExampleWorld : public World {
 	void update(double delta) override;
-	void initiate() override;
+	void initiate(shared_ptr<ShaderGroup> gShader = nullptr) override;
 };
 
 class WaterWorld : public World {
 	void update(double delta) override;
-	void initiate() override;
+	void initiate(shared_ptr<ShaderGroup> gShader = nullptr) override;
 };
 
 class SponzaWorld : public World {
 	void update(double delta) override;
-	void initiate() override;
+	void initiate(shared_ptr<ShaderGroup> gShader = nullptr) override;
 };

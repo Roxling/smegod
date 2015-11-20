@@ -14,10 +14,7 @@ uniform mat4 world;
 uniform mat4 view;
 uniform mat4 projection;
 
-//TODO
-uniform mat4 model_to_clip_matrix;
 uniform mat4 model_to_world_normal_matrix;
-//
 
 void main()
 {
@@ -25,6 +22,6 @@ void main()
 	worldspace_tangent  = normalize((model_to_world_normal_matrix * vec4(tangent, 0.0)).xyz);
 	worldspace_binormal = normalize((model_to_world_normal_matrix * vec4(binormal, 0.0)).xyz);
     pass_texcoords = texture_coord.xy;
-    
-    gl_Position = model_to_clip_matrix * vec4(Vertex, 1.0);
+
+    gl_Position = projection * view * world * vec4(position, 1.0f);
 }

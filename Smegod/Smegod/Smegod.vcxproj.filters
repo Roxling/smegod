@@ -152,12 +152,12 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="Shaders\buffrender.vs">
-	 <Filter>Shader</Filter>
-    </None>
-    <None Include="gbuffer.vs">
       <Filter>Shader</Filter>
     </None>
-    <None Include="gbuffer.fs">
+    <None Include="Shaders\gbuffer.fs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\gbuffer.vs">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

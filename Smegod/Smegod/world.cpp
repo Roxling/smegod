@@ -17,49 +17,28 @@ void World::render()
 	head->render(world_pos);
 }
 
-void SponzaWorld::initiate()
+void SponzaWorld::initiate(shared_ptr<ShaderGroup> gShader)
 {
 	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
 	active_camera->translate(0, 5, 0);
 	head->attach(active_camera);
+	active_camera->addShaderGroup(gShader);
+
+	//shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
+	//shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
 
 
+	//active_camera->addShaderGroup(n_shader);
+	//active_camera->addShaderGroup(l_shader);
 
-	
-	shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
-	shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
-	shared_ptr<ShaderGroup> buff_shader = make_shared<ShaderGroup>("buffrender.vs", "buffrender.fs");
+	//shared_ptr<Light> light = make_shared<Light>(l_shader);
+	//light->addShaderGroup(n_shader);
+	//light->translate(0, 50, 0);
+	//head->attach(light);
 
-
-	active_camera->addShaderGroup(n_shader);
-	active_camera->addShaderGroup(l_shader);
-
-	shared_ptr<Light> light = make_shared<Light>(l_shader);
-	light->addShaderGroup(n_shader);
-	light->translate(0, 50, 0);
-	head->attach(light);
-
-	auto sponza = make_shared<Geometry>(n_shader, Model("sponza/sponza.obj"));
+	auto sponza = make_shared<Geometry>(gShader, Model("sponza/sponza.obj"));
 	sponza->world = glm::scale(sponza->world, { 0.01, 0.01, 0.01 });
 	head->attach(sponza);
-
-	
-
-	shared_ptr<Geometry> q1 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-1, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> q2 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-.6f, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> q3 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-.2f, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> q4 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(.2f, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> q5 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(.6f, -1, 0.4f, 0.4f));
-	q1->model->meshes[0].material->textures.push_back({ "buff" ,1 });
-	q2->model->meshes[0].material->textures.push_back({ "buff" ,2 });
-	q3->model->meshes[0].material->textures.push_back({ "buff" ,3 });
-	q4->model->meshes[0].material->textures.push_back({ "buff" ,4 });
-	q5->model->meshes[0].material->textures.push_back({ "buff" ,5 });
-	head->attach(q1);
-	head->attach(q2);
-	head->attach(q3);
-	head->attach(q4);
-	head->attach(q5);
 }
 void SponzaWorld::update(double delta)
 {
@@ -73,7 +52,7 @@ int num_objects = 3;
 float offset = 50.f;
 float dist = 3.f;
 
-void ExampleWorld::initiate()
+void ExampleWorld::initiate(shared_ptr<ShaderGroup> gShader)
 {
 	/*active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
 	head->attach(active_camera);
@@ -152,7 +131,7 @@ void ExampleWorld::update(double delta)
 //shared_ptr<Geometry> surf;
 //shared_ptr<Plane> plane;
 
-void WaterWorld::initiate()
+void WaterWorld::initiate(shared_ptr<ShaderGroup> gShader)
 {
 	/*
 	float size = 30000;

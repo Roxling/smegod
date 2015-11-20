@@ -166,10 +166,10 @@
   <ItemGroup>
     <None Include="Shaders\buffrender.fs" />
     <None Include="Shaders\buffrender.vs" />
-    <None Include="gbuffer.fs" />
-    <None Include="gbuffer.vs" />
     <None Include="Shaders\cubemap.fs" />
     <None Include="Shaders\cubemap.vs" />
+    <None Include="Shaders\gbuffer.fs" />
+    <None Include="Shaders\gbuffer.vs" />
     <None Include="Shaders\light.fs" />
     <None Include="Shaders\light.vs" />
     <None Include="Shaders\normal.fs" />

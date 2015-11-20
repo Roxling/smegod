@@ -2,7 +2,7 @@
 
 void Geometry::render(glm::mat4 combined_transform)
 {
-	shader_group->use();
+	//shader_group->use();
 	auto program = shader_group->getProgram();
 	auto wIT = glm::transpose(glm::inverse(combined_transform)); //is this the correct way to calculate the inverse transpose?
 	world_location = glGetUniformLocation(shader_group->getProgram(), "world");

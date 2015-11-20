@@ -4,6 +4,7 @@
 #include "input_handling.h"
 #include "camera.h"
 #include "world.h"
+#include "geometries.h"
 
 const string name = "Window";
 shared_ptr<World> world;
@@ -42,7 +43,9 @@ void print_errors() {
 
 void main_loop(GLFWwindow* window) {
 
+	shared_ptr<ShaderGroup> buff_shader = make_shared<ShaderGroup>("buffrender.vs", "buffrender.fs");
 	shared_ptr<ShaderGroup> gbuffer_shader = make_shared<ShaderGroup>("gbuffer.vs", "gbuffer.fs");
+	
 	GLuint gBuffer;
 	glGenFramebuffers(1, &gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -51,9 +54,9 @@ void main_loop(GLFWwindow* window) {
 	// - Diffuse buffer
 	glGenTextures(1, &gDiffuse);
 	glBindTexture(GL_TEXTURE_2D, gDiffuse);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, Globals::WIDTH, Globals::HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Globals::WIDTH, Globals::HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gDiffuse, 0);
 
 	// - NormalSpecular buffer
@@ -63,7 +66,7 @@ void main_loop(GLFWwindow* window) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
-
+	
 
 	// - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
 	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
@@ -81,29 +84,57 @@ void main_loop(GLFWwindow* window) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
+	//Init debug quads
+	shared_ptr<Geometry> q1 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-1, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q2 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-.6f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q3 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-.2f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q4 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(.2f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q5 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(.6f, -1, 0.4f, 0.4f));
+	cout << "gDiffuse id: " << gDiffuse << endl;
+	q1->bindTexture("buff", gDiffuse);
+	q2->bindTexture("buff", gNormal);
+	q3->bindTexture("buff", 30);
+	q4->bindTexture("buff", 40);
+	q5->bindTexture("buff", 50);
 
-	world->initiate();
+
+	glm::mat4 ident;
+
+	world->initiate(gbuffer_shader);
 	while (!glfwWindowShouldClose(window)) {
 		update_delta();
-
+		world->update(time_delta);
 
 		// 1. Geometry Pass: render scene's geometry/color data into gbuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-
-		gbuffer_shader->use();
 		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 		glClearDepthf(1.0f);
 		glClearColor(1.f, .7f, .7f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+		gbuffer_shader->use();
+		GLint model_to_world_normal_matrix;
+		model_to_world_normal_matrix = glGetUniformLocation(gbuffer_shader->getProgram(), "model_to_world_normal_matrix");
+		glUniformMatrix4fv(model_to_world_normal_matrix, 1, GL_FALSE, glm::value_ptr(ident));
 
 		/* START RENDER WORLD */
-		world->update(time_delta);
+		
 		world->render();
 		/* END RENDER WORLD */
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		//Draw debug window
+		glClearColor(1.f, .1f, .7f, 1.0f);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+
+		buff_shader->use();
+		q1->render(ident);
+		q2->render(ident);
+		q3->render(ident);
+		q4->render(ident);
+		q5->render(ident);
 
 
 		glfwSwapBuffers(window);

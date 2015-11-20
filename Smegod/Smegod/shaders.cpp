@@ -137,6 +137,7 @@ void ShaderGroup::bindMaterial(shared_ptr<Material> material)
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, id);
 		glUniform1i(glGetUniformLocation(shader_program, name.c_str()), i);
+		//bind sampler?
 	}
 }
 bool ShaderGroup::link()

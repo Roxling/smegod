@@ -13,6 +13,7 @@ public:
 	Geometry(shared_ptr<ShaderGroup> mshader_group, Model model);
 	
 	virtual void renderSelf(Mesh &mesh);
+	void renderGeometry(glm::mat4 combined_transform);
 	void render(glm::mat4 combined_transform) override;
 	void setColor(glm::vec3 rgb);
 protected:

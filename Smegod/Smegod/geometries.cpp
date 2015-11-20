@@ -38,7 +38,6 @@ void Geometry::renderSelf(Mesh &mesh)
 	glBindVertexArray(mesh.va.VAO);
 	glDrawElements(GL_TRIANGLES, mesh.va.num_indices, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-
 }
 
 

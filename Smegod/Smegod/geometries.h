@@ -11,12 +11,10 @@ class Geometry : public WorldObject {
 public:
 	Geometry(shared_ptr<ShaderGroup> mshader_group, VertexArray va);
 	Geometry(shared_ptr<ShaderGroup> mshader_group, Model model);
-	Material material = Material::DEFAULT;
-	shared_ptr<Texture> texture = make_shared<Texture>();
-	shared_ptr<Texture> bumpmap = make_shared<Texture>();
-	glm::vec3 color = { 1.f,1.f,1.f };
+	
 	virtual void renderSelf(Mesh &mesh);
 	void render(glm::mat4 combined_transform) override;
+	void setColor(glm::vec3 rgb);
 protected:
 	unique_ptr<Model> model;
 };

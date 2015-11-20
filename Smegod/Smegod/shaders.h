@@ -1,5 +1,6 @@
 #pragma once
 #include "smegod_dep.h"
+#include "materials.h"
 
 using namespace std;
 
@@ -54,4 +55,5 @@ public:
 	GLuint getProgram() { return shader_program; }
 	void compile();
 	void use() { glUseProgram(shader_program); }
+	void bindMaterial(shared_ptr<Material> material);
 };

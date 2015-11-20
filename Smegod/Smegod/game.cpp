@@ -1,5 +1,5 @@
 #include "game.h"
-
+/*
 Plane::Plane(shared_ptr<ShaderGroup> mshader_group) :WorldObject(mshader_group)
 {
 	shared_ptr<Texture> tex = make_shared<Texture>("stone43_diffuse.jpg");
@@ -311,3 +311,4 @@ void GenerateGameWorld(shared_ptr<Node> head, shared_ptr<ShaderGroup> shader_gro
 	coneList.push_back(pair);
 	
 }
+*/

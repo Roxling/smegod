@@ -5,7 +5,7 @@
 #include "camera.h"
 #include "input_handling.h"
 
-
+/*
 class Plane : public WorldObject {
 private:
 	shared_ptr<Geometry> propeller;
@@ -46,4 +46,4 @@ public:
 };
 
 
-void GenerateGameWorld(shared_ptr<Node> head, shared_ptr<ShaderGroup> shader_group);
+void GenerateGameWorld(shared_ptr<Node> head, shared_ptr<ShaderGroup> shader_group);*/

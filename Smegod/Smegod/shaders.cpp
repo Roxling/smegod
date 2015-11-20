@@ -116,6 +116,29 @@ void ShaderGroup::compile()
 	}
 	
 }
+void ShaderGroup::bindMaterial(shared_ptr<Material> material)
+{
+	GLuint color_location = glGetUniformLocation(shader_program, "incolor");
+	glUniform3fv(color_location, 1, glm::value_ptr(material->color));
+
+	GLuint ambient_loc, diffuse_loc, specular_loc, shininess_loc;
+	ambient_loc = glGetUniformLocation(shader_program, "kambient");
+	glUniform3fv(ambient_loc, 1, glm::value_ptr(material->ambient));
+	diffuse_loc = glGetUniformLocation(shader_program, "kdiffuse");
+	glUniform3fv(diffuse_loc, 1, glm::value_ptr(material->diffuse));
+	specular_loc = glGetUniformLocation(shader_program, "kspecular");
+	glUniform3fv(specular_loc, 1, glm::value_ptr(material->specular));
+	shininess_loc = glGetUniformLocation(shader_program, "shininess");
+	glUniform1fv(shininess_loc, 1, (const float *)&material->shininess);
+
+	for (int i = 0; i < material->textures.size(); ++i) {
+		string name = material->textures[i].first;
+		GLuint id = material->textures[i].second;
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, id);
+		glUniform1i(glGetUniformLocation(shader_program, name.c_str()), i);
+	}
+}
 bool ShaderGroup::link()
 {
 	glLinkProgram(shader_program);

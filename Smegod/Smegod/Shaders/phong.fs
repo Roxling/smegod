@@ -21,8 +21,10 @@ in vec3 fV;
 
 void main()
 {
-    vec3 text = texture(tex, tex_coord).rgb;
-	vec3 bump = texture(bump, tex_coord).rgb;
+    vec4 text = texture(tex, tex_coord);
+	if(text.a < 0.01)
+        discard;
+    vec3 bump = texture(bump, tex_coord).rgb;
 	bump = bump * 2 - 1;
 
 	vec3 N =  fT * bump.x + fB * bump.y + fN * bump.z;
@@ -33,6 +35,6 @@ void main()
     vec3 R = normalize(reflect(-L,N));
     vec3 diffuse = kdiffuse * max(dot(L,N),0.0);
     vec3 specular = kspecular * pow(max(dot(V,R),0.0), shininess);
-    color.xyz = (kambient + diffuse + specular)*text;
-    color.w = 1.0; 
+    color.xyz = (kambient + diffuse + specular)*text.rgb;
+    color.w = 1; 
 } 

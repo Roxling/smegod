@@ -32,5 +32,5 @@ void main()
 	fB = vec3(worldIT * vec4(binormal, 0.0));
 	fT = vec3(worldIT * vec4(tangent, 0.0));
 	fV = camera_pos - world_pos;
-	fL = light_pos - world_pos; 
+	fL = light_pos - world_pos;
 }

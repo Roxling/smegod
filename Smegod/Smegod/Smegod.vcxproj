@@ -166,6 +166,8 @@
   <ItemGroup>
     <None Include="Shaders\buffrender.fs" />
     <None Include="Shaders\buffrender.vs" />
+    <None Include="gbuffer.fs" />
+    <None Include="gbuffer.vs" />
     <None Include="Shaders\cubemap.fs" />
     <None Include="Shaders\cubemap.vs" />
     <None Include="Shaders\light.fs" />

@@ -15,8 +15,8 @@ public:
 	virtual void renderSelf(Mesh &mesh);
 	void render(glm::mat4 combined_transform) override;
 	void setColor(glm::vec3 rgb);
-protected:
 	unique_ptr<Model> model;
+protected:
 };
 
 class Frame : public WorldObject {

@@ -2,7 +2,7 @@
 #include "shaders.h"
 #include "input_handling.h"
 
-Camera::Camera(float fov, int width, int height, float near, float far) : WorldObject(nullptr)
+Camera::Camera(float fov, int width, int height, float near, float far)
 {
 	projection = glm::perspective(fov, (float)width / (float)height, near, far);
 
@@ -17,7 +17,7 @@ void Camera::translateLocal(float dx, float dy, float dz)
 	world = glm::translate(world, { dx,dy,dz });
 }
 
-void Camera::render(glm::mat4 combined_transform)
+void Camera::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 {
 	combined_world = combined_transform;
 	GLint projection_location;

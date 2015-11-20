@@ -42,4 +42,5 @@ void main()
     float mspec = (spec.r+spec.g+spec.b)/3;
 	geometry_normal_and_specular.a = mspec;
     geometry_depth = encodeDepth(gl_FragCoord.z);
+
 }

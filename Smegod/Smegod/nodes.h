@@ -15,8 +15,8 @@ public:
 
 	glm::vec3 getPosition();
 
-	void render(glm::mat4 combined_transforms);
-	virtual void renderSelf(glm::mat4 combined_transform) {};
+	void render(glm::mat4 combined_transforms, shared_ptr<ShaderGroup> shader);
+	virtual void renderSelf(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) {};
 
 	virtual void attach(shared_ptr<Node> child);
 };
@@ -26,10 +26,9 @@ protected:
 	GLint world_location = 0;
 	GLint worldIT_location = 0;
 public:
-	shared_ptr<ShaderGroup> shader_group;
-	WorldObject(shared_ptr<ShaderGroup> mshader_group) : shader_group(mshader_group) {}
-	void renderSelf(glm::mat4 combined_transform) override;
-	virtual void render(glm::mat4 combined_transform) {};
+	WorldObject(){}
+	void renderSelf(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) override;
+	virtual void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) {};
 };
 
 class ShaderCollection abstract {

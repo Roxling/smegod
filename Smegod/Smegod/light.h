@@ -5,5 +5,5 @@
 class Light : public WorldObject, public ShaderCollection {
 public:
 	Light(shared_ptr<ShaderGroup>);
-	void render(glm::mat4 combined_transform) override;
+	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) override;
 };

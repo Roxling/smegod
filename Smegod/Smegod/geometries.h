@@ -9,12 +9,11 @@
 
 class Geometry : public WorldObject {
 public:
-	Geometry(shared_ptr<ShaderGroup> mshader_group, VertexArray va);
-	Geometry(shared_ptr<ShaderGroup> mshader_group, Model model);
+	Geometry(VertexArray va);
+	Geometry(Model model);
 	
 	virtual void renderSelf(Mesh &mesh);
-	void renderGeometry(glm::mat4 combined_transform);
-	void render(glm::mat4 combined_transform) override;
+	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) override;
 	void setColor(glm::vec3 rgb);
 	void bindTexture(string glslName, GLuint id);
 	unique_ptr<Model> model;
@@ -29,7 +28,7 @@ public:
 class Skybox : public WorldObject {
 public:
 	Skybox(shared_ptr<Cubemap> cubemap);
-	void render(glm::mat4 combined_transform) override;
+	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) override;
 private:
 	shared_ptr<Cubemap> cubemap;
 	shared_ptr<VertexArray> skybox;

@@ -12,17 +12,17 @@ World::World()
 	head = make_shared<Node>();
 }
 
-void World::render()
+void World::render(shared_ptr<ShaderGroup> shader)
 {
-	head->render(world_pos);
+	head->render(world_pos, shader);
 }
 
-void SponzaWorld::initiate(shared_ptr<ShaderGroup> gShader)
+void SponzaWorld::initiate()
 {
 	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
 	active_camera->translate(0, 5, 0);
-	head->attach(active_camera);
-	active_camera->addShaderGroup(gShader);
+	//head->attach(active_camera);
+	//active_camera->addShaderGroup(gShader);
 
 	//shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
 	//shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
@@ -36,13 +36,13 @@ void SponzaWorld::initiate(shared_ptr<ShaderGroup> gShader)
 	//light->translate(0, 50, 0);
 	//head->attach(light);
 
-	auto sponza = make_shared<Geometry>(gShader, Model("sponza/sponza.obj"));
+	auto sponza = make_shared<Geometry>(Model("sponza/sponza.obj"));
 	sponza->world = glm::scale(sponza->world, { 0.01, 0.01, 0.01 });
 	head->attach(sponza);
 }
 void SponzaWorld::update(double delta)
 {
-	active_camera->update(delta);
+	
 }
 
 
@@ -52,7 +52,7 @@ int num_objects = 3;
 float offset = 50.f;
 float dist = 3.f;
 
-void ExampleWorld::initiate(shared_ptr<ShaderGroup> gShader)
+void ExampleWorld::initiate()
 {
 	/*active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
 	head->attach(active_camera);
@@ -131,7 +131,7 @@ void ExampleWorld::update(double delta)
 //shared_ptr<Geometry> surf;
 //shared_ptr<Plane> plane;
 
-void WaterWorld::initiate(shared_ptr<ShaderGroup> gShader)
+void WaterWorld::initiate()
 {
 	/*
 	float size = 30000;

@@ -1,17 +1,17 @@
 #include "geometries.h"
 
-void Geometry::render(glm::mat4 combined_transform)
+void Geometry::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 {
 	//shader_group->use();
-	auto program = shader_group->getProgram();
+	auto program = shader->getProgram();
 	auto wIT = glm::transpose(glm::inverse(combined_transform)); //is this the correct way to calculate the inverse transpose?
-	world_location = glGetUniformLocation(shader_group->getProgram(), "world");
-	worldIT_location = glGetUniformLocation(shader_group->getProgram(), "worldIT");
+	world_location = glGetUniformLocation(shader->getProgram(), "world");
+	worldIT_location = glGetUniformLocation(shader->getProgram(), "worldIT");
 	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
 	glUniformMatrix4fv(worldIT_location, 1, GL_FALSE, glm::value_ptr(wIT));
 
 	for (auto it = model->meshes.begin(); it != model->meshes.end(); ++it){
-		shader_group->bindMaterial(it->material);
+		shader->bindMaterial(it->material);
 		renderSelf(*it);
 	}
 }
@@ -30,12 +30,12 @@ void Geometry::bindTexture(string glslName, GLuint id)
 	}
 }
 
-Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group, VertexArray va) : WorldObject(mshader_group)
+Geometry::Geometry(VertexArray va) : WorldObject()
 {
 	model = make_unique<Model>(va);
 }
 
-Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group, Model m) : WorldObject(mshader_group)
+Geometry::Geometry(Model m) : WorldObject()
 {
 	model = make_unique<Model>(m);
 }
@@ -48,42 +48,42 @@ void Geometry::renderSelf(Mesh &mesh)
 }
 
 
-Frame::Frame(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group)
+Frame::Frame(shared_ptr<ShaderGroup> mshader_group)
 {
 	//X
-	auto axis = make_shared<Geometry>(mshader_group,ParametricShapes::createCube(1.f,1));
+	auto axis = make_shared<Geometry>(ParametricShapes::createCube(1.f,1));
 	axis->world = glm::scale(axis->world, glm::vec3(2.f,0.1f,0.1f));
 	axis->translate(.05f, 0, 0);
 	axis->setColor({ 1.f, 0, 0 });
 	attach(axis);
 	//Y
-	axis = make_shared<Geometry>(mshader_group, ParametricShapes::createCube(1.f, 1));
+	axis = make_shared<Geometry>(ParametricShapes::createCube(1.f, 1));
 	axis->world = glm::scale(axis->world, glm::vec3(0.1f, 2.f, 0.1f));
 	axis->translate(0, .05f, 0);
 	axis->setColor({ 0, 1.f, 0 });
 	attach(axis);
 	//Z
-	axis = make_shared<Geometry>(mshader_group, ParametricShapes::createCube(1.f, 1));
+	axis = make_shared<Geometry>(ParametricShapes::createCube(1.f, 1));
 	axis->world = glm::scale(axis->world, glm::vec3(0.1f, 0.1f, 2.f));
 	axis->translate(0, 0, 1.0f);
 	axis->setColor({ 0, 0, 1.f});
 	attach(axis);
 
 	//box
-	axis = make_shared<Geometry>(mshader_group, ParametricShapes::createCube(1.f, 1));
+	axis = make_shared<Geometry>(ParametricShapes::createCube(1.f, 1));
 	axis->world = glm::scale(axis->world, glm::vec3(.1f));
 	axis->setColor(glm::vec3{ 0.f });
 	attach(axis);
 }
 
 
-Skybox::Skybox(shared_ptr<Cubemap> cubemap) : WorldObject(make_shared<ShaderGroup>("cubemap.vs", "cubemap.fs")), cubemap(cubemap) {
+Skybox::Skybox(shared_ptr<Cubemap> cubemap) : cubemap(cubemap) {
 	skybox = make_shared<VertexArray>(ParametricShapes::createSphere(200, 4, 4, true));
 }
 
-void Skybox::render(glm::mat4 combined_transform) {
+void Skybox::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) {
 	glDepthMask(GL_FALSE);
-	shader_group->use();
+	shader->use();
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(skybox->VAO);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap->texture_id);

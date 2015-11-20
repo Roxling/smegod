@@ -45,7 +45,8 @@ void main_loop(GLFWwindow* window) {
 
 	shared_ptr<ShaderGroup> buff_shader = make_shared<ShaderGroup>("buffrender.vs", "buffrender.fs");
 	shared_ptr<ShaderGroup> gbuffer_shader = make_shared<ShaderGroup>("gbuffer.vs", "gbuffer.fs");
-	
+	shared_ptr<ShaderGroup> laccbuff_shader = make_shared<ShaderGroup>("laccbuffer.vs", "laccbuffer.fs");
+
 	GLuint gBuffer;
 	glGenFramebuffers(1, &gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -76,12 +77,21 @@ void main_loop(GLFWwindow* window) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gDepth, 0);
 
+	GLuint accLight;
+	// - Accumulative light buffer
+	glGenTextures(1, &accLight);
+	glBindTexture(GL_TEXTURE_2D, accLight);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Globals::WIDTH, Globals::HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, accLight, 0);
+
 	// - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
-	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-	glDrawBuffers(3, attachments);
+	GLuint attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+	glDrawBuffers(4, attachments);
 
 	// - Create and attach depth buffer (renderbuffer)
-	GLuint rboDepth;
+	GLuint rboDepth; //unused??
 	glGenRenderbuffers(1, &rboDepth);
 	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, Globals::WIDTH, Globals::HEIGHT);
@@ -89,40 +99,33 @@ void main_loop(GLFWwindow* window) {
 	// - Finally check if framebuffer is complete
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer not complete!" << std::endl;
-	/*
-	GLuint depthMap;
-	glGenTextures(1, &depthMap);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, Globals::WIDTH, Globals::HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-	*/
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
 	//Init debug quads
-	shared_ptr<Geometry> q1 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-1, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> q2 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-.6f, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> q3 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-.2f, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> q4 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(.2f, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> q5 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(.6f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q1 = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q2 = make_shared<Geometry>(ParametricShapes::createNDCQuad(-.6f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q3 = make_shared<Geometry>(ParametricShapes::createNDCQuad(-.2f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q4 = make_shared<Geometry>(ParametricShapes::createNDCQuad(.2f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q5 = make_shared<Geometry>(ParametricShapes::createNDCQuad(.6f, -1, 0.4f, 0.4f));
 	q1->bindTexture("buff", gDiffuse);
 	q2->bindTexture("buff", gNormal);
 	q3->bindTexture("buff", gNormal);
 	q4->bindTexture("buff", gDepth);
-	q5->bindTexture("buff", 50);
+	q5->bindTexture("buff", accLight);
 
 
 	glm::mat4 ident;
 
-	world->initiate(gbuffer_shader);
+	world->initiate();
+	world->active_camera->addShaderGroup(gbuffer_shader);
+	world->active_camera->addShaderGroup(laccbuff_shader);
 	while (!glfwWindowShouldClose(window)) {
 		update_delta();
 		world->update(time_delta);
+		world->active_camera->update(time_delta);
+		world->active_camera->render(world->active_camera->world);
 
 		// 1. Geometry Pass: render scene's geometry/color data into gbuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -138,28 +141,44 @@ void main_loop(GLFWwindow* window) {
 
 		/* START RENDER WORLD */
 		
-		world->render();
+		world->render(gbuffer_shader);
 		/* END RENDER WORLD */
+		
+		glClear(GL_DEPTH_BUFFER_BIT);
+		laccbuff_shader->use();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, gDiffuse);
+		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "gDiffuse"), 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, gNormal);
+		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "gNormal"), 1);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, gDepth);
+		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "gDepth"), 2);
+		//foreach light.. render
 
+		world->render(laccbuff_shader);
+
+		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		//Draw debug window
 		glClearColor(1.f, .1f, .7f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-
+		
 		buff_shader->use();
 		GLuint maskpos = glGetUniformLocation(buff_shader->getProgram(), "mask");
 		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(1.f, 0, 0)));
-		q1->render(ident);
+		q1->render(ident, buff_shader);
 		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(1.f, 0, 0)));
-		q2->render(ident);
+		q2->render(ident, buff_shader);
 		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
-		q3->render(ident);
+		q3->render(ident, buff_shader);
 		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(0, 1, 0)));
-		q4->render(ident);
-		//glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec4(0, 0, 0, 0)));
-		q5->render(ident);
+		q4->render(ident, buff_shader);
+		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(1.f, 0, 0)));
+		q5->render(ident, buff_shader);
 
 
 		glfwSwapBuffers(window);
@@ -168,7 +187,7 @@ void main_loop(GLFWwindow* window) {
 		//prints GLerrors if any.. Not good for performance and should only be used for debug. Will spam if error occurs every frame.
 		GLenum error;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			//cerr << "GLerror: 0x" << hex << error << dec << endl;
+			cerr << "GLerror: 0x" << hex << error << dec << endl;
 		}
 	}
 }

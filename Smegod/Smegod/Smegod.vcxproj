@@ -170,6 +170,8 @@
     <None Include="Shaders\cubemap.vs" />
     <None Include="Shaders\gbuffer.fs" />
     <None Include="Shaders\gbuffer.vs" />
+    <None Include="Shaders\laccbuffer.fs" />
+    <None Include="Shaders\laccbuffer.vs" />
     <None Include="Shaders\light.fs" />
     <None Include="Shaders\light.vs" />
     <None Include="Shaders\normal.fs" />

@@ -23,6 +23,13 @@ void Geometry::setColor(glm::vec3 rgb)
 	}
 }
 
+void Geometry::bindTexture(string glslName, GLuint id)
+{
+	for (auto it = model->meshes.begin(); it != model->meshes.end(); ++it) {
+		it->material->textures.push_back({glslName,id});
+	}
+}
+
 Geometry::Geometry(shared_ptr<ShaderGroup> mshader_group, VertexArray va) : WorldObject(mshader_group)
 {
 	model = make_unique<Model>(va);

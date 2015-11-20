@@ -159,25 +159,34 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		
 		aiString str;
+		GLuint id;
 		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &str) == AI_SUCCESS) {
 			Texture text(path + str.C_Str(), false);
-			new_mesh.texture.texture_id = text.texture_id;
+			id = text.texture_id;
 		}
 		else {
-			new_mesh.texture.texture_id = Texture::getDefaults()->texture;
+			id = Texture::getDefaults()->texture;
 		}
+		new_mesh.material->textures.push_back({"tex", id});
 
 		if (material->GetTexture(aiTextureType_HEIGHT, 0, &str) == AI_SUCCESS) {
 			Texture bump(path + str.C_Str(), false);
-			new_mesh.bumpmap.texture_id = bump.texture_id;
+			id = bump.texture_id;
 		}
 		else {
-			new_mesh.bumpmap.texture_id = Texture::getDefaults()->bump;
+			id = Texture::getDefaults()->bump;
 		}
+		new_mesh.material->textures.push_back({"bump", id});
 		
-		material->GetTexture(aiTextureType_SPECULAR, 0, &str);
-		Texture spec(path + str.C_Str(), false);
-		new_mesh.specular.texture_id = spec.texture_id;
+		if (material->GetTexture(aiTextureType_SPECULAR, 0, &str) == AI_SUCCESS) {
+			Texture spec(path + str.C_Str(), false);
+			id = spec.texture_id;
+		}
+		else {
+			id = 0; //TODO load default specmap.
+		}
+
+		new_mesh.material->textures.push_back({"spec", id});
 	}
 	
 	new_mesh.va = VertexArray::CreateVertexArray(vertices, indices);

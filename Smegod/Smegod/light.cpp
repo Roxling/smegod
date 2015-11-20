@@ -4,7 +4,7 @@ Light::Light(shared_ptr<ShaderGroup> mshader_group) : WorldObject(mshader_group)
 {
 	auto source = make_shared<Geometry>(mshader_group, ParametricShapes::createSphere(1.f, 10,10));
 	source->world = glm::scale(source->world, glm::vec3(2.f));
-	source->color = glm::vec3(1.f,0.6f,0);
+	source->setColor(glm::vec3(1.f,0.6f,0));
 	attach(source);
 }
 

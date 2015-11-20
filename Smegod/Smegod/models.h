@@ -1,6 +1,7 @@
 #pragma once
 #include "smegod_dep.h"
 #include "textures.h"
+#include "materials.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -26,9 +27,7 @@ public:
 
 class Mesh {
 public:
-	Texture texture;
-	Texture bumpmap;
-	Texture specular;
+	shared_ptr<Material> material = make_shared<Material>();
 	VertexArray va;
 };
 

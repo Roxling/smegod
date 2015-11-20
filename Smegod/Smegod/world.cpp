@@ -53,7 +53,7 @@ float dist = 3.f;
 
 void ExampleWorld::initiate()
 {
-	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
+	/*active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
 	head->attach(active_camera);
 	
 	shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
@@ -111,11 +111,11 @@ void ExampleWorld::initiate()
 
 	shared_ptr<Frame> f = make_shared<Frame>(l_shader);
 	head->attach(f);
-	
+	*/
 }
 void ExampleWorld::update(double delta)
 {
-
+	/*
 	active_camera->update(delta);
 	light_rotator->world = glm::rotate(world_pos,(float) glfwGetTime()/10, { 1.f,0,-1.f });
 	for (int i = 0; i < num_objects; i++) {
@@ -123,14 +123,16 @@ void ExampleWorld::update(double delta)
 			cube_groups[i*num_objects + j]->world = glm::translate(world_pos, { 0,glm::sin(glfwGetTime() + i*glm::radians(offset) + j*glm::radians(offset)) , 0 });
 		}
 	}
+	*/
 }
 
-shared_ptr<ShaderGroup> water_shader;
-shared_ptr<Geometry> surf;
-shared_ptr<Plane> plane;
+//shared_ptr<ShaderGroup> water_shader;
+//shared_ptr<Geometry> surf;
+//shared_ptr<Plane> plane;
 
 void WaterWorld::initiate()
 {
+	/*
 	float size = 30000;
 
 	auto simple_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
@@ -185,10 +187,10 @@ void WaterWorld::initiate()
 	
 
 
-	/*auto cube = make_shared<Geometry>(phong_col, ParametricShapes::createCube(50.f, 10));
-	cube->translate(0.f, 0.f, -2.f);
-	cube->color = { 1.0, 1.0, 0.0 };
-	head->attach(cube);*/
+	//auto cube = make_shared<Geometry>(phong_col, ParametricShapes::createCube(50.f, 10));
+	//cube->translate(0.f, 0.f, -2.f);
+	//cube->color = { 1.0, 1.0, 0.0 };
+	//head->attach(cube);
 
 	shared_ptr<Texture> tex = make_shared<Texture>("stone43_diffuse.jpg");
 	shared_ptr<Texture> bump2 = make_shared<Texture>("stone43_bump.jpg");
@@ -198,11 +200,12 @@ void WaterWorld::initiate()
 	sf->texture = tex;
 	sf->bumpmap = bump2;
 	head->attach(sf);
-
+	*/
 }
 
 void WaterWorld::update(double delta)
 {
+	/*
 	plane->propell(delta);
 	active_camera->update(delta);
 
@@ -215,5 +218,6 @@ void WaterWorld::update(double delta)
 	auto time_loc = glGetUniformLocation(water_shader->getProgram(), "time");
 	float time =(float) glfwGetTime();
 	glUniform1fv(time_loc, 1, (const float *)& time);
+	*/
 }
 

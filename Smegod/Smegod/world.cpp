@@ -28,6 +28,9 @@ void SponzaWorld::initiate()
 	
 	shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
 	shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
+	shared_ptr<ShaderGroup> buff_shader = make_shared<ShaderGroup>("buffrender.vs", "buffrender.fs");
+
+
 	active_camera->addShaderGroup(n_shader);
 	active_camera->addShaderGroup(l_shader);
 
@@ -39,6 +42,24 @@ void SponzaWorld::initiate()
 	auto sponza = make_shared<Geometry>(n_shader, Model("sponza/sponza.obj"));
 	sponza->world = glm::scale(sponza->world, { 0.01, 0.01, 0.01 });
 	head->attach(sponza);
+
+	
+
+	shared_ptr<Geometry> q1 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-1, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q2 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-.6f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q3 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-.2f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q4 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(.2f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q5 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(.6f, -1, 0.4f, 0.4f));
+	q1->model->meshes[0].material->textures.push_back({ "buff" ,1 });
+	q2->model->meshes[0].material->textures.push_back({ "buff" ,2 });
+	q3->model->meshes[0].material->textures.push_back({ "buff" ,3 });
+	q4->model->meshes[0].material->textures.push_back({ "buff" ,4 });
+	q5->model->meshes[0].material->textures.push_back({ "buff" ,5 });
+	head->attach(q1);
+	head->attach(q2);
+	head->attach(q3);
+	head->attach(q4);
+	head->attach(q5);
 }
 void SponzaWorld::update(double delta)
 {

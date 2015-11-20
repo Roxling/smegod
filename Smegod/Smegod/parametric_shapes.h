@@ -12,4 +12,5 @@ public:
 	static VertexArray createInfSurface(GLfloat radius, GLint res_radius, GLint res_phi);
 	static VertexArray createInfSurface2(GLfloat side, GLint res);
 	static VertexArray createCone(GLfloat radius, GLfloat height, GLint res);
+	static VertexArray createNDCQuad(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
 };

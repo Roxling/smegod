@@ -148,6 +148,12 @@
     <None Include="Shaders\phongcol.fs">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\buffrender.fs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\buffrender.vs">
+	 <Filter>Shader</Filter>
+    </None>
     <None Include="gbuffer.vs">
       <Filter>Shader</Filter>
     </None>

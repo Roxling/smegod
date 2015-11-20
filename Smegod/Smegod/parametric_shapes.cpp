@@ -547,3 +547,54 @@ VertexArray ParametricShapes::createCone(GLfloat radius, GLfloat height, GLint r
 	return VertexArray::CreateVertexArray(vertices, indices);
 }
 
+VertexArray ParametricShapes::createNDCQuad(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+{
+	shared_ptr<vector<Vertex>> vertices = make_shared<vector<Vertex>>();
+	shared_ptr<vector<Triangle>> indices = make_shared<vector<Triangle>>();
+	Vertex bl, br, tl, tr;
+	bl.x = x;
+	bl.y = y;
+	bl.z = 0;
+	bl.texx = 0;
+	bl.texy = 0;
+	bl.texz = 0;
+
+	br.x = x+width;
+	br.y = y;
+	br.z = 0;
+	br.texx = 1;
+	br.texy = 0;
+	br.texz = 0;
+
+	tl.x = x;
+	tl.y = y+height;
+	tl.z = 0;
+	tl.texx = 0;
+	tl.texy = 1;
+	tl.texz = 0;
+
+	tr.x = x + width;
+	tr.y = y + height;
+	tr.z = 0;
+	tr.texx = 1;
+	tr.texy = 1;
+	tr.texz = 0;
+
+	vertices->push_back(bl); //0
+	vertices->push_back(br); //1
+	vertices->push_back(tl); //2
+	vertices->push_back(tr); //3
+	Triangle t1, t2;
+	t1.a = 2;
+	t1.b = 0;
+	t1.c = 3;
+	
+	t2.a = 0;
+	t2.b = 1;
+	t2.c = 3;
+
+	indices->push_back(t1);
+	indices->push_back(t2);
+
+	return VertexArray::CreateVertexArray(vertices, indices);
+}

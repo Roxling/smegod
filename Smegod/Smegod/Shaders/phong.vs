@@ -25,7 +25,7 @@ out vec3 fL;
 void main()
 {
     gl_Position = projection * view * world * vec4(position, 1.0f);
-	tex_coord = texture_coord.xy;
+	tex_coord = texture_coord.xy;git 
 
 	vec3 world_pos = (world*vec4(position,1)).xyz;
 	fN = vec3(worldIT * vec4(normal, 0.0));

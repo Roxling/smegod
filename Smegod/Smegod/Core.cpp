@@ -49,7 +49,7 @@ void main_loop(GLFWwindow* window) {
 	GLuint gBuffer;
 	glGenFramebuffers(1, &gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-	GLuint gDiffuse, gNormal;
+	GLuint gDiffuse, gNormal, gDepth;
 
 	// - Diffuse buffer
 	glGenTextures(1, &gDiffuse);
@@ -68,9 +68,17 @@ void main_loop(GLFWwindow* window) {
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
 	
 
+	// - NormalSpecular buffer
+	glGenTextures(1, &gDepth);
+	glBindTexture(GL_TEXTURE_2D, gDepth);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Globals::WIDTH, Globals::HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gDepth, 0);
+
 	// - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
-	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, attachments);
+	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers(3, attachments);
 
 	// - Create and attach depth buffer (renderbuffer)
 	GLuint rboDepth;
@@ -81,20 +89,31 @@ void main_loop(GLFWwindow* window) {
 	// - Finally check if framebuffer is complete
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer not complete!" << std::endl;
+	/*
+	GLuint depthMap;
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, Globals::WIDTH, Globals::HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	*/
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
+	
+	
 	//Init debug quads
 	shared_ptr<Geometry> q1 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-1, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> q2 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-.6f, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> q3 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(-.2f, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> q4 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(.2f, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> q5 = make_shared<Geometry>(buff_shader, ParametricShapes::createNDCQuad(.6f, -1, 0.4f, 0.4f));
-	cout << "gDiffuse id: " << gDiffuse << endl;
 	q1->bindTexture("buff", gDiffuse);
 	q2->bindTexture("buff", gNormal);
-	q3->bindTexture("buff", 30);
-	q4->bindTexture("buff", 40);
+	q3->bindTexture("buff", gNormal);
+	q4->bindTexture("buff", gDepth);
 	q5->bindTexture("buff", 50);
 
 
@@ -130,10 +149,16 @@ void main_loop(GLFWwindow* window) {
 
 
 		buff_shader->use();
+		GLuint maskpos = glGetUniformLocation(buff_shader->getProgram(), "mask");
+		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(1.f, 0, 0)));
 		q1->render(ident);
+		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(1.f, 0, 0)));
 		q2->render(ident);
+		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
 		q3->render(ident);
+		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(0, 1, 0)));
 		q4->render(ident);
+		//glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec4(0, 0, 0, 0)));
 		q5->render(ident);
 
 

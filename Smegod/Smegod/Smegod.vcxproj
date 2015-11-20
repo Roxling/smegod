@@ -127,7 +127,7 @@
     </Link>
     <PostBuildEvent>
       <Command>Xcopy Shaders $(TargetDir)\Shaders\ /e /y /I</Command>
-	  <Command>Xcopy ..\external\assimp-3.1.1-win-binaries\bin64\assimp.dll $(TargetDir) /e /y /I</Command>
+      <Command>Xcopy ..\external\assimp-3.1.1-win-binaries\bin64\assimp.dll $(TargetDir) /e /y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -164,6 +164,8 @@
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="gbuffer.fs" />
+    <None Include="gbuffer.vs" />
     <None Include="Shaders\cubemap.fs" />
     <None Include="Shaders\cubemap.vs" />
     <None Include="Shaders\light.fs" />

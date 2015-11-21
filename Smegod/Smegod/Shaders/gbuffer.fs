@@ -36,7 +36,14 @@ void main()
 
 	// Worldspace normal
 	//geometry_normal_and_specular.xyz = texture(normal_texture, pass_texcoords).rgb;
-	geometry_normal_and_specular.xyz = (worldspace_normal*0.5 + 0.5);
+    vec3 bump = texture(normal_texture, pass_texcoords).rgb;
+	bump = bump * 2 - 1;
+
+	vec3 N =  worldspace_tangent * bump.x + worldspace_binormal * bump.y + worldspace_normal * bump.z;
+
+    N = normalize(N);
+
+	geometry_normal_and_specular.xyz = (N*0.5 + 0.5);
 	// Specularity
     vec4 spec = texture(specular_texture, pass_texcoords);
     float mspec = (spec.r+spec.g+spec.b)/3;

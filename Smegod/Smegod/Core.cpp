@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "world.h"
 #include "geometries.h"
+#include "light.h"
 
 const string name = "Window";
 shared_ptr<World> world;
@@ -104,7 +105,13 @@ void main_loop(GLFWwindow* window) {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
+
+
+	SpotLight sl(laccbuff_shader);
+
+
 	shared_ptr<Geometry> output = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, -1, 2, 2));
+
 
 	//Init debug quads
 	shared_ptr<Geometry> q1 = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, -1, 0.4f, 0.4f));
@@ -134,7 +141,7 @@ void main_loop(GLFWwindow* window) {
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 		glClearDepthf(1.0f);
-		glClearColor(1.f, .7f, .7f, 1.0f);
+		glClearColor(0, 0, 0, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		gbuffer_shader->use();
@@ -147,22 +154,29 @@ void main_loop(GLFWwindow* window) {
 		world->render(gbuffer_shader);
 		/* END RENDER WORLD */
 		
+
+
+		//
+		// PASS 2: Generate shadowmaps and accumulate lights' contribution
+		//
 		glClear(GL_DEPTH_BUFFER_BIT);
 		laccbuff_shader->use();
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gDiffuse);
-		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "gDiffuse"), 0);
+		glBindTexture(GL_TEXTURE_2D, gDepth);
+		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "depthBuffer"), 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, gNormal);
-		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "gNormal"), 1);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, gDepth);
-		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "gDepth"), 2);
+		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "normalAndSpecularBuffer"), 1);
 		//foreach light.. render
 
-		world->render(laccbuff_shader);
+		//for shadow map
+		//world->render(laccbuff_shader);
 
-		
+		//for light
+		glClear(GL_DEPTH_BUFFER_BIT);
+		sl.render(sl.world, laccbuff_shader);
+
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		// PASS 3 -- Resolve
@@ -175,10 +189,10 @@ void main_loop(GLFWwindow* window) {
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, gDiffuse);
-		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "diffuse_buffer"), 0);
+		glUniform1i(glGetUniformLocation(resolve_shader->getProgram(), "diffuse_buffer"), 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, accLight);
-		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "light_buffer"), 1);
+		glUniform1i(glGetUniformLocation(resolve_shader->getProgram(), "light_buffer"), 1);
 
 		output->render(ident, resolve_shader);
 		glDepthMask(GL_TRUE);
@@ -205,7 +219,7 @@ void main_loop(GLFWwindow* window) {
 		//prints GLerrors if any.. Not good for performance and should only be used for debug. Will spam if error occurs every frame.
 		GLenum error;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			cerr << "GLerror: 0x" << hex << error << dec << endl;
+			//cerr << "GLerror: 0x" << hex << error << dec << endl;
 		}
 	}
 }

@@ -180,6 +180,8 @@
     <None Include="Shaders\phong.vs" />
     <None Include="Shaders\phongcol.fs" />
     <None Include="Shaders\projection.vs" />
+    <None Include="Shaders\resolve.fs" />
+    <None Include="Shaders\resolve.vs" />
     <None Include="Shaders\texture.fs" />
     <None Include="Shaders\water.fs" />
     <None Include="Shaders\water.vs" />

@@ -32,7 +32,7 @@ void main()
 {
 	// Diffuse color
 	geometry_diffuse = texture(diffuse_texture, pass_texcoords);
-	//if (geometry_diffuse.a < 1.0) discard;
+	if (geometry_diffuse.a < 0.2) discard;
 
 	// Worldspace normal
 	//geometry_normal_and_specular.xyz = texture(normal_texture, pass_texcoords).rgb;

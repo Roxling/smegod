@@ -46,6 +46,7 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<ShaderGroup> buff_shader = make_shared<ShaderGroup>("buffrender.vs", "buffrender.fs");
 	shared_ptr<ShaderGroup> gbuffer_shader = make_shared<ShaderGroup>("gbuffer.vs", "gbuffer.fs");
 	shared_ptr<ShaderGroup> laccbuff_shader = make_shared<ShaderGroup>("laccbuffer.vs", "laccbuffer.fs");
+	shared_ptr<ShaderGroup> resolve_shader = make_shared<ShaderGroup>("resolve.vs", "resolve.fs");
 
 	GLuint gBuffer;
 	glGenFramebuffers(1, &gBuffer);
@@ -103,6 +104,8 @@ void main_loop(GLFWwindow* window) {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
+	shared_ptr<Geometry> output = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, -1, 2, 2));
+
 	//Init debug quads
 	shared_ptr<Geometry> q1 = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> q2 = make_shared<Geometry>(ParametricShapes::createNDCQuad(-.6f, -1, 0.4f, 0.4f));
@@ -162,11 +165,26 @@ void main_loop(GLFWwindow* window) {
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		//Draw debug window
+		// PASS 3 -- Resolve
 		glClearColor(1.f, .1f, .7f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
 		
+		glDepthMask(GL_FALSE);
+		resolve_shader->use();
+
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, gDiffuse);
+		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "diffuse_buffer"), 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, accLight);
+		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "light_buffer"), 1);
+
+		output->render(ident, resolve_shader);
+		glDepthMask(GL_TRUE);
+
+
+		//Draw debug window
 		buff_shader->use();
 		GLuint maskpos = glGetUniformLocation(buff_shader->getProgram(), "mask");
 		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(1.f, 0, 0)));

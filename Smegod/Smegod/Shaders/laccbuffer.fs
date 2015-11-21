@@ -23,46 +23,32 @@ uniform vec2 shadow_texelsize;
 
 layout (location = 0) out vec4 light_contribution;
 
-#define EXTRACT_DEPTH(cc)	((cc).b + (cc).g / 256.0 + (cc).r / (256.0 * 256.0) + (cc).a / (256.0 * 256.0 * 256.0))
-
 void main()
 {
-    mat4 ViewProjection = projection * view;
+    mat4 ViewProjection =  projection * view;
     mat4 ViewProjectionInverse = inverse(ViewProjection);
 
-    vec2 screen_coord; 
-    screen_coord.x = gl_FragCoord.x / 1500;
-    screen_coord.y = gl_FragCoord.y / 720;
+    vec2 screen_coord = gl_FragCoord.xy * invRes; // [0,1]
+    vec2 ndc = screen_coord * 2 - 1;
 
-    vec2 tex_coord = gl_FragCoord.xy * invRes;
-
-
-
-    vec4 depth_tex = texture(depthBuffer, tex_coord);
-    float depth = EXTRACT_DEPTH(depth_tex);
+    float depth = texture(depthBuffer, screen_coord).r * 2 - 1;
 
 
     //Composite light using phong shading, falloffs and LightIntensity and LightColor
 
-    vec4 pixel_pos = vec4(tex_coord.x*2 - 1, tex_coord.y*2 - 1, depth, 1);
-    vec4 pixel_world = (ViewProjectionInverse * pixel_pos);
+    vec4 ndc_pos = vec4(ndc, depth, 1);
+    vec4 pixel_world = (ViewProjectionInverse * ndc_pos);
+    pixel_world.xyz /= pixel_world.w;
 
-    pixel_world.x = pixel_world.x/pixel_world.w;
-    pixel_world.y = pixel_world.y/pixel_world.w;
-    pixel_world.z = pixel_world.z/pixel_world.w;
-    pixel_world.w = 1;
 
     float length = distance(light_pos, pixel_world.xyz);
-    vec3 color = light_color/(pow(length*2, 2));
+    vec3 color = light_color/(pow(length, 2));
 
   
 
-
-    vec4 NnS = texture(normalAndSpecularBuffer, tex_coord);
+    vec4 NnS = texture(normalAndSpecularBuffer, screen_coord);
     vec3 N = NnS.xyz*2 - 1;
-    float shininess = NnS.z*100;
-
-
+    float shininess = NnS.a;
 
     N = normalize(N);
     vec3 L = normalize(light_pos - pixel_world.xyz);
@@ -79,8 +65,6 @@ void main()
     vec3 diffuse = color * max(dot(L,N),0.0);
     vec3 specular = color * pow(max(dot(V,R),0.0), shininess);
 
-    
-
-    light_contribution.xyz = vec3(gl_FragCoord.x/1600);
+    light_contribution.xyz = color;
     light_contribution.w = 1;
 }

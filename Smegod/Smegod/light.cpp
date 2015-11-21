@@ -92,7 +92,7 @@ static GLuint loadCone(GLuint& vboId, GLsizei& verticesNb, shared_ptr<ShaderGrou
 Light::Light(shared_ptr<ShaderGroup> mshader_group)
 {
 	auto source = make_shared<Geometry>(ParametricShapes::createSphere(1.f, 10,10));
-	source->world = glm::scale(source->world, glm::vec3(2.f));
+	//source->world = glm::scale(source->world, glm::vec3(2.f));
 	source->setColor(glm::vec3(1.f,0.6f,0));
 	attach(source);
 }

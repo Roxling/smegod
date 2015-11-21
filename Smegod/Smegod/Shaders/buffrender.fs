@@ -5,8 +5,6 @@ out vec4 color;
 uniform sampler2D buff;
 uniform vec3 mask;
 
-#define EXTRACT_DEPTH(cc)	((cc).b + (cc).g / 256.0 + (cc).r / (256.0 * 256.0) + (cc).a / (256.0 * 256.0 * 256.0))
-
 void main()
 {
     vec4 text = texture(buff, tex_coord);
@@ -17,7 +15,7 @@ void main()
          ncolor.rgb = vec3(text.a);
     }
     if(mask.y == 1){
-        float depth = EXTRACT_DEPTH(text);
+        float depth = text.r;
         ncolor.rgb = vec3(depth);
     }
     color = ncolor;

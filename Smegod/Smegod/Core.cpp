@@ -113,7 +113,7 @@ void main_loop(GLFWwindow* window) {
 
 
 	SpotLight sl(laccbuff_shader);
-
+	sl.translate(0, .1, 0);
 
 	shared_ptr<Geometry> output = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, -1, 2, 2));
 
@@ -170,7 +170,7 @@ void main_loop(GLFWwindow* window) {
 		glBindFramebuffer(GL_FRAMEBUFFER, lBuffer);
 		glCullFace(GL_FRONT);
 		glClearDepthf(0.0f);
-		glClearColor(.2, .2, .2, 1.0f);
+		glClearColor(.05f, .05f, .05f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		laccbuff_shader->use();

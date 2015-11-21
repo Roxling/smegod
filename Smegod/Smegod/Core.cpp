@@ -118,13 +118,13 @@ void main_loop(GLFWwindow* window) {
 	glDrawBuffers(1, attachments);
 
 
-	//{
-	//	GLuint rboDepth;
-	//	glGenRenderbuffers(1, &rboDepth);
-	//	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-	//	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, Globals::WIDTH, Globals::HEIGHT);
-	//	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-	//}
+	{
+		GLuint rboDepth;
+		glGenRenderbuffers(1, &rboDepth);
+		glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, Globals::WIDTH, Globals::HEIGHT);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+	}
 
 	// - Finally check if framebuffer is complete
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -164,6 +164,9 @@ void main_loop(GLFWwindow* window) {
 		world->active_camera->render(world->active_camera->world);
 
 		// 1. Geometry Pass: render scene's geometry/color data into gbuffer
+
+		glDepthFunc(GL_LESS);
+
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 		glClearDepthf(1.0f);
@@ -186,7 +189,8 @@ void main_loop(GLFWwindow* window) {
 		// PASS 2: Generate shadowmaps and accumulate lights' contribution
 		//
 		glBindFramebuffer(GL_FRAMEBUFFER, lBuffer);
-		glClearDepthf(1.0f);
+		glCullFace(GL_FRONT);
+		glClearDepthf(0.0f);
 		glClearColor(.2, .2, .2, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -200,7 +204,32 @@ void main_loop(GLFWwindow* window) {
 		//foreach light.. render
 
 
+
+		// 2.1 shadowmap
+
+
+
+
+		// 2.2 blend light
+		glEnable(GL_BLEND);
+		glDepthFunc(GL_GREATER);
+		glDepthMask(GL_FALSE);
+
+		glBlendEquationSeparate(GL_FUNC_ADD, GL_MIN);
+		glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
+
 		sl.render(sl.world, laccbuff_shader);
+
+
+		glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LESS);
+		glDisable(GL_BLEND);
+
+		//} end foreach light
+
+
+		glCullFace(GL_BACK);
+		glDepthFunc(GL_ALWAYS);
 
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -21,7 +21,7 @@ uniform float light_anglefalloff;
 
 uniform vec2 shadow_texelsize;
 
-layout (location = 3) out vec4 light_contribution;
+layout (location = 0) out vec4 light_contribution;
 
 #define EXTRACT_DEPTH(cc)	((cc).b + (cc).g / 256.0 + (cc).r / (256.0 * 256.0) + (cc).a / (256.0 * 256.0 * 256.0))
 

@@ -18,9 +18,9 @@ public:
 	
 	glm::mat4 getLightSpaceMatrix();
 
+	glm::vec3 LightColor = {.7,.7,.7};
 private:
 	void renderSelf();
-	glm::vec3 LightColor = {.7,.7,.7};
 	float LightIntensity = 240000.0f;
 	float LightAngleFalloff = 0.8f;
 	glm::vec2 ShadowMapTexelSize = { 1.0f / Globals::SHADOW_WIDTH, 1.0f / Globals::SHADOW_HEIGHT };

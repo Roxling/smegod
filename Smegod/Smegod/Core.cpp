@@ -114,6 +114,12 @@ void main_loop(GLFWwindow* window) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	GLfloat c[4] = { 1.f, 1.f,1.f, 1.f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, c);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMap, 0);
 	// - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
 
@@ -124,8 +130,37 @@ void main_loop(GLFWwindow* window) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
-	SpotLight sl(laccbuff_shader);
-	sl.translate(0, .1f, 0);
+	vector<shared_ptr<SpotLight>> lights;
+
+	Node lg;
+
+
+	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(laccbuff_shader);
+	sl1->translate(0, .1f, 0);
+	sl1->LightColor = { 1.f, 0.5f, 0.5f };
+
+	shared_ptr<SpotLight> sl2 = make_shared<SpotLight>(laccbuff_shader);
+	sl2->translate(0, .1f, 0);
+	sl2->world = glm::rotate(sl2->world, glm::pi<float>(), glm::vec3(sl2->world[1]));
+	sl2->LightColor = { .5f, 1.f, 0.5f };
+
+	shared_ptr<SpotLight> sl3 = make_shared<SpotLight>(laccbuff_shader);
+	sl3->translate(0, .1f, 0);
+	sl3->world = glm::rotate(sl3->world, glm::half_pi<float>(), glm::vec3(sl3->world[1]));
+	sl3->LightColor = { .5f, 0.5f, 1.f };
+
+	shared_ptr<SpotLight> sl4 = make_shared<SpotLight>(laccbuff_shader);
+	sl4->translate(0, .1f, 0);
+	sl4->world = glm::rotate(sl4->world, -glm::half_pi<float>(), glm::vec3(sl4->world[1]));
+	sl4->LightColor = { 1.f, 0.5f, 1.f };
+
+	lg.attach(sl1);
+	lg.attach(sl2);
+
+	lights.push_back(sl1);
+	lights.push_back(sl2);
+	lights.push_back(sl3);
+	lights.push_back(sl4);
 
 	shared_ptr<Geometry> output = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, -1, 2, 2));
 
@@ -177,64 +212,68 @@ void main_loop(GLFWwindow* window) {
 		//
 		// PASS 2: Generate shadowmaps and accumulate lights' contribution
 		//
-		glBindFramebuffer(GL_FRAMEBUFFER, sBuffer);
-		glCullFace(GL_FRONT);
-		glClearDepthf(1.0f);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
 		
-		//foreach light.. render
-
-
-
-		// 2.1 shadowmap
-		shadow_shader->use();
-		glViewport(0, 0, Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT);
-
-
-		glm::mat4 model_to_clip_matrix = sl.getLightSpaceMatrix();
-
-		glUniformMatrix4fv(glGetUniformLocation(shadow_shader->getProgram(), "model_to_clip_matrix"), 1, GL_FALSE, glm::value_ptr(model_to_clip_matrix));
-
-		world->render(shadow_shader);
-
-		//shadowMap
-		laccbuff_shader->use();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gDepth);
-		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "depthBuffer"), 0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, gNormal);
-		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "normalAndSpecularBuffer"), 1);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, shadowMap);
-		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "shadowMap"), 1);
-
-		glUniformMatrix4fv(glGetUniformLocation(laccbuff_shader->getProgram(), "worldToLight"), 1, GL_FALSE, glm::value_ptr(model_to_clip_matrix));
-
-		// 2.2 blend light
 		glBindFramebuffer(GL_FRAMEBUFFER, lBuffer);
 		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		glEnable(GL_BLEND);
-		glDepthFunc(GL_GREATER);
-		glDepthMask(GL_FALSE);
-
-		glBlendEquationSeparate(GL_FUNC_ADD, GL_MIN);
-		glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
-
 		
+		for (int i = 0; i < lights.size(); i++) {
+			shared_ptr<SpotLight> sl = lights[i];
 
-		sl.render(sl.world, laccbuff_shader);
+			glBindFramebuffer(GL_FRAMEBUFFER, sBuffer);
+			glCullFace(GL_FRONT);
+			glClearDepthf(1.0f);
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+			// 2.1 shadowmap
+			shadow_shader->use();
+			glViewport(0, 0, Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT);
 
 
-		glDepthMask(GL_TRUE);
-		glDepthFunc(GL_LESS);
-		glDisable(GL_BLEND);
+			glm::mat4 model_to_clip_matrix = sl->getLightSpaceMatrix();
 
-		//} end foreach light
+			glUniformMatrix4fv(glGetUniformLocation(shadow_shader->getProgram(), "model_to_clip_matrix"), 1, GL_FALSE, glm::value_ptr(model_to_clip_matrix));
+
+			world->render(shadow_shader);
+
+			//shadowMap
+			laccbuff_shader->use();
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, gDepth);
+			glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "depthBuffer"), 0);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, gNormal);
+			glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "normalAndSpecularBuffer"), 1);
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, shadowMap);
+			glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "shadowMap"), 2);
+
+			glUniformMatrix4fv(glGetUniformLocation(laccbuff_shader->getProgram(), "worldToLight"), 1, GL_FALSE, glm::value_ptr(model_to_clip_matrix));
+
+			// 2.2 blend light
+			glBindFramebuffer(GL_FRAMEBUFFER, lBuffer);
+			glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			//glClear(GL_COLOR_BUFFER_BIT);
+			glEnable(GL_BLEND);
+			glDepthFunc(GL_GREATER);
+			glDepthMask(GL_FALSE);
+
+			glBlendEquationSeparate(GL_FUNC_ADD, GL_MIN);
+			glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
+
+
+
+			sl->render(lg.world * sl->world, laccbuff_shader);
+
+
+			glDepthMask(GL_TRUE);
+			glDepthFunc(GL_LESS);
+			glDisable(GL_BLEND);
+		}
+
 
 
 		glCullFace(GL_BACK);
@@ -287,6 +326,11 @@ void main_loop(GLFWwindow* window) {
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			//cerr << "GLerror: 0x" << hex << error << dec << endl;
 		}
+
+		//Update world!
+
+		lg.world = glm::translate(ident, glm::vec3(10*glm::sin(glfwGetTime()*0.1), 2 * glm::sin(glfwGetTime()*0.3)+ 2, 0));
+		lg.world = glm::rotate(lg.world,(float) glfwGetTime(), glm::vec3(lg.world[1]));
 	}
 }
 

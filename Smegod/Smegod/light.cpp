@@ -118,6 +118,8 @@ SpotLight::SpotLight(shared_ptr<ShaderGroup> shader)
 
 void SpotLight::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 {
+
+	combined_world = combined_transform;
 	auto program = shader->getProgram();
 	auto wIT = glm::transpose(glm::inverse(combined_transform)); //is this the correct way to calculate the inverse transpose?
 	world_location = glGetUniformLocation(shader->getProgram(), "world");
@@ -153,8 +155,8 @@ glm::mat4 SpotLight::getLightSpaceMatrix()
 {
 	//lightProjection * lightOffsetTransform.GetMatrixInverse() * lightTransform.GetMatrixInverse();
 
-	glm::mat4 lightProjection = glm::perspective(45.0f, 1.0f, 0.1f, 100.0f);
-	glm::mat4 lightView = glm::inverse(world);
+	glm::mat4 lightProjection = glm::perspective(45.f, (float) Globals::SHADOW_WIDTH / (float) Globals::SHADOW_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 lightView = glm::inverse(combined_world);
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 	return lightSpaceMatrix;
 }

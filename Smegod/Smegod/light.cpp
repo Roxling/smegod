@@ -153,7 +153,7 @@ glm::mat4 SpotLight::getLightSpaceMatrix()
 {
 	//lightProjection * lightOffsetTransform.GetMatrixInverse() * lightTransform.GetMatrixInverse();
 
-	glm::mat4 lightProjection = glm::perspective(45.0f, 1.0f, 0.1f, 10.0f);
+	glm::mat4 lightProjection = glm::perspective(45.0f, 1.0f, 0.1f, 100.0f);
 	glm::mat4 lightView = glm::inverse(world);
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 	return lightSpaceMatrix;

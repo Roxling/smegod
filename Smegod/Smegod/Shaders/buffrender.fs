@@ -5,6 +5,17 @@ out vec4 color;
 uniform sampler2D buff;
 uniform vec3 mask;
 
+
+
+float near = 0.1; 
+float far  = 5.0; 
+  
+float LinearizeDepth(float depth) 
+{
+    float z = depth * 2.0 - 1.0; // Back to NDC 
+    return (2.0 * near * far) / (far + near - z * (far - near));	
+}
+
 void main()
 {
     vec4 text = texture(buff, tex_coord);
@@ -15,8 +26,8 @@ void main()
          ncolor.rgb = vec3(text.a);
     }
     if(mask.y == 1){
-        float depth = text.r;
-        ncolor.rgb = vec3(depth);
+		float linearDepth = LinearizeDepth(text.r);
+        ncolor.rgb = vec3(linearDepth);
     }
     color = ncolor;
     color.a = 1;

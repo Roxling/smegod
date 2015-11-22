@@ -46,6 +46,7 @@ void main_loop(GLFWwindow* window) {
 
 	shared_ptr<ShaderGroup> buff_shader = make_shared<ShaderGroup>("buffrender.vs", "buffrender.fs");
 	shared_ptr<ShaderGroup> gbuffer_shader = make_shared<ShaderGroup>("gbuffer.vs", "gbuffer.fs");
+	shared_ptr<ShaderGroup> shadow_shader = make_shared<ShaderGroup>("shadowmap.vs", "shadowmap.fs");
 	shared_ptr<ShaderGroup> laccbuff_shader = make_shared<ShaderGroup>("laccbuffer.vs", "laccbuffer.fs");
 	shared_ptr<ShaderGroup> resolve_shader = make_shared<ShaderGroup>("resolve.vs", "resolve.fs");
 
@@ -100,6 +101,15 @@ void main_loop(GLFWwindow* window) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, accLight, 0);
 
+	// - Depth buffer
+	GLuint shadowMap;
+	glGenTextures(1, &shadowMap);
+	glBindTexture(GL_TEXTURE_2D, shadowMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMap, 0);
+
 	// - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
 	GLuint attachments[1] = { GL_COLOR_ATTACHMENT0 };
 	glDrawBuffers(1, attachments);
@@ -113,7 +123,7 @@ void main_loop(GLFWwindow* window) {
 
 
 	SpotLight sl(laccbuff_shader);
-	sl.translate(0, .1, 0);
+	sl.translate(0, .1f, 0);
 
 	shared_ptr<Geometry> output = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, -1, 2, 2));
 
@@ -124,11 +134,13 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<Geometry> q3 = make_shared<Geometry>(ParametricShapes::createNDCQuad(-.2f, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> q4 = make_shared<Geometry>(ParametricShapes::createNDCQuad(.2f, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> q5 = make_shared<Geometry>(ParametricShapes::createNDCQuad(.6f, -1, 0.4f, 0.4f));
+	shared_ptr<Geometry> q6 = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, 0.6f, 0.4f, 0.4f));
 	q1->bindTexture("buff", gDiffuse);
 	q2->bindTexture("buff", gNormal);
 	q3->bindTexture("buff", gNormal);
 	q4->bindTexture("buff", gDepth);
 	q5->bindTexture("buff", accLight);
+	q6->bindTexture("buff", shadowMap);
 
 
 	glm::mat4 ident;
@@ -169,8 +181,8 @@ void main_loop(GLFWwindow* window) {
 		//
 		glBindFramebuffer(GL_FRAMEBUFFER, lBuffer);
 		glCullFace(GL_FRONT);
-		glClearDepthf(0.0f);
-		glClearColor(.05f, .05f, .05f, 1.0f);
+		glClearDepthf(1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		laccbuff_shader->use();
@@ -185,11 +197,23 @@ void main_loop(GLFWwindow* window) {
 
 
 		// 2.1 shadowmap
+		shadow_shader->use();
+		glViewport(0, 0, Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT);
 
 
+		glm::mat4 model_to_clip_matrix = sl.getLightSpaceMatrix();
 
+		glUniformMatrix4fv(glGetUniformLocation(shadow_shader->getProgram(), "model_to_clip_matrix"), 1, GL_FALSE, glm::value_ptr(model_to_clip_matrix));
+
+		world->render(shadow_shader);
+
+		//sadowMap
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, shadowMap);
+		glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "shadowMap"), 1);
 
 		// 2.2 blend light
+		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 		glEnable(GL_BLEND);
 		glDepthFunc(GL_GREATER);
 		glDepthMask(GL_FALSE);
@@ -245,6 +269,8 @@ void main_loop(GLFWwindow* window) {
 		q4->render(ident, buff_shader);
 		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(1.f, 0, 0)));
 		q5->render(ident, buff_shader);
+		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(0, 1, 0)));
+		q6->render(ident, buff_shader);
 
 
 		glfwSwapBuffers(window);

@@ -10,7 +10,8 @@ using namespace std;
 
 class Globals {
 public:
-	static const GLuint WIDTH = 1280, HEIGHT = 720;
+	static const GLsizei WIDTH = 1280, HEIGHT = 720;
+	static const GLsizei SHADOW_WIDTH = 512, SHADOW_HEIGHT = 512;
 
 	static bool DRAW_FPS;
 

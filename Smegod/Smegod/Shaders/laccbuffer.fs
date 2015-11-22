@@ -23,6 +23,16 @@ uniform vec2 shadow_texelsize;
 
 layout (location = 0) out vec4 light_contribution;
 
+#define saturate(a) clamp( a, 0.0, 1.0 )
+#define whiteCompliment(a) ( 1.0 - saturate( a ) )
+
+float calcLightAttenuation( float lightDistance, float cutoffDistance, float decayExponent ) {
+	if ( decayExponent > 0.0 ) {
+	  return pow( saturate( -lightDistance / cutoffDistance + 1.0 ), decayExponent );
+	}
+	return 1.0;
+}
+
 void main()
 {
     mat4 ViewProjection =  projection * view;

@@ -107,6 +107,12 @@
     <ClInclude Include="models.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GLWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\light.fs">

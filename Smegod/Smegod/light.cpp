@@ -72,7 +72,7 @@ static GLuint loadCone(GLuint& vboId, GLsizei& verticesNb, shared_ptr<ShaderGrou
 	};
 
 	GLuint vaoId = 0u;
-	GLint loc = glGetAttribLocation(shader->getProgram(), "Vertex");
+	GLint loc = glGetAttribLocation(shader->getGlId(), "Vertex");
 	glGenVertexArrays(1, &vaoId);
 	glBindVertexArray(vaoId);
 	{
@@ -101,7 +101,7 @@ void Light::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 {
 	GLuint light_pos;//for vs
 	for (auto it = shader_groups.begin(); it != shader_groups.end(); ++it) {
-		auto program = (*it)->getProgram();
+		auto program = (*it)->getGlId();
 		(*it)->use();
 
 		light_pos = glGetUniformLocation(program, "light_pos");
@@ -120,33 +120,17 @@ void SpotLight::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> sha
 {
 
 	combined_world = combined_transform;
-	auto program = shader->getProgram();
 	auto wIT = glm::transpose(glm::inverse(combined_transform)); //is this the correct way to calculate the inverse transpose?
-	world_location = glGetUniformLocation(shader->getProgram(), "world");
-	worldIT_location = glGetUniformLocation(shader->getProgram(), "worldIT");
-	glUniformMatrix4fv(world_location, 1, GL_FALSE, glm::value_ptr(combined_transform));
-	glUniformMatrix4fv(worldIT_location, 1, GL_FALSE, glm::value_ptr(wIT));
 
-	GLint color = glGetUniformLocation(shader->getProgram(), "light_color");
-	glUniform3fv(color, 1, glm::value_ptr(LightColor));
-
-	GLint intensity = glGetUniformLocation(shader->getProgram(), "light_intensity");
-	glUniform1fv(intensity, 1, (const float *)&LightIntensity);
-
-	GLint falloff = glGetUniformLocation(shader->getProgram(), "light_anglefalloff");
-	glUniform1fv(falloff, 1, (const float *)&LightAngleFalloff);
-
-	GLint texel = glGetUniformLocation(shader->getProgram(), "shadow_texelsize");
-	glUniform2fv(texel, 1, glm::value_ptr(ShadowMapTexelSize));
-
-	GLint position = glGetUniformLocation(shader->getProgram(), "light_pos");
-	glUniform3fv(position, 1, glm::value_ptr(combined_transform[3]));
-
-	GLint dir = glGetUniformLocation(shader->getProgram(), "light_dir");
-	glUniform3fv(dir, 1, glm::value_ptr(combined_transform[2]));
-
-	GLint inv = glGetUniformLocation(shader->getProgram(), "invRes");
-	glUniform2fv(inv, 1, glm::value_ptr(invRes));
+	shader->setUniform("world", combined_transform);
+	shader->setUniform("worldIT", wIT);
+	shader->setUniform("light_color", LightColor);
+	shader->setUniform("light_intensity", LightIntensity);
+	shader->setUniform("light_anglefalloff", LightAngleFalloff);
+	shader->setUniform("shadow_texelsize", ShadowMapTexelSize);
+	shader->setUniform("light_pos", glm::vec3(combined_transform[3]));
+	shader->setUniform("light_dir", glm::vec3(combined_transform[2]));
+	shader->setUniform("invRes", invRes);
 
 	renderSelf();
 }

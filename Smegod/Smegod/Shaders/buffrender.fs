@@ -6,7 +6,6 @@ uniform sampler2D buff;
 uniform vec3 mask;
 
 
-
 float near = 0.1; 
 float far  = 5.0; 
   

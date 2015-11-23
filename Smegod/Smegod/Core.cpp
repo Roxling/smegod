@@ -17,6 +17,37 @@ double time_delta = 0;
 double sum = 0;
 int fps = 0;
 
+
+static bool gl_is_broken = false;
+static int error_line = -1;
+bool check_errors(const string file, const string function, int line) {
+	GLenum result;
+	result = glGetError();
+
+	if (result) {
+		if (error_line != line) {
+			gl_is_broken = true;
+			error_line = line;
+			string err;
+			switch (result) {
+			case GL_INVALID_ENUM: err = "Invalid enum"; break;
+			case GL_INVALID_VALUE: err = "Invalid value"; break;
+			case GL_INVALID_OPERATION: err = "Invalid operation"; break;
+			case GL_STACK_OVERFLOW: err = "Stack overflow"; break;
+			case GL_STACK_UNDERFLOW: err = "Stack undeflow"; break;
+			case GL_OUT_OF_MEMORY: err = "Out of memory"; break;
+			default: err = ""; break;
+			}
+			cout << "GL error caught with error code 0x" << hex << result << dec << ": " << err << ". " << file << ":" << function << "(" << line << ")" << endl;
+		}
+		return false;
+	}
+	else {
+		error_line = -1;
+	}
+	return true;
+}
+
 static void update_delta() {
 	time_delta = time_end - time_start;
 	time_start = time_end;
@@ -54,6 +85,8 @@ void main_loop(GLFWwindow* window) {
 	GLuint gBuffer;
 	glGenFramebuffers(1, &gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+
+
 	GLuint gDiffuse, gNormal, gDepth;
 
 	// - Diffuse buffer
@@ -114,8 +147,6 @@ void main_loop(GLFWwindow* window) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	GLfloat c[4] = { 1.f, 1.f,1.f, 1.f };
@@ -233,8 +264,7 @@ void main_loop(GLFWwindow* window) {
 
 
 			glm::mat4 model_to_clip_matrix = sl->getLightSpaceMatrix();
-
-			glUniformMatrix4fv(glGetUniformLocation(shadow_shader->getProgram(), "model_to_clip_matrix"), 1, GL_FALSE, glm::value_ptr(model_to_clip_matrix));
+			shadow_shader->setUniform("model_to_clip_matrix", model_to_clip_matrix);
 
 			world->render(shadow_shader);
 
@@ -242,15 +272,15 @@ void main_loop(GLFWwindow* window) {
 			laccbuff_shader->use();
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, gDepth);
-			glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "depthBuffer"), 0);
+			glUniform1i(glGetUniformLocation(laccbuff_shader->getGlId(), "depthBuffer"), 0);
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, gNormal);
-			glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "normalAndSpecularBuffer"), 1);
+			glUniform1i(glGetUniformLocation(laccbuff_shader->getGlId(), "normalAndSpecularBuffer"), 1);
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, shadowMap);
-			glUniform1i(glGetUniformLocation(laccbuff_shader->getProgram(), "shadowMap"), 2);
+			glUniform1i(glGetUniformLocation(laccbuff_shader->getGlId(), "shadowMap"), 2);
 
-			glUniformMatrix4fv(glGetUniformLocation(laccbuff_shader->getProgram(), "worldToLight"), 1, GL_FALSE, glm::value_ptr(model_to_clip_matrix));
+			laccbuff_shader->setUniform("worldToLight", model_to_clip_matrix);
 
 			// 2.2 blend light
 			glBindFramebuffer(GL_FRAMEBUFFER, lBuffer);
@@ -292,10 +322,10 @@ void main_loop(GLFWwindow* window) {
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, gDiffuse);
-		glUniform1i(glGetUniformLocation(resolve_shader->getProgram(), "diffuse_buffer"), 0);
+		glUniform1i(glGetUniformLocation(resolve_shader->getGlId(), "diffuse_buffer"), 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, accLight);
-		glUniform1i(glGetUniformLocation(resolve_shader->getProgram(), "light_buffer"), 1);
+		glUniform1i(glGetUniformLocation(resolve_shader->getGlId(), "light_buffer"), 1);
 
 		output->render(ident, resolve_shader);
 		glDepthMask(GL_TRUE);
@@ -303,20 +333,25 @@ void main_loop(GLFWwindow* window) {
 
 		//Draw debug window
 		buff_shader->use();
-		GLuint maskpos = glGetUniformLocation(buff_shader->getProgram(), "mask");
-		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(1.f, 0, 0)));
-		textures->render(ident, buff_shader);
-		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(1.f, 0, 0)));
-		normals->render(ident, buff_shader);
-		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
-		speculars->render(ident, buff_shader);
-		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(0, 1, 0)));
-		depth->render(ident, buff_shader);
-		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(1.f, 0, 0)));
-		accumulatedlight->render(ident, buff_shader);
-		glUniform3fv(maskpos, 1, glm::value_ptr(glm::vec3(0, 1, 0)));
-		shadowmap->render(ident, buff_shader);
 
+
+		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+		textures->render(ident, buff_shader);
+		
+		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+		normals->render(ident, buff_shader);
+		
+		buff_shader->setUniform("mask", glm::vec3(0, 0, 0));
+		speculars->render(ident, buff_shader);
+		
+		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
+		depth->render(ident, buff_shader);
+
+		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+		accumulatedlight->render(ident, buff_shader);
+
+		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
+		shadowmap->render(ident, buff_shader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

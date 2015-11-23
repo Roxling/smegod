@@ -22,5 +22,5 @@ void main()
 	worldspace_binormal = normalize((worldIT * vec4(binormal, 0.0)).xyz);
     pass_texcoords = texture_coord.xy;
 
-    gl_Position = projection * view * world * vec4(position, 1.0f);
+    gl_Position = projection * view * world * vec4(position, 1.0);
 }

@@ -34,8 +34,8 @@ void Node::render(glm::mat4 combined_transforms, shared_ptr<ShaderGroup> shader)
 void WorldObject::renderSelf(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 {
 	if (shader != nullptr) {
-		world_location = glGetUniformLocation(shader->getProgram(), "world");
-		worldIT_location = glGetUniformLocation(shader->getProgram(), "worldIT");
+		world_location = glGetUniformLocation(shader->getGlId(), "world");
+		worldIT_location = glGetUniformLocation(shader->getGlId(), "worldIT");
 	}
 	render(combined_transform, shader);
 }

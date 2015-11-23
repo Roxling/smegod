@@ -148,9 +148,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="core.h" />
     <ClInclude Include="cubemap.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="geometries.h" />
+    <ClInclude Include="GLWrapper.h" />
     <ClInclude Include="gl_dep.h" />
     <ClInclude Include="input_handling.h" />
     <ClInclude Include="light.h" />

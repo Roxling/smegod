@@ -100,8 +100,6 @@ Texture::Texture(string file, bool use_defaultfolder)
 	this->format = GL_RGBA;
 	this->precision = GL_UNSIGNED_BYTE;
 
-	cout << "Loading " << (file).c_str() << " size " << width << "x" << height << endl;
-
 	create(image);
 
 	glBindTexture(layout, glId);

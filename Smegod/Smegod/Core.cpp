@@ -152,7 +152,6 @@ void main_loop(GLFWwindow* window) {
 	accumulatedlight->bindTexture("buff", gAccLight.getGlId());
 	shadowmap->bindTexture("buff", shadowMap.getGlId());
 
-
 	glm::mat4 ident;
 
 	world->initiate();
@@ -295,8 +294,8 @@ void main_loop(GLFWwindow* window) {
 
 		//Update world!
 
-		lg.world = glm::translate(ident, glm::vec3(10*glm::sin(glfwGetTime()*0.1), 2 * glm::sin(glfwGetTime()*0.3)+ 2, 0));
-		lg.world = glm::rotate(lg.world,(float) glfwGetTime(), glm::vec3(lg.world[1]));
+		//lg.world = glm::translate(ident, glm::vec3(10*glm::sin(glfwGetTime()*0.1), 2 * glm::sin(glfwGetTime()*0.3)+ 2, 0));
+		lg.world = glm::rotate(ident,(float) glfwGetTime(), glm::vec3(lg.world[1]));
 	}
 }
 

@@ -100,6 +100,8 @@ Texture::Texture(string file, bool use_defaultfolder)
 	this->format = GL_RGBA;
 	this->precision = GL_UNSIGNED_BYTE;
 
+	//cout << "Loading " << (file).c_str() << " size " << width << "x" << height << endl;
+
 	create(image);
 
 	glBindTexture(layout, glId);
@@ -217,6 +219,7 @@ FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttac
 	glBindFramebuffer(GL_FRAMEBUFFER, glId);
 	GL_CHECK_ERRORS();
 
+		vector<GLenum> attachments;
 	if (colorAttachments) {
 		unsigned int i = 0;
 		for (auto it = colorAttachments->begin(); it != colorAttachments->end(); ++it, i++) {
@@ -226,7 +229,10 @@ FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttac
 			if (result != GL_FRAMEBUFFER_COMPLETE) {
 				cout << "Failed to create frame buffer object" << endl;
 			}
+			attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
+
+		
 	}
 	if (depthAttachment) {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, (GLenum)depthAttachment->getLayout(), depthAttachment->getGlId(), 0);
@@ -252,7 +258,10 @@ FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttac
 			cout << "Failed to create frame buffer object" << endl;
 		}
 	}
-
+	GLsizei size =(GLsizei) attachments.size();
+	if (size > 0) {
+		glDrawBuffers(attachments.size(), attachments.data());
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	GL_CHECK_ERRORS();
 }

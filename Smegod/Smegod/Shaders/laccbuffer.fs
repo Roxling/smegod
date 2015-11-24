@@ -52,17 +52,7 @@ void main()
     float shadowdepth = texture(shadowMap, pixel_in_light.xy*0.5 +0.5).r * 2 - 1;
     //float shadowdepth = texture(shadowMap, pixel_in_light.xyz);
 
-
-    float shadow = 0.0;
-    for(int x = -1; x <= 1; ++x)
-    {
-        for(int y = -1; y <= 1; ++y)
-        {
-            float pcfDepth = texture(shadowMap, pixel_in_light.xy*0.5 +0.5 + vec2(x, y) * shadow_texelsize).r * 2 - 1; 
-            shadow += pixel_in_light.z < pcfDepth ? 1.0 : 0.0;        
-        }    
-    }
-    shadow /= 9.0;
+    
 
    // float shadow = 0;
     //if(shadowdepth > pixel_in_light.z)
@@ -88,6 +78,19 @@ void main()
     vec3 V = normalize(camera_pos - pixel_world.xyz);
     vec3 R = normalize(reflect(-L,N));
 
+
+    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+    bias = 0;
+    float shadow = 0.0;
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(shadowMap, pixel_in_light.xy*0.5 +0.5 + vec2(x, y) * shadow_texelsize).r * 2 - 1; 
+            shadow +=(pixel_in_light.z - bias) < pcfDepth ? 1.0 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
 
     float rad = acos(dot(L, normalize(light_dir)));
     if(rad > light_anglefalloff)

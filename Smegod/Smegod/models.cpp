@@ -172,7 +172,6 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		if (material->GetTexture(aiTextureType_HEIGHT, 0, &str) == AI_SUCCESS) {
 			Texture bump(path + str.C_Str(), false);
 			id = bump.getGlId();
-			cout << id << endl;
 		}
 		else {
 			id = Texture::getDefaults()->bump;

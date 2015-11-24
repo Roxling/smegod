@@ -12,7 +12,7 @@ void main()
 		discard;
 
     vec3 light   = texelFetch(light_buffer  , ivec2(gl_FragCoord.xy), 0).rgb;
-    const vec3 ambient = vec3(0.2);
+    const vec3 ambient = vec3(0.1);
 
 	frag_color = vec4((light + ambient) * diffuse.rgb, 1.0);
 }

@@ -206,12 +206,17 @@ void ShaderGroup::bindMaterial(shared_ptr<Material> material)
 bool ShaderGroup::bindTexture(const string & name, const unsigned int slot, Texture & t)
 {
 	GL_CHECK_SHADER_BOUND(glId);
+	auto match = uniformLocs.find(name);
+	if (match == uniformLocs.end()) {
+		cout << "Sampler " << name << " not found in shader " << vshader->file << endl; \
+		return false;
+	}
+	match->second.isSet = true;
 	glActiveTexture(GL_TEXTURE0 + slot);
+	glBindTexture(t.getLayout(), t.getGlId());
+	glUniform1i(match->second.loc, slot);
 	GL_CHECK_ERRORS();
-	glBindTexture(GL_TEXTURE_2D, t.texture_id);
-	GL_CHECK_ERRORS();
-	glUniform1i(glGetUniformLocation(glId, name.c_str()), slot);
-	GL_CHECK_ERRORS();
+
 	return true;
 }
 

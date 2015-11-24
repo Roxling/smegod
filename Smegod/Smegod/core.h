@@ -1,10 +1,11 @@
 #pragma once
 
 #include "smegod_dep.h"
+#include <cassert>
 
 class GLResource {
 protected:
-	GLuint glId;
+	GLuint glId = 0;
 public:
 	GLuint getGlId() const { return glId; }
 };

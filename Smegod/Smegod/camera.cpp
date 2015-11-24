@@ -20,9 +20,6 @@ void Camera::translateLocal(float dx, float dy, float dz)
 void Camera::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 {
 	combined_world = combined_transform;
-	GLint projection_location;
-	GLint view_location;
-	GLuint camera_pos_location;
 
 	for (auto it = shader_groups.begin(); it != shader_groups.end(); ++it) {
 		auto program = *it;

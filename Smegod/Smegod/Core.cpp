@@ -82,83 +82,25 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<ShaderGroup> resolve_shader = make_shared<ShaderGroup>("resolve.vs", "resolve.fs");
 
 
-	GLuint gBuffer;
-	glGenFramebuffers(1, &gBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+	// Setup g-buffer
+	RenderTexture gDiffuse(Globals::WIDTH, Globals::HEIGHT); // - Diffuse buffer
+	RenderTexture gNormal(Globals::WIDTH, Globals::HEIGHT);  // - NormalSpecular buffer
+	DepthTexture gDepth(Globals::WIDTH, Globals::HEIGHT); // - Depth buffer
+
+	vector<Texture *> gAttachments = { &gDiffuse, &gNormal };
+	FrameBuffer gBuffer(&gAttachments, &gDepth);
 
 
-	GLuint gDiffuse, gNormal, gDepth;
+	// Setup light buffer
+	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT);
 
-	// - Diffuse buffer
-	glGenTextures(1, &gDiffuse);
-	glBindTexture(GL_TEXTURE_2D, gDiffuse);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Globals::WIDTH, Globals::HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gDiffuse, 0);
-
-	// - NormalSpecular buffer
-	glGenTextures(1, &gNormal);
-	glBindTexture(GL_TEXTURE_2D, gNormal);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Globals::WIDTH, Globals::HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
-	
-
-	// - Depth buffer
-	glGenTextures(1, &gDepth);
-	glBindTexture(GL_TEXTURE_2D, gDepth);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, Globals::WIDTH, Globals::HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gDepth, 0);
-
-	// - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
-	GLuint gattachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, gattachments);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	vector<Texture *> lAttachments = { &gAccLight };
+	FrameBuffer lBuffer(&lAttachments, &gDepth);
 
 
-	GLuint lBuffer;
-	glGenFramebuffers(1, &lBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, lBuffer);
-	
-	GLuint accLight;
-	// - Accumulative light buffer
-	glGenTextures(1, &accLight);
-	glBindTexture(GL_TEXTURE_2D, accLight);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Globals::WIDTH, Globals::HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, accLight, 0);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gDepth, 0);
-
-
-	GLuint sBuffer;
-	glGenFramebuffers(1, &sBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, sBuffer);
-	// - Depth buffer
-	GLuint shadowMap;
-	glGenTextures(1, &shadowMap);
-	glBindTexture(GL_TEXTURE_2D, shadowMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	GLfloat c[4] = { 1.f, 1.f,1.f, 1.f };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, c);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMap, 0);
-	// - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
-
-	// - Finally check if framebuffer is complete
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "Framebuffer not complete!" << std::endl;
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// Setup shadow buffer
+	DepthTexture shadowMap(Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT);
+	FrameBuffer sBuffer(nullptr, &shadowMap);
 
 
 	vector<shared_ptr<SpotLight>> lights;
@@ -203,12 +145,12 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<Geometry> depth = make_shared<Geometry>(ParametricShapes::createNDCQuad(.2f, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> accumulatedlight = make_shared<Geometry>(ParametricShapes::createNDCQuad(.6f, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> shadowmap = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, 0.6f, 0.4f, 0.4f));
-	textures->bindTexture("buff", gDiffuse);
-	normals->bindTexture("buff", gNormal);
-	speculars->bindTexture("buff", gNormal);
-	depth->bindTexture("buff", gDepth);
-	accumulatedlight->bindTexture("buff", accLight);
-	shadowmap->bindTexture("buff", shadowMap);
+	textures->bindTexture("buff", gDiffuse.getGlId());
+	normals->bindTexture("buff", gNormal.getGlId());
+	speculars->bindTexture("buff", gNormal.getGlId());
+	depth->bindTexture("buff", gDepth.getGlId());
+	accumulatedlight->bindTexture("buff", gAccLight.getGlId());
+	shadowmap->bindTexture("buff", shadowMap.getGlId());
 
 
 	glm::mat4 ident;
@@ -226,7 +168,7 @@ void main_loop(GLFWwindow* window) {
 
 		glDepthFunc(GL_LESS);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+		gBuffer.activate();
 		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 		glClearDepthf(1.0f);
 		glClearColor(0, 0, 0, 1.0f);
@@ -243,8 +185,7 @@ void main_loop(GLFWwindow* window) {
 		//
 		// PASS 2: Generate shadowmaps and accumulate lights' contribution
 		//
-		
-		glBindFramebuffer(GL_FRAMEBUFFER, lBuffer);
+		lBuffer.activate();
 		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -252,7 +193,7 @@ void main_loop(GLFWwindow* window) {
 		for (int i = 0; i < lights.size(); i++) {
 			shared_ptr<SpotLight> sl = lights[i];
 
-			glBindFramebuffer(GL_FRAMEBUFFER, sBuffer);
+			sBuffer.activate();
 			glCullFace(GL_FRONT);
 			glClearDepthf(1.0f);
 			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -268,22 +209,16 @@ void main_loop(GLFWwindow* window) {
 
 			world->render(shadow_shader);
 
-			//shadowMap
+
 			laccbuff_shader->use();
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, gDepth);
-			glUniform1i(glGetUniformLocation(laccbuff_shader->getGlId(), "depthBuffer"), 0);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, gNormal);
-			glUniform1i(glGetUniformLocation(laccbuff_shader->getGlId(), "normalAndSpecularBuffer"), 1);
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, shadowMap);
-			glUniform1i(glGetUniformLocation(laccbuff_shader->getGlId(), "shadowMap"), 2);
+			laccbuff_shader->bindTexture("depthBuffer", 0, gDepth);
+			laccbuff_shader->bindTexture("normalAndSpecularBuffer", 1, gNormal);
+			laccbuff_shader->bindTexture("shadowMap", 2, shadowMap);
 
 			laccbuff_shader->setUniform("worldToLight", model_to_clip_matrix);
 
 			// 2.2 blend light
-			glBindFramebuffer(GL_FRAMEBUFFER, lBuffer);
+			lBuffer.activate();
 			glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			//glClear(GL_COLOR_BUFFER_BIT);
@@ -317,17 +252,13 @@ void main_loop(GLFWwindow* window) {
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		
 		glDepthMask(GL_FALSE);
+
 		resolve_shader->use();
-
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gDiffuse);
-		glUniform1i(glGetUniformLocation(resolve_shader->getGlId(), "diffuse_buffer"), 0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, accLight);
-		glUniform1i(glGetUniformLocation(resolve_shader->getGlId(), "light_buffer"), 1);
+		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);
+		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
 
 		output->render(ident, resolve_shader);
+
 		glDepthMask(GL_TRUE);
 
 

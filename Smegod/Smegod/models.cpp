@@ -162,7 +162,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		GLuint id;
 		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &str) == AI_SUCCESS) {
 			Texture text(path + str.C_Str(), false);
-			id = text.texture_id;
+			id = text.getGlId();
 		}
 		else {
 			id = Texture::getDefaults()->texture;
@@ -171,7 +171,8 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 
 		if (material->GetTexture(aiTextureType_HEIGHT, 0, &str) == AI_SUCCESS) {
 			Texture bump(path + str.C_Str(), false);
-			id = bump.texture_id;
+			id = bump.getGlId();
+			cout << id << endl;
 		}
 		else {
 			id = Texture::getDefaults()->bump;
@@ -180,7 +181,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		
 		if (material->GetTexture(aiTextureType_SPECULAR, 0, &str) == AI_SUCCESS) {
 			Texture spec(path + str.C_Str(), false);
-			id = spec.texture_id;
+			id = spec.getGlId();
 		}
 		else {
 			id = 0; //TODO load default specmap.

@@ -83,8 +83,8 @@ void main_loop(GLFWwindow* window) {
 
 
 	// Setup g-buffer
-	RenderTexture gDiffuse(Globals::WIDTH, Globals::HEIGHT); // - Diffuse buffer
-	RenderTexture gNormal(Globals::WIDTH, Globals::HEIGHT);  // - NormalSpecular buffer
+	RenderTexture gDiffuse(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE); // - Diffuse buffer
+	RenderTexture gNormal(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);  // - NormalSpecular buffer
 	DepthTexture gDepth(Globals::WIDTH, Globals::HEIGHT); // - Depth buffer
 
 	vector<Texture *> gAttachments = { &gDiffuse, &gNormal };
@@ -92,7 +92,7 @@ void main_loop(GLFWwindow* window) {
 
 
 	// Setup light buffer
-	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT);
+	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
 
 	vector<Texture *> lAttachments = { &gAccLight };
 	FrameBuffer lBuffer(&lAttachments, &gDepth);

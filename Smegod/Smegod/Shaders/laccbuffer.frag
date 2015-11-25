@@ -97,7 +97,7 @@ void main()
     float radialFalloff = 1 - rad/light_anglefalloff;
 	float distfalloff = 1 / (length * length);
 
-	float intensityscale = 10000;
+	float intensityscale = 1000;
 
 	vec3 color = light_color * radialFalloff * distfalloff * (light_intensity / intensityscale);
    

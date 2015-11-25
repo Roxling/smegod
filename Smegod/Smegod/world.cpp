@@ -47,8 +47,6 @@ void SponzaWorld::initiate()
 	bridge->attach(p3);
 
 
-	auto surf = make_shared<Geometry>(ParametricShapes::createInfSurface(500, 500, 500));
-	head->attach(surf);
 
 	bridge->world = glm::scale(bridge->world, glm::vec3(3, 3, 3));
 	head->attach(bridge);

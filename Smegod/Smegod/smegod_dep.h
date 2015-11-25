@@ -11,7 +11,7 @@ using namespace std;
 class Globals {
 public:
 	static const GLsizei WIDTH = 1280, HEIGHT = 720;
-	static const GLsizei SHADOW_WIDTH = 1280, SHADOW_HEIGHT = 720;
+	static const GLsizei SHADOW_WIDTH = 720, SHADOW_HEIGHT = 480;
 
 	static bool DRAW_FPS;
 

@@ -109,21 +109,21 @@ void main_loop(GLFWwindow* window) {
 
 
 	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(laccbuff_shader);
-	sl1->translate(0, .1f, 0);
+	sl1->translate(0, .3f, 0);
 	sl1->LightColor = { 1.f, 0.5f, 0.5f };
 
 	shared_ptr<SpotLight> sl2 = make_shared<SpotLight>(laccbuff_shader);
-	sl2->translate(0, .1f, 0);
+	sl2->translate(0, .3f, 0);
 	sl2->world = glm::rotate(sl2->world, glm::pi<float>(), glm::vec3(sl2->world[1]));
 	sl2->LightColor = { .5f, 1.f, 0.5f };
 
 	shared_ptr<SpotLight> sl3 = make_shared<SpotLight>(laccbuff_shader);
-	sl3->translate(0, .1f, 0);
+	sl3->translate(0, .3f, 0);
 	sl3->world = glm::rotate(sl3->world, glm::half_pi<float>(), glm::vec3(sl3->world[1]));
 	sl3->LightColor = { .5f, 0.5f, 1.f };
 
 	shared_ptr<SpotLight> sl4 = make_shared<SpotLight>(laccbuff_shader);
-	sl4->translate(0, .1f, 0);
+	sl4->translate(0, .3f, 0);
 	sl4->world = glm::rotate(sl4->world, -glm::half_pi<float>(), glm::vec3(sl4->world[1]));
 	sl4->LightColor = { 1.f, 0.5f, 1.f };
 

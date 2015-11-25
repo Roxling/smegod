@@ -219,7 +219,7 @@ FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttac
 	glBindFramebuffer(GL_FRAMEBUFFER, glId);
 	GL_CHECK_ERRORS();
 
-		vector<GLenum> attachments;
+	vector<GLenum> attachments;
 	if (colorAttachments) {
 		unsigned int i = 0;
 		for (auto it = colorAttachments->begin(); it != colorAttachments->end(); ++it, i++) {
@@ -227,7 +227,7 @@ FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttac
 			GL_CHECK_ERRORS();
 			GLint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 			if (result != GL_FRAMEBUFFER_COMPLETE) {
-				cout << "Failed to create frame buffer object" << endl;
+				cout << "Failed to create frame buffer object: Color attachment #" << i << endl;
 			}
 			attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
@@ -239,7 +239,7 @@ FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttac
 		GL_CHECK_ERRORS();
 		GLint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (result != GL_FRAMEBUFFER_COMPLETE) {
-			cout << "Failed to create frame buffer object" << endl;
+			cout << "Failed to create frame buffer object: Depth attachment" << endl;
 		}
 	}
 	if (stencilAttachment) {
@@ -247,7 +247,7 @@ FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttac
 		GL_CHECK_ERRORS();
 		GLint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (result != GL_FRAMEBUFFER_COMPLETE) {
-			cout << "Failed to create frame buffer object" << endl;
+			cout << "Failed to create frame buffer object: Stencil attachment" << endl;
 		}
 	}
 	if (depthStencilAttachment) {
@@ -255,7 +255,7 @@ FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttac
 		GL_CHECK_ERRORS();
 		GLint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (result != GL_FRAMEBUFFER_COMPLETE) {
-			cout << "Failed to create frame buffer object" << endl;
+			cout << "Failed to create frame buffer object: Depth stencil attachment" << endl;
 		}
 	}
 	GLsizei size =(GLsizei) attachments.size();

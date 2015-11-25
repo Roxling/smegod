@@ -13,6 +13,8 @@ public:
 	static const GLsizei WIDTH = 1280, HEIGHT = 720;
 	static const GLsizei SHADOW_WIDTH = 720, SHADOW_HEIGHT = 480;
 
+	static bool WIREFRAME;
+
 	static bool DRAW_FPS;
 
 	static void printVec4(glm::vec4 v) {

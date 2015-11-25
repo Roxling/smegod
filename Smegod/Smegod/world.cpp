@@ -36,9 +36,22 @@ void SponzaWorld::initiate()
 	//light->translate(0, 50, 0);
 	//head->attach(light);
 
-	auto sponza = make_shared<Geometry>(Model("bridge/bridge.obj"));
-	sponza->translate(0, -0.2, 0);
-	head->attach(sponza);
+	auto bridge = make_shared<Node>();
+	auto p1 = make_shared<Geometry>(Model("bridge/bridge.obj"));
+	auto p2 = make_shared<Geometry>(Model("bridge/bridge.obj"));
+	p2->translate(7.18, 0, 0);
+	auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
+	p3->translate(-7.18, 0, 0);
+	bridge->attach(p1);
+	bridge->attach(p2);
+	bridge->attach(p3);
+
+
+	auto surf = make_shared<Geometry>(ParametricShapes::createInfSurface(500, 500, 500));
+	head->attach(surf);
+
+	bridge->world = glm::scale(bridge->world, glm::vec3(3, 3, 3));
+	head->attach(bridge);
 }
 void SponzaWorld::update(double delta)
 {

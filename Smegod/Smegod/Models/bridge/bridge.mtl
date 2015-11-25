@@ -10,8 +10,8 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-map_Ka textures\bridge_color.dds
-map_Kd textures\bridge_color.dds
-map_Ks textures\bridge_spec.dds
-map_bump textures\bridge_normal.dds
-bump textures\bridge_normal.dds
+map_Ka textures\bridge_color.png
+map_Kd textures\bridge_color.png
+map_Ks textures\bridge_spec.png
+map_bump textures\bridge_bump.png
+bump textures\bridge_bump.png

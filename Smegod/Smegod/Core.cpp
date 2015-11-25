@@ -92,7 +92,7 @@ void main_loop(GLFWwindow* window) {
 
 
 	// Setup light buffer
-	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
 	vector<Texture *> lAttachments = { &gAccLight };
 	FrameBuffer lBuffer(&lAttachments, &gDepth);

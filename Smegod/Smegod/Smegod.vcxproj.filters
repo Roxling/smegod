@@ -115,73 +115,73 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\light.fs">
+    <None Include="Shaders\laccbuffer.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\light.vs">
+    <None Include="Shaders\laccbuffer.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\phong.fs">
+    <None Include="Shaders\gbuffer.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\phong.vs">
+    <None Include="Shaders\gbuffer.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\projection.vs">
+    <None Include="Shaders\buffrender.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\texture.fs">
+    <None Include="Shaders\buffrender.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\normal.fs">
+    <None Include="Shaders\cubemap.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\normal.vs">
+    <None Include="Shaders\cubemap.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\water.fs">
+    <None Include="Shaders\light.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\water.vs">
+    <None Include="Shaders\light.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\cubemap.fs">
+    <None Include="Shaders\normal.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\cubemap.vs">
+    <None Include="Shaders\normal.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\phongcol.fs">
+    <None Include="Shaders\phong.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\buffrender.fs">
+    <None Include="Shaders\phong.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\buffrender.vs">
+    <None Include="Shaders\projection.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\gbuffer.fs">
+    <None Include="Shaders\phongcol.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\gbuffer.vs">
+    <None Include="Shaders\resolve.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\laccbuffer.fs">
+    <None Include="Shaders\resolve.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\laccbuffer.vs">
+    <None Include="Shaders\shadowmap.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\resolve.fs">
+    <None Include="Shaders\shadowmap.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\resolve.vs">
+    <None Include="Shaders\texture.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\shadowmap.fs">
+    <None Include="Shaders\water.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\shadowmap.vs">
+    <None Include="Shaders\water.frag">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

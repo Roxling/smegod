@@ -77,8 +77,8 @@ public:
 
 class RenderTexture : public Texture {
 public:
-	RenderTexture(const unsigned int width, const unsigned int height) :
-		Texture(nullptr, width, height, 0/*depth*/, 0/*layers*/, 1 /*msaa*/, 0/*mipLevels*/, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE) {}
+	RenderTexture(const unsigned int width, const unsigned int height, GLenum internalFormat, GLenum format, GLenum precision) :
+		Texture(nullptr, width, height, 0/*depth*/, 0/*layers*/, 1 /*msaa*/, 0/*mipLevels*/, internalFormat, format, precision) {}
 };
 
 class FrameBuffer : public GLResource {

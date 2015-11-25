@@ -33,6 +33,7 @@ float calcLightAttenuation( float lightDistance, float cutoffDistance, float dec
 	return 1.0;
 }
 
+
 void main()
 {
     vec2 screen_coord = gl_FragCoord.xy * invRes; // [0,1]

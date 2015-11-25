@@ -184,5 +184,11 @@
     <None Include="Shaders\water.frag">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\bloom.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\bloom.vert">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

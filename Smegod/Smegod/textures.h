@@ -78,7 +78,18 @@ public:
 class RenderTexture : public Texture {
 public:
 	RenderTexture(const unsigned int width, const unsigned int height, GLenum format, GLenum internalFormat, GLenum precision) :
-		Texture(nullptr, width, height, 0/*depth*/, 0/*layers*/, 1 /*msaa*/, 0/*mipLevels*/, format, internalFormat, precision) {}
+		Texture(nullptr, width, height, 0/*depth*/, 0/*layers*/, 1 /*msaa*/, 0/*mipLevels*/, format, internalFormat, precision) {
+
+		glBindTexture(layout, glId);
+		GL_CHECK_ERRORS();
+
+		/* Texture options */
+		glTexParameteri(layout, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(layout, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		glBindTexture(layout, 0);
+		GL_CHECK_ERRORS();
+	}
 };
 
 class FrameBuffer : public GLResource {

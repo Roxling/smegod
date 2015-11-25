@@ -22,6 +22,7 @@ uniform float light_anglefalloff;
 uniform vec2 shadow_texelsize;
 
 layout (location = 0) out vec4 light_contribution;
+layout (location = 1) out vec4 bloom_filter;
 
 #define saturate(a) clamp( a, 0.0, 1.0 )
 #define whiteCompliment(a) ( 1.0 - saturate( a ) )
@@ -97,7 +98,7 @@ void main()
     float radialFalloff = 1 - rad/light_anglefalloff;
 	float distfalloff = 1 / (length * length);
 
-	float intensityscale = 1000;
+	float intensityscale = 10000;
 
 	vec3 color = light_color * radialFalloff * distfalloff * (light_intensity / intensityscale);
    
@@ -106,8 +107,12 @@ void main()
     if(NnS.a == 0)
         specular = vec3(0);
 
-    light_contribution.xyz = (diffuse + specular)*shadow;
-    light_contribution.w = 1;
+    vec3 full_color = (diffuse + specular)*shadow;
+    light_contribution = vec4(full_color, 1.0);
+
+    float brightness = dot(full_color, vec3(0.2126, 0.7152, 0.0722));
+    if(brightness > 1.0)
+        bloom_filter = vec4(full_color, 1.0);
 
     //TO REMOVE
     //light_contribution.xyz = normalize(pixel_in_light.xyz)*0.5 + 0.5;

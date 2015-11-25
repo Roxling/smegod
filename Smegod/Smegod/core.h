@@ -20,4 +20,3 @@ public:
 
 /* Ensures that GL hasn't generated any errors */
 bool check_errors(const string file, const string function, int line);
-

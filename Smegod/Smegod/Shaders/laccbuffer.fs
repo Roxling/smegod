@@ -64,8 +64,6 @@ void main()
     // PHONG
     //Composite light using phong shading, falloffs and LightIntensity and LightColor
 
-    
-
 
     float length = distance(light_pos, pixel_world.xyz);
   
@@ -76,8 +74,7 @@ void main()
     N = normalize(N);
     vec3 L = normalize(light_pos - pixel_world.xyz);
     vec3 V = normalize(camera_pos - pixel_world.xyz);
-    vec3 R = normalize(reflect(-L,N));
-
+    vec3 H = normalize(L + V);
 
     float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
     bias = 0;
@@ -97,14 +94,14 @@ void main()
         rad = light_anglefalloff;
 
     float radialFalloff = 1 - rad/light_anglefalloff;
-	float distfalloff = 1 / pow(length, 2);
+	float distfalloff = 1 / (length * length);
 
 	float intensityscale = 10000;
 
 	vec3 color = light_color * radialFalloff * distfalloff * (light_intensity / intensityscale);
    
     vec3 diffuse = color * max(dot(L,N),0.0);
-    vec3 specular = color * pow(max(dot(V,R),0.0), shininess);
+    vec3 specular = color * pow(max(dot(N,H),0.0), shininess);
     if(NnS.a == 0)
         specular = vec3(0);
 

@@ -36,8 +36,8 @@ void SponzaWorld::initiate()
 	//light->translate(0, 50, 0);
 	//head->attach(light);
 
-	auto sponza = make_shared<Geometry>(Model("sponza/sponza.obj"));
-	sponza->world = glm::scale(sponza->world, { 0.01, 0.01, 0.01 });
+	auto sponza = make_shared<Geometry>(Model("bridge/bridge.obj"));
+	sponza->translate(0, -0.2, 0);
 	head->attach(sponza);
 }
 void SponzaWorld::update(double delta)

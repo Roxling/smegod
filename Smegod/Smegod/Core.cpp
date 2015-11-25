@@ -82,19 +82,19 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<ShaderGroup> resolve_shader = make_shared<ShaderGroup>("resolve.vert", "resolve.frag");
 	shared_ptr<ShaderGroup> bloom_shader = make_shared<ShaderGroup>("bloom.vert", "bloom.frag");
 
+	RenderTexture gBloom(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
 	// Setup g-buffer
 	RenderTexture gDiffuse(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE); // - Diffuse buffer
 	RenderTexture gNormal(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);  // - NormalSpecular buffer
 	DepthTexture gDepth(Globals::WIDTH, Globals::HEIGHT); // - Depth buffer
 
-	vector<Texture *> gAttachments = { &gDiffuse, &gNormal };
+	vector<Texture *> gAttachments = { &gDiffuse, &gNormal, &gBloom };
 	FrameBuffer gBuffer(&gAttachments, &gDepth);
 
 
 	// Setup light buffer
 	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
-	RenderTexture gBloom(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
 	vector<Texture *> lAttachments = { &gAccLight, &gBloom };
 	FrameBuffer lBuffer(&lAttachments, &gDepth);
@@ -187,6 +187,12 @@ void main_loop(GLFWwindow* window) {
 		world->active_camera->update(time_delta);
 		world->active_camera->render(world->active_camera->world);
 
+		//clear light buffer
+		lBuffer.activate();
+		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		// 1. Geometry Pass: render scene's geometry/color data into gbuffer
 
 		if (Globals::WIREFRAME) {
@@ -212,10 +218,6 @@ void main_loop(GLFWwindow* window) {
 		//
 		// PASS 2: Generate shadowmaps and accumulate lights' contribution
 		//
-		lBuffer.activate();
-		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 		
 		for (int i = 0; i < lights.size(); i++) {
 			shared_ptr<SpotLight> sl = lights[i];

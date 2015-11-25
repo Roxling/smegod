@@ -33,6 +33,10 @@ float calcLightAttenuation( float lightDistance, float cutoffDistance, float dec
 	return 1.0;
 }
 
+vec3 blinnPhong(vec3 normal, vec3 pos, vec3 light_pos, vec3 light_color) {
+
+}
+
 void main()
 {
     vec2 screen_coord = gl_FragCoord.xy * invRes; // [0,1]

@@ -124,29 +124,36 @@ void main_loop(GLFWwindow* window) {
 
 
 	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(laccbuff_shader);
-	sl1->translate(0, .3f, 0);
-	sl1->LightColor = { 1.f, 0.5f, 0.5f };
-
+	sl1->translate(3.5, 7.f, -3.5);
+	sl1->rotate(110, 45, 0);
+	sl1->world = glm::scale(sl1->world, glm::vec3(20));
+	sl1->LightColor = { 1.f, 1.f, 0.8f };
+	
 	shared_ptr<SpotLight> sl2 = make_shared<SpotLight>(laccbuff_shader);
-	sl2->translate(0, .3f, 0);
-	sl2->world = glm::rotate(sl2->world, glm::pi<float>(), glm::vec3(sl2->world[1]));
-	sl2->LightColor = { .5f, 1.f, 0.5f };
+	sl2->translate(3.8, 5.f, -4);
+	sl2->rotate(-110, 45, 0);
+	sl2->world = glm::scale(sl2->world, glm::vec3(20));
+	sl2->LightColor = { 1.f, 1.f, 0.8f };
 
 	shared_ptr<SpotLight> sl3 = make_shared<SpotLight>(laccbuff_shader);
-	sl3->translate(0, .3f, 0);
-	sl3->world = glm::rotate(sl3->world, glm::half_pi<float>(), glm::vec3(sl3->world[1]));
-	sl3->LightColor = { .5f, 0.5f, 1.f };
+	sl3->translate(-3.5, 5.f, -4);
+	sl3->rotate(110, 45, 0);
+	sl3->world = glm::scale(sl3->world, glm::vec3(20));
+	sl3->LightColor = { 1.f, 1.f, 0.8f };
 
 	shared_ptr<SpotLight> sl4 = make_shared<SpotLight>(laccbuff_shader);
-	sl4->translate(0, .3f, 0);
-	sl4->world = glm::rotate(sl4->world, -glm::half_pi<float>(), glm::vec3(sl4->world[1]));
-	sl4->LightColor = { 1.f, 0.5f, 1.f };
+	sl4->translate(-3.8, 5.f, -4);
+	sl4->rotate(-110, 45, 0);
+	sl4->world = glm::scale(sl4->world, glm::vec3(20));
+	sl4->LightColor = { 1.f, 1.f, 0.8f };
 
-	lg.attach(sl1);
-	lg.attach(sl2);
+
+
+	
 
 	lights.push_back(sl1);
 	lights.push_back(sl2);
+
 	lights.push_back(sl3);
 	lights.push_back(sl4);
 
@@ -181,6 +188,10 @@ void main_loop(GLFWwindow* window) {
 		world->active_camera->render(world->active_camera->world);
 
 		// 1. Geometry Pass: render scene's geometry/color data into gbuffer
+
+		if (Globals::WIREFRAME) {
+			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+		}
 
 		glDepthFunc(GL_LESS);
 
@@ -291,6 +302,11 @@ void main_loop(GLFWwindow* window) {
 		
 		glDepthMask(GL_FALSE);
 
+		if (Globals::WIREFRAME) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+
+
 		resolve_shader->use();
 		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);
 		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
@@ -338,7 +354,7 @@ void main_loop(GLFWwindow* window) {
 		//Update world!
 
 		//lg.world = glm::translate(ident, glm::vec3(10*glm::sin(glfwGetTime()*0.1), 2 * glm::sin(glfwGetTime()*0.3)+ 2, 0));
-		lg.world = glm::rotate(ident,(float) glfwGetTime(), glm::vec3(lg.world[1]));
+		//lg.world = glm::rotate(ident,(float) glfwGetTime(), glm::vec3(lg.world[1]));
 	}
 }
 

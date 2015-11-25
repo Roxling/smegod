@@ -77,11 +77,12 @@ const int InputHandler::getMouseButtonstate(int button)
 
 unique_ptr<vector<pair<bool, bool>>> CommandHandler::toggle_state = make_unique<vector<pair<bool,bool>>>(GLFW_KEY_LAST, make_pair(true,true)); //{first press callback, new state on toggle}
 
-
+bool Globals::WIREFRAME = false;
 void CommandHandler::set_wireframe(bool state)
 {
 	cout << "Wirefram toggled " <<(state ? "ON" : "OFF") << "." << endl;
-	glPolygonMode(GL_FRONT_AND_BACK, state ? GL_LINE : GL_FILL); //Uncomment for wireframe
+	Globals::WIREFRAME = state;
+	 //Uncomment for wireframe
 }
 
 void CommandHandler::recompile_shaders()

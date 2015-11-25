@@ -9,7 +9,7 @@ out vec4 frag_color;
 void main()
 {
     const float gamma = 2.2;
-    const vec3 ambient = vec3(0.1);
+    const vec3 ambient = vec3(0.0);
 
     vec4 diffuse = texelFetch(diffuse_buffer, ivec2(gl_FragCoord.xy), 0);
 	if (diffuse.a < 0.2)

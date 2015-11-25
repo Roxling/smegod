@@ -112,7 +112,6 @@ void Light::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 
 SpotLight::SpotLight(shared_ptr<ShaderGroup> shader)
 {
-	world = glm::scale(world, glm::vec3(10));
 	coneVao = loadCone(coneVbo, coneVerticesNb, shader);
 }
 

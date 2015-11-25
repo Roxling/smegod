@@ -75,11 +75,11 @@ void print_errors() {
 
 void main_loop(GLFWwindow* window) {
 
-	shared_ptr<ShaderGroup> buff_shader = make_shared<ShaderGroup>("buffrender.vs", "buffrender.fs");
-	shared_ptr<ShaderGroup> gbuffer_shader = make_shared<ShaderGroup>("gbuffer.vs", "gbuffer.fs");
-	shared_ptr<ShaderGroup> shadow_shader = make_shared<ShaderGroup>("shadowmap.vs", "shadowmap.fs");
-	shared_ptr<ShaderGroup> laccbuff_shader = make_shared<ShaderGroup>("laccbuffer.vs", "laccbuffer.fs");
-	shared_ptr<ShaderGroup> resolve_shader = make_shared<ShaderGroup>("resolve.vs", "resolve.fs");
+	shared_ptr<ShaderGroup> buff_shader = make_shared<ShaderGroup>("buffrender.vert", "buffrender.frag");
+	shared_ptr<ShaderGroup> gbuffer_shader = make_shared<ShaderGroup>("gbuffer.vert", "gbuffer.frag");
+	shared_ptr<ShaderGroup> shadow_shader = make_shared<ShaderGroup>("shadowmap.vert", "shadowmap.frag");
+	shared_ptr<ShaderGroup> laccbuff_shader = make_shared<ShaderGroup>("laccbuffer.vert", "laccbuffer.frag");
+	shared_ptr<ShaderGroup> resolve_shader = make_shared<ShaderGroup>("resolve.vert", "resolve.frag");
 
 
 	// Setup g-buffer

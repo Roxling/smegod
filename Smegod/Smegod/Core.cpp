@@ -173,12 +173,12 @@ void main_loop(GLFWwindow* window) {
 	glm::mat4 ident;
 
 	world->initiate();
-	world->active_camera->addShaderGroup(laccbuff_shader);
+	shared_ptr<Camera> cam = world->active_camera;
 	while (!glfwWindowShouldClose(window)) {
 		update_delta();
 		world->update(time_delta);
-		world->active_camera->update(time_delta);
-		world->active_camera->render(world->active_camera->world);
+		cam->update(time_delta);
+		cam->render(cam->world);
 
 		//clear light buffer
 		lBuffer.activate();
@@ -202,8 +202,7 @@ void main_loop(GLFWwindow* window) {
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		gbuffer_shader->use();
-		gbuffer_shader->setUniform("projection", world->active_camera->projection);
-		gbuffer_shader->setUniform("view", glm::inverse(world->active_camera->combined_world));
+		gbuffer_shader->setUniform("view_projection", cam->view_projection);
 		
 		world->render(gbuffer_shader);
 		
@@ -213,6 +212,13 @@ void main_loop(GLFWwindow* window) {
 		// PASS 2: Generate shadowmaps and accumulate lights' contribution
 		//
 		PERF_START(PassPerf::Pass::FULL_LIGHT_PASS);
+
+		laccbuff_shader->use();
+		laccbuff_shader->setUniform("view_projection", cam->view_projection);
+		laccbuff_shader->setUniform("view_projection_inverse", cam->view_projecion_inverse);
+		laccbuff_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
+
+
 		for (int i = 0; i < lights.size(); i++) {
 			shared_ptr<SpotLight> sl = lights[i];
 
@@ -233,14 +239,14 @@ void main_loop(GLFWwindow* window) {
 			world->render(shadow_shader);
 
 
+
+			// 2.2 blend light
 			laccbuff_shader->use();
 			laccbuff_shader->bindTexture("depthBuffer", 0, gDepth);
 			laccbuff_shader->bindTexture("normalAndSpecularBuffer", 1, gNormal);
 			laccbuff_shader->bindTexture("shadowMap", 2, shadowMap);
-
 			laccbuff_shader->setUniform("worldToLight", model_to_clip_matrix);
 
-			// 2.2 blend light
 			lBuffer.activate();
 			glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

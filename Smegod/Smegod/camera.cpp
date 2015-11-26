@@ -20,15 +20,18 @@ void Camera::translateLocal(float dx, float dy, float dz)
 void Camera::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 {
 	combined_world = combined_transform;
+	view = glm::inverse(combined_transform);
+	view_projection = projection * view;
+	view_projecion_inverse = glm::inverse(view_projection);
 
-	for (auto it = shader_groups.begin(); it != shader_groups.end(); ++it) {
+	/*for (auto it = shader_groups.begin(); it != shader_groups.end(); ++it) {
 		auto program = *it;
 		program->use();
 
 		program->setUniform("projection", projection);
 		program->setUniform("view", glm::inverse(combined_transform));
 		program->setUniform("camera_pos", glm::vec3(combined_transform[3]));
-	}
+	}*/
 }
 
 

@@ -7,8 +7,8 @@ uniform sampler2D shadowMap;
 uniform vec2 invRes;
 
 
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 view_projection;
+uniform mat4 view_projection_inverse;
 
 uniform vec3 camera_pos;
 uniform mat4 worldToLight;
@@ -39,12 +39,10 @@ void main()
 {
     vec2 screen_coord = gl_FragCoord.xy * invRes; // [0,1]
     vec2 ndc = screen_coord * 2 - 1;
-    mat4 ViewProjection =  projection * view;
-    mat4 ViewProjectionInverse = inverse(ViewProjection);
 
     float depth = texture(depthBuffer, screen_coord).r * 2 - 1;
     vec4 ndc_pos = vec4(ndc, depth, 1);
-    vec4 pixel_world = ViewProjectionInverse * ndc_pos;
+    vec4 pixel_world = view_projection_inverse * ndc_pos;
     pixel_world /= pixel_world.w;
 
     //SHADOW

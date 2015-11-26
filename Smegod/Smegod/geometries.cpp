@@ -2,9 +2,7 @@
 
 void Geometry::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 {
-	auto wIT = glm::transpose(glm::inverse(combined_transform)); //is this the correct way to calculate the inverse transpose?
 	shader->setUniform("world", combined_transform);
-	shader->setUniform("worldIT", wIT);
 
 	for (auto it = model->meshes.begin(); it != model->meshes.end(); ++it){
 		shader->bindMaterial(it->material);
@@ -88,4 +86,47 @@ void Skybox::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader
 	glBindVertexArray(0);
 
 	glDepthMask(GL_TRUE);
+}
+
+Quad::Quad() : Quad(-1.f, -1.f, 1.f, 1.f) { }
+Quad::Quad(glm::vec2 &lb, glm::vec2 &tr) : Quad(lb.x, lb.y, tr.x, tr.y) { }
+
+Quad::Quad(float x1, float y1, float x2, float y2)
+{
+	GLfloat quadVertices[] = {
+		// Positions        // Texture Coords
+		x1, y2, 0.0f, 0.0f, 1.0f,
+		x1, y1, 0.0f, 0.0f, 0.0f,
+		x2, y2, 0.0f, 1.0f, 1.0f,
+		x2, y1, 0.0f, 1.0f, 0.0f,
+	};
+	// Setup plane VAO
+	glGenVertexArrays(1, &quadVAO);
+	GL_CHECK_ERRORS();
+	glGenBuffers(1, &quadVBO);
+	GL_CHECK_ERRORS();
+	glBindVertexArray(quadVAO);
+	GL_CHECK_ERRORS();
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	GL_CHECK_ERRORS();
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	GL_CHECK_ERRORS();
+	glEnableVertexAttribArray(0);
+	GL_CHECK_ERRORS();
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	GL_CHECK_ERRORS();
+	glEnableVertexAttribArray(1);
+	GL_CHECK_ERRORS();
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	GL_CHECK_ERRORS();
+}
+
+void Quad::render()
+{
+	glBindVertexArray(quadVAO);
+	GL_CHECK_ERRORS();
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	GL_CHECK_ERRORS();
+	glBindVertexArray(0);
+	GL_CHECK_ERRORS();
 }

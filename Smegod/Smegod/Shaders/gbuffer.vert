@@ -11,12 +11,12 @@ out vec3 worldspace_tangent;
 out vec2 pass_texcoords;
 
 uniform mat4 world;
-uniform mat4 worldIT;
 uniform mat4 view;
 uniform mat4 projection;
 
 void main()
 {
+	mat4 worldIT = transpose(inverse(world));
     worldspace_normal   = normalize((worldIT * vec4(normal, 0.0)).xyz);
 	worldspace_tangent  = normalize((worldIT * vec4(tangent, 0.0)).xyz);
 	worldspace_binormal = normalize((worldIT * vec4(binormal, 0.0)).xyz);

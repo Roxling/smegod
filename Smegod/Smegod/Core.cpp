@@ -74,6 +74,7 @@ void print_errors() {
 }
 
 void main_loop(GLFWwindow* window) {
+	PERF_INIT();
 
 	shared_ptr<ShaderGroup> buff_shader = make_shared<ShaderGroup>("buffrender.vert", "buffrender.frag");
 	shared_ptr<ShaderGroup> gbuffer_shader = make_shared<ShaderGroup>("gbuffer.vert", "gbuffer.frag");
@@ -157,29 +158,21 @@ void main_loop(GLFWwindow* window) {
 	lights.push_back(sl3);
 	lights.push_back(sl4);
 
-	shared_ptr<Geometry> output = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, -1, 2, 2));
-
+	Quad output;
 
 	//Init debug quads
-	shared_ptr<Geometry> textures = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> normals = make_shared<Geometry>(ParametricShapes::createNDCQuad(-.6f, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> speculars = make_shared<Geometry>(ParametricShapes::createNDCQuad(-.2f, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> depth = make_shared<Geometry>(ParametricShapes::createNDCQuad(.2f, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> accumulatedlight = make_shared<Geometry>(ParametricShapes::createNDCQuad(.6f, -1, 0.4f, 0.4f));
-	shared_ptr<Geometry> shadowmap = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, 0.6f, 0.4f, 0.4f));
-	shared_ptr<Geometry> bloom = make_shared<Geometry>(ParametricShapes::createNDCQuad(-.6f, 0.6f, 0.4f, 0.4f));
-	textures->bindTexture("buff", gDiffuse.getGlId());
-	normals->bindTexture("buff", gNormal.getGlId());
-	speculars->bindTexture("buff", gNormal.getGlId());
-	depth->bindTexture("buff", gDepth.getGlId());
-	accumulatedlight->bindTexture("buff", gAccLight.getGlId());
-	shadowmap->bindTexture("buff", shadowMap.getGlId());
-	bloom->bindTexture("buff", gBloom.getGlId());
+	Quad quad_textures(-1.f, -1.f, -.6f, -.6f);
+	Quad quad_normals(-.6f, -1.f, -.2f, -.6f);
+	Quad quad_speculars(-.2f, -1.f, .2f, -.6f);
+	Quad quad_depth(.2f, -1.f, .6f, -.6f);
+	Quad quad_acclight(.6f, -1.f, 1.f, -.6f);
+
+	Quad quad_shadowmap(-1.f, .6f, -.6f, 1.f);
+	Quad quad_bloom(-.6f, .6f, -.2f, 1.f);
 
 	glm::mat4 ident;
 
 	world->initiate();
-	world->active_camera->addShaderGroup(gbuffer_shader);
 	world->active_camera->addShaderGroup(laccbuff_shader);
 	while (!glfwWindowShouldClose(window)) {
 		update_delta();
@@ -194,6 +187,7 @@ void main_loop(GLFWwindow* window) {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// 1. Geometry Pass: render scene's geometry/color data into gbuffer
+		PERF_START(PassPerf::Pass::GEOMETRY_PASS);
 
 		if (Globals::WIREFRAME) {
 			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -208,17 +202,17 @@ void main_loop(GLFWwindow* window) {
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		gbuffer_shader->use();
-		/* START RENDER WORLD */
+		gbuffer_shader->setUniform("projection", world->active_camera->projection);
+		gbuffer_shader->setUniform("view", glm::inverse(world->active_camera->combined_world));
 		
 		world->render(gbuffer_shader);
-		/* END RENDER WORLD */
 		
 
-
+		PERF_END(PassPerf::Pass::GEOMETRY_PASS);
 		//
 		// PASS 2: Generate shadowmaps and accumulate lights' contribution
 		//
-		
+		PERF_START(PassPerf::Pass::FULL_LIGHT_PASS);
 		for (int i = 0; i < lights.size(); i++) {
 			shared_ptr<SpotLight> sl = lights[i];
 
@@ -267,7 +261,7 @@ void main_loop(GLFWwindow* window) {
 			glDepthFunc(GL_LESS);
 			glDisable(GL_BLEND);
 		}
-
+		PERF_END(PassPerf::Pass::FULL_LIGHT_PASS);
 
 
 		glCullFace(GL_BACK);
@@ -278,6 +272,7 @@ void main_loop(GLFWwindow* window) {
 
 
 		// PASS 2.3 Blur bloom buffer
+		PERF_START(PassPerf::Pass::BLOOM_PASS);
 		GLboolean horizontal = true, first_iteration = true;
 		GLuint amount = 4;
 		bloom_shader->use();
@@ -292,13 +287,14 @@ void main_loop(GLFWwindow* window) {
 			else {
 				bloom_shader->bindTexture("image", 0, horizontal? gPing : gPong);
 			}
-			output->render(ident, bloom_shader);
+			output.render();
 			horizontal = !horizontal;
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+		PERF_END(PassPerf::Pass::BLOOM_PASS);
 
 		// PASS 3 -- Resolve
+		PERF_START(PassPerf::Pass::RESOLVE_PASS);
 		glClearColor(1.f, .1f, .7f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		
@@ -314,49 +310,71 @@ void main_loop(GLFWwindow* window) {
 		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
 		resolve_shader->bindTexture("bloom_buffer", 2, horizontal ? gPing : gPong);
 
-		output->render(ident, resolve_shader);
+		output.render();
+
+		PERF_END(PassPerf::Pass::RESOLVE_PASS);
 
 		glDepthMask(GL_TRUE);
+		GL_CHECK_ERRORS();
 
 
 		//Draw debug window
+		PERF_START(PassPerf::Pass::QUAD_PASS);
 		buff_shader->use();
 
 
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
-		textures->render(ident, buff_shader);
+		buff_shader->bindTexture("buff", 0, gDiffuse);
+		quad_textures.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
-		normals->render(ident, buff_shader);
+		buff_shader->bindTexture("buff", 0, gNormal);
+		quad_normals.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(0, 0, 0));
-		speculars->render(ident, buff_shader);
+		buff_shader->bindTexture("buff", 0, gNormal);
+		quad_speculars.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
-		depth->render(ident, buff_shader);
+		buff_shader->bindTexture("buff", 0, gDepth);
+		quad_depth.render();
 
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
-		accumulatedlight->render(ident, buff_shader);
+		buff_shader->bindTexture("buff", 0, gAccLight);
+		quad_acclight.render();
 
 		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
-		shadowmap->render(ident, buff_shader);
+		buff_shader->bindTexture("buff", 0, shadowMap);
+		quad_shadowmap.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
-		bloom->render(ident, buff_shader);
+		buff_shader->bindTexture("buff", 0, gBloom);
+		quad_bloom.render();
 
+		PERF_END(PassPerf::Pass::QUAD_PASS);
+
+		//Swap buffers
+		PERF_START(PassPerf::Pass::SWAP_PASS);
 		glfwSwapBuffers(window);
+		PERF_END(PassPerf::Pass::SWAP_PASS);
+
 		glfwPollEvents();
 
+
 		//prints GLerrors if any.. Not good for performance and should only be used for debug. Will spam if error occurs every frame.
+#if DEBUG_LEVEL >= 1
 		GLenum error;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			//cerr << "GLerror: 0x" << hex << error << dec << endl;
+			cerr << "GLerror: 0x" << hex << error << dec << endl;
 		}
+#endif
 
 		//Update world!
 
 		//lg.world = glm::translate(ident, glm::vec3(10*glm::sin(glfwGetTime()*0.1), 2 * glm::sin(glfwGetTime()*0.3)+ 2, 0));
 		//lg.world = glm::rotate(ident,(float) glfwGetTime(), glm::vec3(lg.world[1]));
+
+		PERF_PRINT();
 	}
 }
 

@@ -33,3 +33,17 @@ private:
 	shared_ptr<Cubemap> cubemap;
 	shared_ptr<VertexArray> skybox;
 };
+
+
+class Quad {
+public:
+	Quad();
+	Quad(glm::vec2 &lb, glm::vec2 &tr);
+	Quad(float x1, float y1, float x2, float y2);
+
+	void render();
+
+private:
+	GLuint quadVAO = 0;
+	GLuint quadVBO;
+};

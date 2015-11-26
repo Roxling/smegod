@@ -122,7 +122,6 @@ void SpotLight::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> sha
 	auto wIT = glm::transpose(glm::inverse(combined_transform)); //is this the correct way to calculate the inverse transpose?
 
 	shader->setUniform("world", combined_transform);
-	shader->setUniform("worldIT", wIT);
 	shader->setUniform("light_color", LightColor);
 	shader->setUniform("light_intensity", LightIntensity);
 	shader->setUniform("light_anglefalloff", LightAngleFalloff);

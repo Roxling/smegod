@@ -2,6 +2,7 @@
 
 uniform mat4 model_to_clip_matrix;
 uniform mat4 world;
+uniform mat4 worldIT;
 
 layout (location = 0) in vec3 position;
 

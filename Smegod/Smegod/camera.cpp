@@ -28,7 +28,6 @@ void Camera::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader
 		program->setUniform("projection", projection);
 		program->setUniform("view", glm::inverse(combined_transform));
 		program->setUniform("camera_pos", glm::vec3(combined_transform[3]));
-
 	}
 }
 

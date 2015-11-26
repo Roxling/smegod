@@ -139,30 +139,6 @@
     <None Include="Shaders\cubemap.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\light.vert">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shaders\light.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shaders\normal.vert">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shaders\normal.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shaders\phong.vert">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shaders\phong.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shaders\projection.vert">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shaders\phongcol.frag">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="Shaders\resolve.vert">
       <Filter>Shader</Filter>
     </None>
@@ -173,9 +149,6 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="Shaders\shadowmap.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shaders\texture.frag">
       <Filter>Shader</Filter>
     </None>
     <None Include="Shaders\water.vert">

@@ -176,19 +176,10 @@
     <None Include="Shaders\gbuffer.vert" />
     <None Include="Shaders\laccbuffer.frag" />
     <None Include="Shaders\laccbuffer.vert" />
-    <None Include="Shaders\light.frag" />
-    <None Include="Shaders\light.vert" />
-    <None Include="Shaders\normal.frag" />
-    <None Include="Shaders\normal.vert" />
-    <None Include="Shaders\phong.frag" />
-    <None Include="Shaders\phong.vert" />
-    <None Include="Shaders\phongcol.frag" />
-    <None Include="Shaders\projection.vert" />
     <None Include="Shaders\resolve.frag" />
     <None Include="Shaders\resolve.vert" />
     <None Include="Shaders\shadowmap.frag" />
     <None Include="Shaders\shadowmap.vert" />
-    <None Include="Shaders\texture.frag" />
     <None Include="Shaders\water.frag" />
     <None Include="Shaders\water.vert" />
   </ItemGroup>

@@ -80,27 +80,42 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<ShaderGroup> shadow_shader = make_shared<ShaderGroup>("shadowmap.vert", "shadowmap.frag");
 	shared_ptr<ShaderGroup> laccbuff_shader = make_shared<ShaderGroup>("laccbuffer.vert", "laccbuffer.frag");
 	shared_ptr<ShaderGroup> resolve_shader = make_shared<ShaderGroup>("resolve.vert", "resolve.frag");
+	shared_ptr<ShaderGroup> bloom_shader = make_shared<ShaderGroup>("bloom.vert", "bloom.frag");
 
+	RenderTexture gBloom(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
 	// Setup g-buffer
 	RenderTexture gDiffuse(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE); // - Diffuse buffer
 	RenderTexture gNormal(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);  // - NormalSpecular buffer
 	DepthTexture gDepth(Globals::WIDTH, Globals::HEIGHT); // - Depth buffer
 
-	vector<Texture *> gAttachments = { &gDiffuse, &gNormal };
+	vector<Texture *> gAttachments = { &gDiffuse, &gNormal, &gBloom };
 	FrameBuffer gBuffer(&gAttachments, &gDepth);
 
 
 	// Setup light buffer
 	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
-	vector<Texture *> lAttachments = { &gAccLight };
+	vector<Texture *> lAttachments = { &gAccLight, &gBloom };
 	FrameBuffer lBuffer(&lAttachments, &gDepth);
 
 
 	// Setup shadow buffer
 	DepthTexture shadowMap(Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT);
 	FrameBuffer sBuffer(nullptr, &shadowMap);
+
+
+	//Setup blur step
+	RenderTexture gPing(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	RenderTexture gPong(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+
+	vector<Texture *> pingAttachments = { &gPing };
+	vector<Texture *> pongAttachments = { &gPong };
+	FrameBuffer pingBuffer(&pingAttachments);
+	FrameBuffer pongBuffer(&pongAttachments);
+
+	FrameBuffer* pingpongBuffer[2] = { &pingBuffer, &pongBuffer };
+	Texture* pingpongTextures[2] = { &gPing, &gPong };
 
 
 	vector<shared_ptr<SpotLight>> lights;
@@ -152,12 +167,14 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<Geometry> depth = make_shared<Geometry>(ParametricShapes::createNDCQuad(.2f, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> accumulatedlight = make_shared<Geometry>(ParametricShapes::createNDCQuad(.6f, -1, 0.4f, 0.4f));
 	shared_ptr<Geometry> shadowmap = make_shared<Geometry>(ParametricShapes::createNDCQuad(-1, 0.6f, 0.4f, 0.4f));
+	shared_ptr<Geometry> bloom = make_shared<Geometry>(ParametricShapes::createNDCQuad(-.6f, 0.6f, 0.4f, 0.4f));
 	textures->bindTexture("buff", gDiffuse.getGlId());
 	normals->bindTexture("buff", gNormal.getGlId());
 	speculars->bindTexture("buff", gNormal.getGlId());
 	depth->bindTexture("buff", gDepth.getGlId());
 	accumulatedlight->bindTexture("buff", gAccLight.getGlId());
 	shadowmap->bindTexture("buff", shadowMap.getGlId());
+	bloom->bindTexture("buff", gBloom.getGlId());
 
 	glm::mat4 ident;
 
@@ -169,6 +186,12 @@ void main_loop(GLFWwindow* window) {
 		world->update(time_delta);
 		world->active_camera->update(time_delta);
 		world->active_camera->render(world->active_camera->world);
+
+		//clear light buffer
+		lBuffer.activate();
+		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		// 1. Geometry Pass: render scene's geometry/color data into gbuffer
 
@@ -195,10 +218,6 @@ void main_loop(GLFWwindow* window) {
 		//
 		// PASS 2: Generate shadowmaps and accumulate lights' contribution
 		//
-		lBuffer.activate();
-		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 		
 		for (int i = 0; i < lights.size(); i++) {
 			shared_ptr<SpotLight> sl = lights[i];
@@ -257,6 +276,28 @@ void main_loop(GLFWwindow* window) {
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+
+		// PASS 2.3 Blur bloom buffer
+		GLboolean horizontal = true, first_iteration = true;
+		GLuint amount = 4;
+		bloom_shader->use();
+		for (GLuint i = 0; i < amount; i++)
+		{
+			pingpongBuffer[horizontal]->activate();
+			bloom_shader->setUniform("horizontal", horizontal);
+			if (first_iteration) {
+				bloom_shader->bindTexture("image", 0, gBloom);
+				first_iteration = false;
+			}
+			else {
+				bloom_shader->bindTexture("image", 0, horizontal? gPing : gPong);
+			}
+			output->render(ident, bloom_shader);
+			horizontal = !horizontal;
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 		// PASS 3 -- Resolve
 		glClearColor(1.f, .1f, .7f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -271,6 +312,7 @@ void main_loop(GLFWwindow* window) {
 		resolve_shader->use();
 		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);
 		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
+		resolve_shader->bindTexture("bloom_buffer", 2, horizontal ? gPing : gPong);
 
 		output->render(ident, resolve_shader);
 
@@ -298,6 +340,9 @@ void main_loop(GLFWwindow* window) {
 
 		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
 		shadowmap->render(ident, buff_shader);
+		
+		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+		bloom->render(ident, buff_shader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

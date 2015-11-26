@@ -166,6 +166,8 @@
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\bloom.frag" />
+    <None Include="Shaders\bloom.vert" />
     <None Include="Shaders\buffrender.frag" />
     <None Include="Shaders\buffrender.vert" />
     <None Include="Shaders\cubemap.frag" />

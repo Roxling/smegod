@@ -1,6 +1,7 @@
 #version 330 core
 layout (location = 0) out vec4 geometry_diffuse;
 layout (location = 1) out vec4 geometry_normal_and_specular;
+layout (location = 2) out vec4 bloom_filter;
 
 in vec3 worldspace_normal;
 in vec3 worldspace_binormal;
@@ -17,6 +18,9 @@ void main()
 	// Diffuse color
 	geometry_diffuse = texture(diffuse_texture, pass_texcoords);
 	if (geometry_diffuse.a < 0.2) discard;
+    if (geometry_diffuse.a < 0.5) {
+        bloom_filter = vec4(20, 20, 2, 1);
+    }
 
 	// Worldspace normal
 	//geometry_normal_and_specular.xyz = texture(normal_texture, pass_texcoords).rgb;

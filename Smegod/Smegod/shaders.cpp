@@ -278,6 +278,7 @@ bool ShaderGroup::getUniformLocation(GLuint &dst, const string &name) {
 
 
 //primitives
+UNIFORM_UPLOAD_1(unsigned char, glUniform1i) // bool?
 UNIFORM_UPLOAD_1(unsigned int, glUniform1ui)
 UNIFORM_UPLOAD_1(int, glUniform1i)
 UNIFORM_UPLOAD_1(float, glUniform1f)

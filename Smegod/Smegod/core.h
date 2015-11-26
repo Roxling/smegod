@@ -14,7 +14,7 @@ public:
 // 1 check all gl calls
 // 2 + check uniforms
 // 3 + query performance
-#define DEBUG_LEVEL (2)
+#define DEBUG_LEVEL (0)
 
 #if DEBUG_LEVEL >= 1
 #	define GL_CHECK_ERRORS() check_errors(__FILE__, __FUNCTION__, __LINE__)

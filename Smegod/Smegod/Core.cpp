@@ -123,40 +123,61 @@ void main_loop(GLFWwindow* window) {
 
 	Node lg;
 
+	float lightoffset = 21.54;
 
 	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(laccbuff_shader);
-	sl1->translate(3.5, 7.f, -3.5);
-	sl1->rotate(110, 45, 0);
-	sl1->world = glm::scale(sl1->world, glm::vec3(20));
-	sl1->LightColor = { 1.f, 1.f, 0.8f };
-	
+	sl1->translate(3.7f, 6.f, -3.3f);
+	sl1->rotate(180, 55, 0);
+	sl1->scale(20);
+	sl1->LightColor = { 1.f, 1.f, 0.6f };
+
 	shared_ptr<SpotLight> sl2 = make_shared<SpotLight>(laccbuff_shader);
-	sl2->translate(3.8, 5.f, -4);
-	sl2->rotate(-110, 45, 0);
-	sl2->world = glm::scale(sl2->world, glm::vec3(20));
-	sl2->LightColor = { 1.f, 1.f, 0.8f };
+	sl2->translate(-3.7f, 6.f, -3.3f);
+	sl2->rotate(180, 55, 0);
+	sl2->scale(20);
+	sl2->LightColor = { 1.f, 1.f, 0.6f };
 
 	shared_ptr<SpotLight> sl3 = make_shared<SpotLight>(laccbuff_shader);
-	sl3->translate(-3.5, 5.f, -4);
-	sl3->rotate(110, 45, 0);
-	sl3->world = glm::scale(sl3->world, glm::vec3(20));
-	sl3->LightColor = { 1.f, 1.f, 0.8f };
+	sl3->translate(3.7f + lightoffset, 6.f, -3.3f);
+	sl3->rotate(180, 55, 0);
+	sl3->scale(20);
+	sl3->LightColor = { 1.f, 1.f, 0.6f };
 
 	shared_ptr<SpotLight> sl4 = make_shared<SpotLight>(laccbuff_shader);
-	sl4->translate(-3.8, 5.f, -4);
-	sl4->rotate(-110, 45, 0);
-	sl4->world = glm::scale(sl4->world, glm::vec3(20));
-	sl4->LightColor = { 1.f, 1.f, 0.8f };
+	sl4->translate(-3.7f + lightoffset, 6.f, -3.3f);
+	sl4->rotate(180, 55, 0);
+	sl4->scale(20);
+	sl4->LightColor = { 1.f, 1.f, 0.6f };
 
+	/*shared_ptr<SpotLight> sl5 = make_shared<SpotLight>(laccbuff_shader);
+	sl5->translate(3.7f - lightoffset, 6.f, -3.3f);
+	sl5->rotate(180, 55, 0);
+	sl5->scale(20);
+	sl5->LightColor = { 1.f, 1.f, 0.6f };
 
-
+	shared_ptr<SpotLight> sl6 = make_shared<SpotLight>(laccbuff_shader);
+	sl6->translate(-3.7f - lightoffset, 6.f, -3.3f);
+	sl6->rotate(180, 55, 0);
+	sl6->scale(20);
+	sl6->LightColor = { 1.f, 1.f, 0.6f };
+	*/
 	
+	shared_ptr<SpotLight> lh = make_shared<SpotLight>(laccbuff_shader);
+	lh->translate(20,30,0);
+	lh->rotate(-90, 45, 0);
+	lh->scale(20);
+	lh->LightColor = { 1.f, 0, 0.0f };
 
 	lights.push_back(sl1);
 	lights.push_back(sl2);
 
 	lights.push_back(sl3);
 	lights.push_back(sl4);
+
+	//lights.push_back(sl5);
+	//lights.push_back(sl6);
+
+	lights.push_back(lh);
 
 	Quad output;
 

@@ -12,6 +12,8 @@ public:
 public:
 	void translate(float dx, float dy, float dz);
 	void rotate(float dyaw, float dpitch, float droll);
+	void scale(float x, float y, float z);
+	void scale(float factor);
 
 	glm::vec3 getPosition();
 

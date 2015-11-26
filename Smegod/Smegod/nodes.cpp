@@ -11,6 +11,15 @@ void Node::rotate(float dyaw, float dpitch, float droll)
 	world = world * rot;
 }
 
+void Node::scale(float x, float y, float z)
+{
+	world = glm::scale(world, glm::vec3(x, y, z));
+}
+void Node::scale(float factor)
+{
+	scale(factor, factor, factor);
+}
+
 glm::vec3 Node::getPosition() {
 	return glm::vec3(combined_world[3]);
 }

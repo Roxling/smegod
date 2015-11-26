@@ -1,0 +1,170 @@
+# Blender MTL File: 'None'
+# Material Count: 14
+
+newmtl Material_#6218
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\7b26aa4d_Defuse.tga
+map_Kd textures\7b26aa4d_Defuse.tga
+map_bump textures\7b26aa4d_Normal.tga
+
+newmtl Material_#6219
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\1bda4806_Defuse.tga
+map_Kd textures\1bda4806_Defuse.tga
+map_bump textures\1bda4806_Normal.tga
+
+newmtl Material_#6220
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\00925fb3_Defuse.tga
+map_Kd textures\00925fb3_Defuse.tga
+map_bump textures\00925fb3_Normal.tga
+
+newmtl Material_#6221
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\f779c12a_Defuse.tga
+map_Kd textures\f779c12a_Defuse.tga
+map_bump textures\f779c12a_Normal.tga
+
+newmtl Material_#6222
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\09dbc9a9_Defuse.tga
+map_Kd textures\09dbc9a9_Defuse.tga
+map_bump textures\09dbc9a9_Normal.tga
+
+newmtl Material_#6223
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\ce35a7f8_Defuse.tga
+map_Kd textures\ce35a7f8_Defuse.tga
+map_bump textures\ce35a7f8_Normal.tga
+
+newmtl Material_#6224
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\6e2fc158_Defuse.tga
+map_Kd textures\6e2fc158_Defuse.tga
+map_bump textures\6e2fc158_Normal.tga
+
+newmtl Material_#6225
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\b98d8325_Defuse.tga
+map_Kd textures\b98d8325_Defuse.tga
+map_bump textures\b98d8325_Normal.tga
+
+newmtl Material_#6226
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\d4afa143_Defuse.tga
+map_Kd textures\d4afa143_Defuse.tga
+map_bump textures\d4afa143_Normal.tga
+
+newmtl Material_#6227
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\d1c3d725_Defuse.tga
+map_Kd textures\d1c3d725_Defuse.tga
+map_bump textures\d1c3d725_Normal.tga
+
+newmtl Material_#6228
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\bbb4258c_Defuse.tga
+map_Kd textures\bbb4258c_Defuse.tga
+map_bump textures\bbb4258c_Normal.tga
+
+newmtl Material_#6229
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\d1c3d725_Defuse.tga
+map_Kd textures\d1c3d725_Defuse.tga
+map_bump textures\d1c3d725_Normal.tga
+
+newmtl Material_#6230
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\ee22d6e4_Defuse.tga
+map_Kd textures\ee22d6e4_Defuse.tga
+map_bump textures\ee22d6e4_Normal.tga
+
+newmtl Material_#6231
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.467451 0.467451 0.467451
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka textures\57c1696e_Defuse.tga
+map_Kd textures\57c1696e_Defuse.tga
+map_bump textures\57c1696e_Normal.tga

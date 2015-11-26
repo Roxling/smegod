@@ -36,12 +36,18 @@ void SponzaWorld::initiate()
 	//light->translate(0, 50, 0);
 	//head->attach(light);
 
+	auto lighthouse = make_shared<Geometry>(Model("lighthouse/lighthouse.obj"));
+	lighthouse->translate(7.18f * 5.3f, 0, 0);
+	lighthouse->scale(10);
+	head->attach(lighthouse);
+
+
 	auto bridge = make_shared<Node>();
 	auto p1 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	auto p2 = make_shared<Geometry>(Model("bridge/bridge.obj"));
-	p2->translate(7.18, 0, 0);
+	p2->translate(7.18f, 0, 0);
 	auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
-	p3->translate(-7.18, 0, 0);
+	p3->translate(-7.18f, 0, 0);
 	bridge->attach(p1);
 	bridge->attach(p2);
 	bridge->attach(p3);

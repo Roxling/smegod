@@ -46,11 +46,11 @@ void SponzaWorld::initiate()
 	auto p1 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	auto p2 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	p2->translate(7.18f, 0, 0);
-	auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
-	p3->translate(-7.18f, 0, 0);
+	//auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
+	//p3->translate(-7.18f, 0, 0);
 	bridge->attach(p1);
 	bridge->attach(p2);
-	bridge->attach(p3);
+	//bridge->attach(p3);
 
 
 

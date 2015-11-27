@@ -125,10 +125,8 @@ void SpotLight::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> sha
 	shader->setUniform("light_color", LightColor);
 	shader->setUniform("light_intensity", LightIntensity);
 	shader->setUniform("light_anglefalloff", LightAngleFalloff);
-	shader->setUniform("shadow_texelsize", ShadowMapTexelSize);
 	shader->setUniform("light_pos", glm::vec3(combined_transform[3]));
 	shader->setUniform("light_dir", glm::vec3(combined_transform[2]));
-	shader->setUniform("invRes", invRes);
 
 	renderSelf();
 }

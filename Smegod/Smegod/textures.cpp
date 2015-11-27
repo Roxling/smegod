@@ -260,7 +260,7 @@ FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttac
 	}
 	GLsizei size =(GLsizei) attachments.size();
 	if (size > 0) {
-		glDrawBuffers(attachments.size(), attachments.data());
+		glDrawBuffers(size, attachments.data());
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	GL_CHECK_ERRORS();

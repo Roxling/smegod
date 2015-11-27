@@ -87,6 +87,9 @@ public:
 		glTexParameteri(layout, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(layout, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+		glTexParameteri(layout, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(layout, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 		glBindTexture(layout, 0);
 		GL_CHECK_ERRORS();
 	}

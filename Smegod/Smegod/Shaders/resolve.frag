@@ -4,10 +4,15 @@ uniform sampler2D diffuse_buffer;
 uniform sampler2D light_buffer;
 uniform sampler2D bloom_buffer;
 
+uniform vec2 invRes;
+
 out vec4 frag_color;
 
 void main()
 {
+    vec2 screen_coord = gl_FragCoord.xy * invRes; // [0,1]
+    vec2 ndc = screen_coord * 2 - 1; // [-1,1]
+
     const float gamma = 2.2;
     const vec3 ambient = vec3(0.0);
 
@@ -16,7 +21,7 @@ void main()
 		discard;
 
     vec3 light = texelFetch(light_buffer, ivec2(gl_FragCoord.xy), 0).rgb;
-    vec3 bloom = texelFetch(bloom_buffer, ivec2(gl_FragCoord.xy), 0).rgb;
+    vec3 bloom = texture(bloom_buffer, screen_coord).rgb;
 
     vec3 hdrColor = (light + ambient + bloom) * diffuse.rgb;
     float exposure = 0.5;

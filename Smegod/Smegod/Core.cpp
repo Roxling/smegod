@@ -107,8 +107,8 @@ void main_loop(GLFWwindow* window) {
 
 
 	//Setup blur step
-	RenderTexture gPing(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
-	RenderTexture gPong(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	RenderTexture gPing(Globals::WIDTH / 2, Globals::HEIGHT / 2, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	RenderTexture gPong(Globals::WIDTH / 2, Globals::HEIGHT / 2, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
 	vector<Texture *> pingAttachments = { &gPing };
 	vector<Texture *> pongAttachments = { &gPong };
@@ -119,11 +119,20 @@ void main_loop(GLFWwindow* window) {
 	Texture* pingpongTextures[2] = { &gPing, &gPong };
 
 
+	//Setup unifroms
+	glm::vec2 shadowMapTexelSize = { 1.0f / Globals::SHADOW_WIDTH, 1.0f / Globals::SHADOW_HEIGHT };
+	glm::vec2 invRes = { 1.0f / Globals::WIDTH, 1.0f / Globals::HEIGHT};
+	resolve_shader->use();
+	resolve_shader->setUniform("invRes", invRes);
+	laccbuff_shader->use();
+	laccbuff_shader->setUniform("invRes", invRes);
+	laccbuff_shader->setUniform("shadow_texelsize", shadowMapTexelSize);
+
 	vector<shared_ptr<SpotLight>> lights;
 
 	Node lg;
 
-	float lightoffset = 21.54;
+	float lightoffset = 21.54f;
 
 	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(laccbuff_shader);
 	sl1->translate(3.7f, 6.f, -3.3f);
@@ -177,7 +186,7 @@ void main_loop(GLFWwindow* window) {
 	//lights.push_back(sl5);
 	//lights.push_back(sl6);
 
-	lights.push_back(lh);
+	//lights.push_back(lh);
 
 	Quad output;
 
@@ -190,6 +199,7 @@ void main_loop(GLFWwindow* window) {
 
 	Quad quad_shadowmap(-1.f, .6f, -.6f, 1.f);
 	Quad quad_bloom(-.6f, .6f, -.2f, 1.f);
+	Quad quad_ping(-.2f, .6f, .2f, 1.f);
 
 	glm::mat4 ident;
 
@@ -300,6 +310,7 @@ void main_loop(GLFWwindow* window) {
 
 		// PASS 2.3 Blur bloom buffer
 		PERF_START(PassPerf::Pass::BLOOM_PASS);
+		glViewport(0, 0, Globals::WIDTH / 2, Globals::HEIGHT / 2);
 		GLboolean horizontal = true, first_iteration = true;
 		GLuint amount = 4;
 		bloom_shader->use();
@@ -322,6 +333,7 @@ void main_loop(GLFWwindow* window) {
 
 		// PASS 3 -- Resolve
 		PERF_START(PassPerf::Pass::RESOLVE_PASS);
+		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 		glClearColor(1.f, .1f, .7f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		
@@ -377,6 +389,10 @@ void main_loop(GLFWwindow* window) {
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
 		buff_shader->bindTexture("buff", 0, gBloom);
 		quad_bloom.render();
+
+		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+		buff_shader->bindTexture("buff", 0, gPing);
+		quad_ping.render();
 
 		PERF_END(PassPerf::Pass::QUAD_PASS);
 

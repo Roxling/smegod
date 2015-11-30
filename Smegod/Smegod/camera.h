@@ -16,8 +16,6 @@ protected:
 	float min_angle = -max_angle;
 
 	const glm::mat4 identity = glm::mat4();
-	glm::mat4 view = glm::mat4();
-	glm::mat4 projection;
 
 
 	bool oldTakingCursorInput = false;
@@ -32,6 +30,8 @@ protected:
 	void updateRotation(float ry, float rx);
 
 public:
+	glm::mat4 view = glm::mat4();
+	glm::mat4 projection;
 	glm::mat4 view_projection;
 	glm::mat4 view_projecion_inverse;
 

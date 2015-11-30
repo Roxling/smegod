@@ -19,7 +19,7 @@ void World::render(shared_ptr<ShaderGroup> shader)
 
 void SponzaWorld::initiate()
 {
-	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 100.f);
+	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 300.f);
 	active_camera->translate(0, 5, 0);
 	//head->attach(active_camera);
 	//active_camera->addShaderGroup(gShader);

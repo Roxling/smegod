@@ -82,6 +82,7 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<ShaderGroup> laccbuff_shader = make_shared<ShaderGroup>("laccbuffer.vert", "laccbuffer.frag");
 	shared_ptr<ShaderGroup> resolve_shader = make_shared<ShaderGroup>("resolve.vert", "resolve.frag");
 	shared_ptr<ShaderGroup> bloom_shader = make_shared<ShaderGroup>("bloom.vert", "bloom.frag");
+	shared_ptr<ShaderGroup> skybox_shader = make_shared<ShaderGroup>("cubemap.vert", "cubemap.frag");
 
 	RenderTexture gBloom(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
@@ -127,6 +128,13 @@ void main_loop(GLFWwindow* window) {
 	laccbuff_shader->use();
 	laccbuff_shader->setUniform("invRes", invRes);
 	laccbuff_shader->setUniform("shadow_texelsize", shadowMapTexelSize);
+
+
+
+
+	auto cubemap = make_shared<Cubemap>("Textures/opensea_cubemap/opensea_", ".png");
+	auto skybox = make_shared<Skybox>(cubemap);
+
 
 	vector<shared_ptr<SpotLight>> lights;
 
@@ -217,6 +225,7 @@ void main_loop(GLFWwindow* window) {
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+
 		// 1. Geometry Pass: render scene's geometry/color data into gbuffer
 		PERF_START(PassPerf::Pass::GEOMETRY_PASS);
 
@@ -231,6 +240,11 @@ void main_loop(GLFWwindow* window) {
 		glClearDepthf(1.0f);
 		glClearColor(0, 0, 0, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+		skybox_shader->use();
+		skybox_shader->setUniform("projection", cam->projection);
+		skybox_shader->setUniform("view", cam->view);
+		skybox->render(ident, skybox_shader);
 
 		gbuffer_shader->use();
 		gbuffer_shader->setUniform("view_projection", cam->view_projection);

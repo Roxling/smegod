@@ -135,7 +135,7 @@ glm::mat4 SpotLight::getLightSpaceMatrix()
 {
 	//lightProjection * lightOffsetTransform.GetMatrixInverse() * lightTransform.GetMatrixInverse();
 
-	glm::mat4 lightProjection = glm::perspective(45.f, (float) Globals::SHADOW_WIDTH / (float) Globals::SHADOW_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 lightProjection = glm::perspective(45.f, (float) Globals::SHADOW_WIDTH / (float) Globals::SHADOW_HEIGHT, 0.1f, 1000.0f);
 	glm::mat4 lightView = glm::inverse(combined_world);
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 	return lightSpaceMatrix;

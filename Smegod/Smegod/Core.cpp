@@ -83,21 +83,20 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<ShaderGroup> resolve_shader = make_shared<ShaderGroup>("resolve.vert", "resolve.frag");
 	shared_ptr<ShaderGroup> bloom_shader = make_shared<ShaderGroup>("bloom.vert", "bloom.frag");
 	shared_ptr<ShaderGroup> skybox_shader = make_shared<ShaderGroup>("cubemap.vert", "cubemap.frag");
+	shared_ptr<ShaderGroup> water_shader = make_shared<ShaderGroup>("water.vert", "water.frag");
 
 	RenderTexture gBloom(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
 	// Setup g-buffer
 	RenderTexture gDiffuse(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE); // - Diffuse buffer
 	RenderTexture gNormal(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);  // - NormalSpecular buffer
+	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 	DepthTexture gDepth(Globals::WIDTH, Globals::HEIGHT); // - Depth buffer
 
-	vector<Texture *> gAttachments = { &gDiffuse, &gNormal, &gBloom };
+	vector<Texture *> gAttachments = { &gDiffuse, &gNormal, &gBloom, &gAccLight};
 	FrameBuffer gBuffer(&gAttachments, &gDepth);
 
-
 	// Setup light buffer
-	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
-
 	vector<Texture *> lAttachments = { &gAccLight, &gBloom };
 	FrameBuffer lBuffer(&lAttachments, &gDepth);
 
@@ -125,7 +124,10 @@ void main_loop(GLFWwindow* window) {
 	glm::vec2 invRes = { 1.0f / Globals::WIDTH, 1.0f / Globals::HEIGHT};
 
 
-
+	// Water
+	Texture water_bump("waves.png");
+	Geometry water(ParametricShapes::createSurface(400, 400, 200));
+	water.translate(-200, 1, -200);
 
 
 	auto cubemap = make_shared<Cubemap>("Textures/grimmnight_cubemap/grimmnight_", ".tga");
@@ -216,18 +218,13 @@ void main_loop(GLFWwindow* window) {
 			laccbuff_shader->use();
 			laccbuff_shader->setUniform("invRes", invRes);
 			laccbuff_shader->setUniform("shadow_texelsize", shadowMapTexelSize);
+
 			Globals::UNIFORM_REFRESH = false;
 		}
 		update_delta();
 		world->update(time_delta);
 		cam->update(time_delta);
 		cam->render(cam->world);
-
-		//clear light buffer
-		lBuffer.activate();
-		glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 
 
 		// 1. Geometry Pass: render scene's geometry/color data into gbuffer
@@ -254,6 +251,17 @@ void main_loop(GLFWwindow* window) {
 		gbuffer_shader->setUniform("view_projection", cam->view_projection);
 		
 		world->render(gbuffer_shader);
+
+
+		//water
+		water_shader->use();
+		water_shader->setUniform("time", (float)glfwGetTime());
+		water_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
+		water_shader->setUniform("view_projection", cam->view_projection);
+		water_shader->setUniform("light_pos", ident); // TODO
+		water_shader->bindTexture("bump", 0, water_bump);
+
+		water.render(water.world, water_shader);
 		
 
 		PERF_END(PassPerf::Pass::GEOMETRY_PASS);

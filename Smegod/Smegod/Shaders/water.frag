@@ -1,16 +1,15 @@
 #version 330 core
 in vec2 tex_coord;
 
-out vec4 color;
+layout (location = 0) out vec4 geometry_diffuse;
+layout (location = 1) out vec4 geometry_normal_and_specular;
+layout (location = 2) out vec4 bloom_filter;
+layout (location = 3) out vec4 light;
 
 uniform sampler2D bump;
 uniform samplerCube skybox;
 
 uniform float time;
-uniform vec3 kambient;
-uniform vec3 kdiffuse;
-uniform vec3 kspecular;
-uniform float shininess;
 
 uniform vec3 camera_pos;
 
@@ -30,9 +29,7 @@ float R0 = pow((1.0 - 1.33)/(1.0 + 1.33), 2);
 
 vec3 animateBump(float bump_time, float scalef, float speedf)
 {
-    vec2 offset = vec2( camera_pos.x, camera_pos.z)/100;
-
-    vec2 bump_coord = vec2( ((tex_coord.xy + offset) * tex_scale * scalef) + (bump_time * bump_speed * speedf) );
+    vec2 bump_coord = vec2( (tex_coord.xy * tex_scale * scalef) + (bump_time * bump_speed * speedf) );
 
     return texture(bump, bump_coord).rgb * 2 - 1;
 }
@@ -58,11 +55,11 @@ void main()
     vec3 R = normalize(reflect(-V,N));
 
 
-
     vec4 color_water = mix(color_deep, color_shallow, 1-max(dot(V,N),0));
     vec4 reflection = texture(skybox, R);
     vec4 refraction = texture(skybox, refract(-V, N, 1/1.33));
 
-
-    color = color_water + (reflection * (fresnel)) + (refraction * (1 - fresnel));
+	//geometry_normal_and_specular = vec4(N, 1);
+	light = (reflection * (fresnel)) + (refraction * (1 - fresnel));
+	geometry_diffuse = color_water;
 }

@@ -2,6 +2,7 @@
 layout (location = 0) out vec4 geometry_diffuse;
 layout (location = 1) out vec4 geometry_normal_and_specular;
 layout (location = 2) out vec4 bloom_filter;
+layout (location = 3) out vec4 light;
 
 in vec3 worldspace_normal;
 in vec3 worldspace_binormal;

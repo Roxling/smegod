@@ -52,6 +52,12 @@ void SponzaWorld::initiate()
 	bridge->attach(p2);
 	//bridge->attach(p3);
 
+	Texture glow("glow.png");
+
+	auto lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(1.f, 10, 10));
+	lh_bulb->translate(35.6, 26.5, -1.3);
+	lh_bulb->model->meshes[0].material->textures.push_back({"diffuse_texture", glow.getGlId()});
+	head->attach(lh_bulb);
 
 
 	bridge->world = glm::scale(bridge->world, glm::vec3(3, 3, 3));

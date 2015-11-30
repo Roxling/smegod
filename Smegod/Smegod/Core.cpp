@@ -127,7 +127,7 @@ void main_loop(GLFWwindow* window) {
 	// Water
 	Texture water_bump("waves.png");
 	Geometry water(ParametricShapes::createSurface(400, 400, 200));
-	water.translate(-200, 1, -200);
+	water.translate(-200, 0, -200);
 
 
 	auto cubemap = make_shared<Cubemap>("Textures/grimmnight_cubemap/grimmnight_", ".tga");
@@ -334,6 +334,9 @@ void main_loop(GLFWwindow* window) {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
+		if (Globals::WIREFRAME) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 		// PASS 2.3 Blur bloom buffer
 		PERF_START(PassPerf::Pass::BLOOM_PASS);
 		glViewport(0, 0, Globals::WIDTH / 2, Globals::HEIGHT / 2);
@@ -365,9 +368,6 @@ void main_loop(GLFWwindow* window) {
 		
 		glDepthMask(GL_FALSE);
 
-		if (Globals::WIREFRAME) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
 
 
 		resolve_shader->use();

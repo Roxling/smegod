@@ -175,6 +175,7 @@ void main_loop(GLFWwindow* window) {
 	lh->translate(20,30,0);
 	lh->rotate(-90, 45, 0);
 	lh->scale(20);
+	lh->LightIntensity *= 2;
 	lh->LightColor = { 1.f, 0, 0.0f };
 
 	lights.push_back(sl1);
@@ -186,7 +187,7 @@ void main_loop(GLFWwindow* window) {
 	//lights.push_back(sl5);
 	//lights.push_back(sl6);
 
-	//lights.push_back(lh);
+	lights.push_back(lh);
 
 	Quad output;
 

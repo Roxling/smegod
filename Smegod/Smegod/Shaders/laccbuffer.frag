@@ -96,9 +96,7 @@ void main()
     float radialFalloff = 1 - rad/light_anglefalloff;
 	float distfalloff = 1 / (length * length);
 
-	float intensityscale = 10000;
-
-	vec3 color = light_color * radialFalloff * distfalloff * (light_intensity / intensityscale);
+	vec3 color = light_color * radialFalloff * distfalloff * light_intensity;
    
     vec3 diffuse = color * max(dot(L,N),0.0);
     vec3 specular = color * pow(max(dot(N,H),0.0), shininess);

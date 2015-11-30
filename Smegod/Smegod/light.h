@@ -19,9 +19,9 @@ public:
 	glm::mat4 getLightSpaceMatrix();
 
 	glm::vec3 LightColor = {.7,.7,.7};
+	float LightIntensity = 24.0f;
 private:
 	void renderSelf();
-	float LightIntensity = 240000.0f;
 	float LightAngleFalloff = 0.8f;
 
 	GLuint coneVao = 0u, coneVbo = 0u;

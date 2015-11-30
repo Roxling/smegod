@@ -85,8 +85,10 @@ void CommandHandler::set_wireframe(bool state)
 	 //Uncomment for wireframe
 }
 
+bool Globals::UNIFORM_REFRESH = true;
 void CommandHandler::recompile_shaders()
 {
+	Globals::UNIFORM_REFRESH = true;
 	cout << "Recompiling shaders." << endl;
 	ShaderGroup::recompile_all();
 }

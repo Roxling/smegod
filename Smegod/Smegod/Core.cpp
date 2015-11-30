@@ -123,16 +123,12 @@ void main_loop(GLFWwindow* window) {
 	//Setup unifroms
 	glm::vec2 shadowMapTexelSize = { 1.0f / Globals::SHADOW_WIDTH, 1.0f / Globals::SHADOW_HEIGHT };
 	glm::vec2 invRes = { 1.0f / Globals::WIDTH, 1.0f / Globals::HEIGHT};
-	resolve_shader->use();
-	resolve_shader->setUniform("invRes", invRes);
-	laccbuff_shader->use();
-	laccbuff_shader->setUniform("invRes", invRes);
-	laccbuff_shader->setUniform("shadow_texelsize", shadowMapTexelSize);
 
 
 
 
-	auto cubemap = make_shared<Cubemap>("Textures/opensea_cubemap/opensea_", ".png");
+
+	auto cubemap = make_shared<Cubemap>("Textures/grimmnight_cubemap/grimmnight_", ".tga");
 	auto skybox = make_shared<Skybox>(cubemap);
 
 
@@ -214,6 +210,14 @@ void main_loop(GLFWwindow* window) {
 	world->initiate();
 	shared_ptr<Camera> cam = world->active_camera;
 	while (!glfwWindowShouldClose(window)) {
+		if (Globals::UNIFORM_REFRESH) {
+			resolve_shader->use();
+			resolve_shader->setUniform("invRes", invRes);
+			laccbuff_shader->use();
+			laccbuff_shader->setUniform("invRes", invRes);
+			laccbuff_shader->setUniform("shadow_texelsize", shadowMapTexelSize);
+			Globals::UNIFORM_REFRESH = false;
+		}
 		update_delta();
 		world->update(time_delta);
 		cam->update(time_delta);

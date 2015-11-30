@@ -16,6 +16,7 @@ public:
 	static bool WIREFRAME;
 
 	static bool DRAW_FPS;
+	static bool UNIFORM_REFRESH;
 
 	static void printVec4(glm::vec4 v) {
 		cout << v.x << " : " << v.y << " : " << v.z << endl;

@@ -16,6 +16,9 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{e2e4a621-2061-4e17-ac8a-06699830e685}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader\Rain">
+      <UniqueIdentifier>{8ccbd6a2-daba-4653-abed-0b265c0e566c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp">
@@ -58,6 +61,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="models.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="particles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -113,6 +119,9 @@
     <ClInclude Include="core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="particles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\laccbuffer.frag">
@@ -162,6 +171,33 @@
     </None>
     <None Include="Shaders\bloom.vert">
       <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\billboard.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\billboard.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\billboard.geom">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\rain_render.frag">
+      <Filter>Shader\Rain</Filter>
+    </None>
+    <None Include="Shaders\rain_render.geom">
+      <Filter>Shader\Rain</Filter>
+    </None>
+    <None Include="Shaders\rain_render.vert">
+      <Filter>Shader\Rain</Filter>
+    </None>
+    <None Include="Shaders\rain_update.frag">
+      <Filter>Shader\Rain</Filter>
+    </None>
+    <None Include="Shaders\rain_update.geom">
+      <Filter>Shader\Rain</Filter>
+    </None>
+    <None Include="Shaders\rain_update.vert">
+      <Filter>Shader\Rain</Filter>
     </None>
   </ItemGroup>
 </Project>

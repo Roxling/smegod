@@ -41,6 +41,11 @@ public:
 	FragmentShader(string file) : Shader(GL_FRAGMENT_SHADER, file) {}
 };
 
+class GeometryShader : public Shader {
+public:
+	GeometryShader(string file) : Shader(GL_GEOMETRY_SHADER, file) {}
+};
+
 struct ShaderLocation {
 	string name;
 	GLuint loc;
@@ -54,6 +59,7 @@ private:
 	static unique_ptr<vector<ShaderGroup*>> all_groups;
 	unique_ptr<VertexShader> vshader;
 	unique_ptr<FragmentShader> fshader;
+	unique_ptr<GeometryShader> gshader;
 	bool link();
 
 	//cached locations
@@ -65,6 +71,7 @@ private:
 public:
 	static void recompile_all();
 	ShaderGroup(const string &vs, const string &fs);
+	ShaderGroup(const string &vs, const string &gs, const string &fs);
 	void compile();
 	void use() { 
 		glUseProgram(glId);

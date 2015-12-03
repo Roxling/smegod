@@ -124,6 +124,12 @@ void main_loop(GLFWwindow* window) {
 	glm::vec2 invRes = { 1.0f / Globals::WIDTH, 1.0f / Globals::HEIGHT};
 
 
+
+
+	//rain
+	ArrayTexture rainTexs("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA8);
+	TestTexture testTex;
+
 	// Water
 	Texture water_bump("waves.png");
 	Geometry water(ParametricShapes::createSurface(400, 400, 200));
@@ -416,8 +422,8 @@ void main_loop(GLFWwindow* window) {
 		buff_shader->bindTexture("buff", 0, gBloom);
 		quad_bloom.render();
 
-		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
-		buff_shader->bindTexture("buff", 0, gPing);
+		buff_shader->setUniform("mask", glm::vec3(2.f, 0, 0));
+		buff_shader->bindTexture("buffArray", 1, rainTexs);
 		quad_ping.render();
 
 		PERF_END(PassPerf::Pass::QUAD_PASS);

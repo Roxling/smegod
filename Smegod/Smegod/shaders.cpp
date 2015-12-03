@@ -113,10 +113,23 @@ ShaderGroup::ShaderGroup(const string &vs, const string &fs)
 	fshader = make_unique<FragmentShader>(fs);
 	compile();
 }
+
+ShaderGroup::ShaderGroup(const string & vs, const string & gs, const string & fs)
+{
+	glId = glCreateProgram();
+	GL_CHECK_ERRORS();
+	all_groups->push_back(this);
+	vshader = make_unique<VertexShader>(vs);
+	gshader = make_unique<GeometryShader>(gs);
+	fshader = make_unique<FragmentShader>(fs);
+	compile();
+}
+
 void ShaderGroup::compile()
 {
 	auto vs_status = vshader->compile();
 	auto fs_status = fshader->compile();
+
 
 	if (vs_status == Shader::CompileStatus::UNCHANGED && fs_status == Shader::CompileStatus::UNCHANGED) {
 		cout << "No changes in " << vshader->file << " or " << fshader->file << "." << endl;

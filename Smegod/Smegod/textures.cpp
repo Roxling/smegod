@@ -210,7 +210,65 @@ bool Texture::create(const unsigned char *data)
 	return true;
 }
 
+ArrayTexture::ArrayTexture(string tmpl, int num, const unsigned int width, const unsigned int height, GLenum format, GLenum internalFormat, GLenum precision) {
+	this->width = width;
+	this->height = height;
 
+	this->format = format;
+	this->internalFormat = internalFormat;
+	this->precision = precision;
+	this->layout = GL_TEXTURE_2D_ARRAY;
+	mipLevels = 10;
+	this->layers = num;
+
+	glGenTextures(1, &glId);
+	GL_CHECK_ERRORS();
+	glBindTexture(layout, glId);
+	GL_CHECK_ERRORS();
+
+	glTexParameteri(layout, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(layout, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(layout, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(layout, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(layout, GL_TEXTURE_BASE_LEVEL, 0);
+	glTexParameteri(layout, GL_TEXTURE_MAX_LEVEL, mipLevels);
+
+	glTexStorage3D(layout, mipLevels, precision, width, height, layers);
+
+	tmpl = FOLDER + tmpl;
+
+	for (int i = 0; i < num; i++) {
+		char buff[1024];
+		snprintf(buff, sizeof(buff), tmpl.c_str(), i);
+		string file = buff;
+
+		if (!Globals::File_Exists(file)) {
+			cout << "File " << file << " does not exist. Can not load texture." << endl;
+			return;
+		}
+
+
+		int load_width;
+		int load_height;
+		int load_channels;
+		unsigned char *image = SOIL_load_image((file).c_str(), &load_width, &load_height, &load_channels, format == GL_RGBA ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
+
+		cout << file << " " << width << "x" << height << " (" << load_channels << ") " << endl;
+
+		assert(width == load_width);
+		assert(height == load_height);
+
+		glTexSubImage3D(layout, 0, 0, 0, i, width, height, 1, format, internalFormat, image);
+		SOIL_free_image_data(image);
+	}
+
+	if (mipLevels > 0)
+		glGenerateMipmap(layout);
+
+	glBindTexture(layout, 0);
+	GL_CHECK_ERRORS();
+}
 
 FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttachment, Texture *stencilAttachment, Texture *depthStencilAttachment)
 {

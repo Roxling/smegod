@@ -110,6 +110,7 @@ ShaderGroup::ShaderGroup(const string &vs, const string &fs)
 	GL_CHECK_ERRORS();
 	all_groups->push_back(this);
 	vshader = make_unique<VertexShader>(vs);
+	gshader = nullptr;
 	fshader = make_unique<FragmentShader>(fs);
 	compile();
 }
@@ -129,20 +130,31 @@ void ShaderGroup::compile()
 {
 	auto vs_status = vshader->compile();
 	auto fs_status = fshader->compile();
+	auto gs_status = Shader::CompileStatus::UNCHANGED;
+
+	if (gshader) {
+		gs_status = gshader->compile();
+	}
 
 
-	if (vs_status == Shader::CompileStatus::UNCHANGED && fs_status == Shader::CompileStatus::UNCHANGED) {
-		cout << "No changes in " << vshader->file << " or " << fshader->file << "." << endl;
+	if (vs_status == Shader::CompileStatus::UNCHANGED && fs_status == Shader::CompileStatus::UNCHANGED && gs_status == Shader::CompileStatus::UNCHANGED) {
+		cout << "No changes in " << vshader->file << " or linked shaders." << endl;
 		return;
 	}
 
-	if (vs_status != Shader::CompileStatus::FAILED && fs_status != Shader::CompileStatus::FAILED) {
+	if (vs_status != Shader::CompileStatus::FAILED && fs_status != Shader::CompileStatus::FAILED && gs_status != Shader::CompileStatus::FAILED) {
 		
 		vshader->attachTo(glId);
 		fshader->attachTo(glId);
+		if (gshader) {
+			gshader->attachTo(glId);
+		}
 		if (link()) {
 			vshader->detachFrom(glId);
 			fshader->detachFrom(glId);
+			if (gshader) {
+				gshader->detachFrom(glId);
+			}
 		}
 		else {
 			//glDeleteProgram(shader_program);
@@ -153,8 +165,9 @@ void ShaderGroup::compile()
 			cout << vshader->file << " failed to compile. Fix it and try again." << endl;
 		if(fs_status == Shader::CompileStatus::FAILED)
 			cout << fshader->file << " failed to compile. Fix it and try again." << endl;
+		if (gshader && gs_status == Shader::CompileStatus::FAILED)
+			cout << gshader->file << " failed to compile. Fix it and try again." << endl;
 	}
-
 
 	//Create changed location entries
 	attributeLocs.clear();

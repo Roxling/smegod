@@ -10,31 +10,39 @@ uniform vec3 camera_pos;
 uniform float g_Near; 
 uniform float g_Far; 
 
-in vec3 pos_in[];
-in vec3 seed_in[];
-in vec3 speed_in[];
-in float random_in[];
-in uint type_in[];
-
+in VS_OUT {
+	vec3 pos;
+	vec3 seed;
+	vec3 speed;
+	float random;
+	uint type;
+} gs_in[]; 
 
 out vec4 pos;
 out vec3 lightDir;
 out vec3 pointLightDir;
 out vec3 eyeVec;
 out vec2 tex;
-out uint type;
+flat out uint type;
 out float random;
 
+uniform mat4 g_mWorldView;
+uniform mat4 g_mWorldViewProj;
 
 uniform float g_FrameRate;
 uniform float g_SpriteSize = 1.0;
 uniform vec3 g_eyePos;   //eye in world space
 uniform vec3 g_lightPos = vec3(10,10,0); //the directional light in world space 
 
+uniform vec3 g_TotalVel = vec3(0, -0.25, 0);
+
 uniform float g_PointLightIntensity = 2.0;
 uniform float g_ResponsePointLight = 1.0;
 uniform float dirLightIntensity = 1.0;
 uniform float g_ResponseDirLight = 1.0;
+
+
+
 
 const vec2 g_texcoords[4] = 
 { 
@@ -45,8 +53,9 @@ const vec2 g_texcoords[4] =
 };
 
 const vec3 g_PointLightPos = vec3(3.7, 5.8, 3.15);
+const vec3 g_PointLightPos2 = vec3(-3.7,5.8,3.15);
 
-bool cullSprite( float3 position, float SpriteSize)
+bool cullSprite(vec3 position, float SpriteSize)
 {
     vec4 vpos = vec4(position, 1.0) * g_mWorldView;
     
@@ -91,13 +100,13 @@ void GenRainSpriteVertices(vec3 worldPos, vec3 velVec, vec3 eyePos, out vec3 out
 void main()
 {
 	float totalIntensity = g_PointLightIntensity*g_ResponsePointLight + dirLightIntensity*g_ResponseDirLight;
-    if(!cullSprite(pos_in[0], 2*g_SpriteSize) && totalIntensity > 0)
+    if(!cullSprite(gs_in[0].pos, 2*g_SpriteSize) && totalIntensity > 0)
     {
-        type = type_in[0];
-        random = random_in[0];
+        type = gs_in[0].type;
+        random = gs_in[0].random;
        
         vec3 bpos[4];
-        GenRainSpriteVertices(pos_in[0].xyz, speed_in[0].xyz/g_FrameRate + g_TotalVel, g_eyePos, bpos);
+        GenRainSpriteVertices(gs_in[0].pos.xyz, gs_in[0].speed.xyz/g_FrameRate + g_TotalVel, g_eyePos, bpos);
         
         vec3 closestPointLight = g_PointLightPos;
         float closestDistance = length(g_PointLightPos - bpos[0]);

@@ -85,6 +85,11 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<ShaderGroup> skybox_shader = make_shared<ShaderGroup>("cubemap.vert", "cubemap.frag");
 	shared_ptr<ShaderGroup> water_shader = make_shared<ShaderGroup>("water.vert", "water.frag");
 
+	shared_ptr<ShaderGroup> rain_update_shader = make_shared<ShaderGroup>("rain_update.vert", "rain_update.geom", "rain_update.frag");
+	shared_ptr<ShaderGroup> rain_render_shader = make_shared<ShaderGroup>("rain_render.vert", "rain_render.geom", "rain_render.frag");
+
+
+
 	RenderTexture gBloom(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
 	// Setup g-buffer

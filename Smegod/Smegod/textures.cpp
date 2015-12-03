@@ -254,7 +254,7 @@ ArrayTexture::ArrayTexture(string tmpl, int num, const unsigned int width, const
 		int load_channels;
 		unsigned char *image = SOIL_load_image((file).c_str(), &load_width, &load_height, &load_channels, format == GL_RGBA ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
 
-		cout << file << " " << width << "x" << height << " (" << load_channels << ") " << endl;
+		//cout << file << " " << width << "x" << height << " (" << load_channels << ") " << endl;
 
 		assert(width == load_width);
 		assert(height == load_height);

@@ -10,11 +10,13 @@ uniform vec3 camera_pos;
 uniform float g_Near; 
 uniform float g_Far; 
 
-in vec3 pos_in[];
-in vec3 seed_in[];
-in vec3 speed_in[];
-in float random_in[];
-in uint type_in[];
+in VS_OUT {
+	vec3 pos;
+	vec3 seed;
+	vec3 speed;
+	float random;
+	uint type;
+} gs_in[]; 
 
 out vec3 pos;
 out vec3 seed;
@@ -26,14 +28,15 @@ uniform float g_FrameRate;
 uniform vec3 g_TotalVel = vec3(0, -0.25, 0);
 uniform vec3 g_eyePos;   //eye in world space
 uniform float g_heightRange = 30.0;
+uniform bool moveParticles = false;
 
 void main()
 {
-	pos = pos_in[0];
-	seed = seed_in[0];
-	speed = speed_in[0];
-	random = random_in[0];
-	type = type_in[0];
+	pos = gs_in[0].pos;
+	seed = gs_in[0].seed;
+	speed = gs_in[0].speed;
+	random = gs_in[0].random;
+	type = gs_in[0].type;
 
 	if(moveParticles) {
          //move forward

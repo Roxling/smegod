@@ -14,7 +14,6 @@ private:
 	string code = "";
 
 	bool compiled = false;
-
 protected:
 	Shader(GLenum mtype, string mfile);
 
@@ -42,8 +41,13 @@ public:
 };
 
 class GeometryShader : public Shader {
+private:
 public:
-	GeometryShader(string file) : Shader(GL_GEOMETRY_SHADER, file) {}
+	vector<GLchar *> varyings;
+	GeometryShader(string file, vector<GLchar*> varyings) : Shader(GL_GEOMETRY_SHADER, file) {
+		this->varyings = varyings;
+	}
+
 };
 
 struct ShaderLocation {
@@ -71,11 +75,11 @@ private:
 public:
 	static void recompile_all();
 	ShaderGroup(const string &vs, const string &fs);
-	ShaderGroup(const string &vs, const string &gs, const string &fs);
+	ShaderGroup(const string &vs, const string &gs, const string &fs, vector<GLchar*> varyings);
 	void compile();
 	void use() { 
 		glUseProgram(glId);
-		GL_CHECK_ERRORS();
+		GL_CHECK_ERRORS_MSG("Failed to use "+ vshader->file);
 	}
 	void bindMaterial(shared_ptr<Material> material);
 

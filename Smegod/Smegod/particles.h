@@ -16,7 +16,7 @@ public:
 private:
 	GLuint m_particleBuffer[2];
 	GLuint m_transformFeedback[2];
-
+	GLuint vao;
 	bool m_isFirst;
 	unsigned int m_currVB;
 	unsigned int m_currTFB;

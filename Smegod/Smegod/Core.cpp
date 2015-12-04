@@ -21,7 +21,8 @@ int fps = 0;
 
 static bool gl_is_broken = false;
 static int error_line = -1;
-bool check_errors(const string file, const string function, int line) {
+
+bool check_errors(const string file, const string function, int line, string msg) {
 	GLenum result;
 	result = glGetError();
 
@@ -39,7 +40,7 @@ bool check_errors(const string file, const string function, int line) {
 			case GL_OUT_OF_MEMORY: err = "Out of memory"; break;
 			default: err = ""; break;
 			}
-			cout << "GL error caught with error code 0x" << hex << result << dec << ": " << err << ". " << file << ":" << function << "(" << line << ")" << endl;
+			cout << "GL error caught with error code 0x" << hex << result << dec << ": " << err << ". " << file << ":" << function << "(" << line << ") Message: " << msg << endl;
 		}
 		return false;
 	}
@@ -86,8 +87,18 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<ShaderGroup> skybox_shader = make_shared<ShaderGroup>("cubemap.vert", "cubemap.frag");
 	shared_ptr<ShaderGroup> water_shader = make_shared<ShaderGroup>("water.vert", "water.frag");
 
-	shared_ptr<ShaderGroup> rain_update_shader = make_shared<ShaderGroup>("rain_update.vert", "rain_update.geom", "rain_update.frag");
-	shared_ptr<ShaderGroup> rain_render_shader = make_shared<ShaderGroup>("rain_render.vert", "rain_render.geom", "rain_render.frag");
+	vector<GLchar *> ruVaryings;
+	ruVaryings.push_back("pos");
+	/*ruVaryings.push_back("seed");
+	ruVaryings.push_back("speed");
+	ruVaryings.push_back("random");
+	ruVaryings.push_back("type");*/
+
+	shared_ptr<ShaderGroup> rain_update_shader = make_shared<ShaderGroup>("rain_update.vert", "rain_update.geom", "rain_update.frag", ruVaryings);
+	
+
+	vector<GLchar *> rrVaryings;
+	shared_ptr<ShaderGroup> rain_render_shader = make_shared<ShaderGroup>("rain_render.vert", "rain_render.geom", "rain_render.frag", rrVaryings);
 
 
 
@@ -269,7 +280,7 @@ void main_loop(GLFWwindow* window) {
 		water_shader->setUniform("time", (float)glfwGetTime());
 		water_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 		water_shader->setUniform("view_projection", cam->view_projection);
-		water_shader->setUniform("light_pos", ident); // TODO
+		water_shader->setUniform("light_pos", glm::vec3(50,30,100)); // TODO
 		water_shader->bindTexture("bump", 0, water_bump);
 
 		water.render(water.world, water_shader);
@@ -378,6 +389,11 @@ void main_loop(GLFWwindow* window) {
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		
 
+		glDepthMask(GL_FALSE);
+		resolve_shader->use();
+		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);
+		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
+		resolve_shader->bindTexture("bloom_buffer", 2, horizontal ? gPing : gPong);
 		//move rain
 		rain_update_shader->use();
 		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
@@ -386,7 +402,7 @@ void main_loop(GLFWwindow* window) {
 		rain_update_shader->setUniform("moveParticles", true);
 		rain_update_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
 		rain.update();
-
+		
 		//render
 		rain_render_shader->use();
 		rain_render_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
@@ -403,16 +419,11 @@ void main_loop(GLFWwindow* window) {
 		rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
 
 		rain.renderParticles();
-
+		
+		
 		//swap rain buffers
 		rain.swap();
 
-		glDepthMask(GL_FALSE);
-
-		resolve_shader->use();
-		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);
-		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
-		resolve_shader->bindTexture("bloom_buffer", 2, horizontal ? gPing : gPong);
 
 		//output.render();
 

@@ -11,8 +11,6 @@ uniform samplerCube skybox;
 
 uniform float time;
 
-uniform vec3 camera_pos;
-
 in vec3 fN;
 in vec3 fB;
 in vec3 fT;

@@ -17,9 +17,11 @@ public:
 #define DEBUG_LEVEL (2)
 
 #if DEBUG_LEVEL >= 1
-#	define GL_CHECK_ERRORS() check_errors(__FILE__, __FUNCTION__, __LINE__)
+#	define GL_CHECK_ERRORS() check_errors(__FILE__, __FUNCTION__, __LINE__ , "No message")
+#   define GL_CHECK_ERRORS_MSG(msg) check_errors(__FILE__, __FUNCTION__, __LINE__, msg)
 #else
 #	define GL_CHECK_ERRORS()
+#   define GL_CHECK_ERRORS_MSG(msg)
 #endif
 
 #if DEBUG_LEVEL >= 3
@@ -36,7 +38,7 @@ public:
 
 /* Ensures that GL hasn't generated any errors */
 bool check_errors(const string file, const string function, int line);
-
+bool check_errors(const string file, const string function, int line, string msg);
 
 class PassPerf {
 public:

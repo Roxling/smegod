@@ -115,13 +115,13 @@ ShaderGroup::ShaderGroup(const string &vs, const string &fs)
 	compile();
 }
 
-ShaderGroup::ShaderGroup(const string & vs, const string & gs, const string & fs)
+ShaderGroup::ShaderGroup(const string & vs, const string & gs, const string & fs, vector<GLchar*> varyings)
 {
 	glId = glCreateProgram();
 	GL_CHECK_ERRORS();
 	all_groups->push_back(this);
 	vshader = make_unique<VertexShader>(vs);
-	gshader = make_unique<GeometryShader>(gs);
+	gshader = make_unique<GeometryShader>(gs, varyings);
 	fshader = make_unique<FragmentShader>(fs);
 	compile();
 }
@@ -148,6 +148,9 @@ void ShaderGroup::compile()
 		fshader->attachTo(glId);
 		if (gshader) {
 			gshader->attachTo(glId);
+			if (gshader->varyings.size() > 0) {
+				glTransformFeedbackVaryings(glId,(GLsizei) gshader->varyings.size() , gshader->varyings.data(), GL_INTERLEAVED_ATTRIBS);
+			}
 		}
 		if (link()) {
 			vshader->detachFrom(glId);
@@ -288,19 +291,19 @@ bool ShaderGroup::getUniformLocation(GLuint &dst, const string &name) {
 	template<> bool ShaderGroup::setUniform<t>(const std::string &name, const t &v) { \
 		UNIFORM_UPLOAD_SETUP() \
 		f(loc, v); \
-		GL_CHECK_ERRORS(); return true; }
+		GL_CHECK_ERRORS_MSG(name); return true; }
 
 #define UNIFORM_UPLOAD_GLMv(t, f) \
 	template<> bool ShaderGroup::setUniform<t>(const std::string &name, const t &v) { \
 		UNIFORM_UPLOAD_SETUP() \
 		f(loc, 1, glm::value_ptr(v)); \
-		GL_CHECK_ERRORS(); return true; }
+		GL_CHECK_ERRORS_MSG(name); return true; }
 
 #define UNIFORM_UPLOAD_GLMm(t, f) \
 	template<> bool ShaderGroup::setUniform<t>(const std::string &name, const t &v) { \
 		UNIFORM_UPLOAD_SETUP() \
 		f(loc, (GLsizei) 1, GL_FALSE, glm::value_ptr(v)); \
-		GL_CHECK_ERRORS(); return true; }
+		GL_CHECK_ERRORS_MSG(name +" in any of the "+ vshader->file); return true; }
 
 
 //primitives

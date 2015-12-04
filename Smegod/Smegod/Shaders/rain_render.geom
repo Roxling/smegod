@@ -98,7 +98,7 @@ void GenRainSpriteVertices(vec3 worldPos, vec3 velVec, vec3 eyePos, out vec3 out
 void main()
 {
 	float totalIntensity = g_PointLightIntensity*g_ResponsePointLight + dirLightIntensity*g_ResponseDirLight;
-    //if(!cullSprite(gs_in[0].pos, 2*g_SpriteSize) && totalIntensity > 0)
+    if(!cullSprite(gs_in[0].pos, 2*g_SpriteSize) && totalIntensity > 0 || true)
     {
         type = gs_in[0].type;
         random = gs_in[0].random;

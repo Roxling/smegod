@@ -1,16 +1,15 @@
 #version 330 core
-uniform sampler2D tex;
 uniform sampler2DArray rainTextureArray;
 
 out vec4 frag_color;
 
-in vec4 pos_in;
-in vec3 lightDir_in;
-in vec3 pointLightDir_in;
-in vec3 eyeVec_in;
-in vec2 tex_in;
-in uint type_in;
-in float random_in;
+in vec4 pos;
+in vec3 lightDir;
+in vec3 pointLightDir;
+in vec3 eyeVec;
+in vec2 tex;
+flat in uint type;
+in float random;
 
 
 uniform vec3 g_SpotLightDir = vec3(0,-1,0);
@@ -23,7 +22,9 @@ uniform float g_ResponsePointLight = 1.0;
 uniform float dirLightIntensity = 1.0;
 uniform bool g_useSpotLight = true;
 
-const vec4 pointLightColor = float4(1.0,1.0,1.0,1.0);
+const vec4 pointLightColor = vec4(1.0,1.0,1.0,1.0);
+
+#define PI 3.14159265
 
 const float g_rainfactors[370] = 
 {
@@ -68,7 +69,7 @@ const float g_rainfactors[370] =
 
 #define saturate(a) clamp( a, 0.0, 1.0 )
 
-void rainResponse(vec3 lightVector, float lightIntensity, vec3 lightColor, vec3 eyeVector, bool fallOffFactor, out vec4 rainResponseVal)
+void rainResponse(vec3 lightVector, float lightIntensity, vec3 lightColor, vec3 eyeVector, bool fallOffFactor, inout vec4 rainResponseVal)
 {
     float opacity = 0.0;
 
@@ -118,14 +119,14 @@ void rainResponse(vec3 lightVector, float lightIntensity, vec3 lightColor, vec3 
         // Outputs:
         // verticalLightIndex[1|2] - two indices in the vertical direction
         // t - fraction at which the vangle is between these two indices (for lerp)
-        int verticalLightIndex1 = floor(vangle); // 0 to 5
+        int verticalLightIndex1 = int(floor(vangle)); // 0 to 5
         int verticalLightIndex2 = min(MAX_VIDX, (verticalLightIndex1 + 1) );
         verticalLightIndex1 = max(0, verticalLightIndex1);
         float t = fract(vangle);
 
         // textureCoordsH[1|2] used in case we need to flip the texture horizontally
-        float textureCoordsH1 = tex_in.x;
-        float textureCoordsH2 = tex_in.x;
+        float textureCoordsH1 = tex.x;
+        float textureCoordsH2 = tex.x;
         
         // horizontalLightIndex[1|2] - two indices in the horizontal direction
         // s - fraction at which the hangle is between these two indices (for lerp)
@@ -134,7 +135,7 @@ void rainResponse(vec3 lightVector, float lightIntensity, vec3 lightColor, vec3 
         float s = 0;
         
         s = fract(hangle);
-        horizontalLightIndex1 = floor(hangle); // 0 to 8
+        horizontalLightIndex1 = int(floor(hangle)); // 0 to 8
         horizontalLightIndex2 = horizontalLightIndex1+1;
         if( horizontalLightIndex1 < 0 )
         {
@@ -164,31 +165,31 @@ void rainResponse(vec3 lightVector, float lightIntensity, vec3 lightColor, vec3 
                 
         if( verticalLightIndex1 >= MAX_VIDX )
         {
-            textureCoordsH2 = tex_in.x;
+            textureCoordsH2 = tex.x;
             horizontalLightIndex1 = 0;
             horizontalLightIndex2 = 0;
             s = 0;
         }
         
         // Generate the final texture coordinates for each sample
-        uint type = type_in;
-        uvec2 texIndicesV1 = uvec2(verticalLightIndex1*90 + horizontalLightIndex1*10 + type,
-                                     verticalLightIndex1*90 + horizontalLightIndex2*10 + type);
-        vec3 tex1 = vec3(textureCoordsH1, tex_in.y, texIndicesV1.x);
-        vec3 tex2 = vec3(textureCoordsH2, tex_in.y, texIndicesV1.y);
+        int itype = int(type);
+        ivec2 texIndicesV1 = ivec2(verticalLightIndex1*90 + horizontalLightIndex1*10 + itype,
+                                     verticalLightIndex1*90 + horizontalLightIndex2*10 + itype);
+        vec3 tex1 = vec3(textureCoordsH1, tex.y, texIndicesV1.x);
+        vec3 tex2 = vec3(textureCoordsH2, tex.y, texIndicesV1.y);
         if( (verticalLightIndex1<4) && (verticalLightIndex2>=4) ) 
         {
             s = 0;
             horizontalLightIndex1 = 0;
             horizontalLightIndex2 = 0;
-            textureCoordsH1 = tex_in.x;
-            textureCoordsH2 = tex_in.x;
+            textureCoordsH1 = tex.x;
+            textureCoordsH2 = tex.x;
         }
         
-        uvec2 texIndicesV2 = uvec2(verticalLightIndex2*90 + horizontalLightIndex1*10 + type,
-                                     verticalLightIndex2*90 + horizontalLightIndex2*10 + type);
-        vec3 tex3 = vec3(textureCoordsH1, tex_in.y, texIndicesV2.x);        
-        vec3 tex4 = vec3(textureCoordsH2, tex_in.y, texIndicesV2.y);
+        ivec2 texIndicesV2 = ivec2(verticalLightIndex2*90 + horizontalLightIndex1*10 + itype,
+                                     verticalLightIndex2*90 + horizontalLightIndex2*10 + itype);
+        vec3 tex3 = vec3(textureCoordsH1, tex.y, texIndicesV2.x);        
+        vec3 tex4 = vec3(textureCoordsH2, tex.y, texIndicesV2.y);
 
         // Sample opacity from the textures
 		//Filter = ANISOTROPIC;
@@ -207,23 +208,23 @@ void rainResponse(vec3 lightVector, float lightIntensity, vec3 lightColor, vec3 
         opacity = 4 * lightIntensity * opacity * fallOff;
     }
          
-   rainResponseVal = vec3(lightColor, opacity);
+   rainResponseVal = vec4(lightColor, opacity);
 }
 
 void main()
 {
 	//directional lighting---------------------------------------------------------------------------------
-	vec4 directionalLight;
-	rainResponse(lightDir_in, 2.0*dirLightIntensity*g_ResponseDirLight*random_in, vec3(1.0,1.0,1.0), eyeVec_in, false, directionalLight);
+	vec4 directionalLight = vec4(0);
+	rainResponse(lightDir, 2.0*dirLightIntensity*g_ResponseDirLight*random, vec3(1.0,1.0,1.0), eyeVec, false, directionalLight);
 
 	//point lighting---------------------------------------------------------------------------------------
-	vec4 pointLight = vec4(0,0,0,0);
+	vec4 pointLight = vec4(0);
 
-	vec3 L = normalize( pointLightDir_in );
+	vec3 L = normalize( pointLightDir );
 	float angleToSpotLight = dot(-L, g_SpotLightDir);
 
 	if( !g_useSpotLight || g_useSpotLight && angleToSpotLight > g_cosSpotlightAngle )
-		rainResponse(pointLightDir_in, 2*g_PointLightIntensity*g_ResponsePointLight*random_in, pointLightColor.xyz, eyeVec_in, true, pointLight);
+		rainResponse(pointLightDir, 2*g_PointLightIntensity*g_ResponsePointLight*random, pointLightColor.xyz, eyeVec, true, pointLight);
 
 	float totalOpacity = pointLight.a + directionalLight.a;
 	frag_color = vec4( vec3(pointLight.rgb*pointLight.a/totalOpacity + directionalLight.rgb*directionalLight.a/totalOpacity), totalOpacity);

@@ -50,16 +50,6 @@ void main()
     pixel_in_light /= pixel_in_light.w;
 
     float shadowdepth = texture(shadowMap, pixel_in_light.xy*0.5 +0.5).r * 2 - 1;
-    //float shadowdepth = texture(shadowMap, pixel_in_light.xyz);
-
-    
-
-   // float shadow = 0;
-    //if(shadowdepth > pixel_in_light.z)
-    //    shadow = 1;
-    
- 
-
 
     // PHONG
     //Composite light using phong shading, falloffs and LightIntensity and LightColor
@@ -103,15 +93,11 @@ void main()
     if(NnS.a == 0)
         specular = vec3(0);
 
+	//nått i diffuse och/eller specular
     vec3 full_color = (diffuse + specular)*shadow;
-    light_contribution = vec4(full_color, 1.0);
 
+	light_contribution = vec4(full_color, 1.0);
     float brightness = dot(full_color, vec3(0.2126, 0.7152, 0.0722));
     if(brightness > 1.0)
         bloom_filter = vec4(full_color, 1.0);
-
-    //TO REMOVE
-    //light_contribution.xyz = normalize(pixel_in_light.xyz)*0.5 + 0.5;
-   // light_contribution.xyz = vec3(shadowdepth);
-    //light_contribution.xyz = light_color*shadow;
 }

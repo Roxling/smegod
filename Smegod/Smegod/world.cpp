@@ -21,20 +21,6 @@ void SponzaWorld::initiate()
 {
 	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 300.f);
 	active_camera->translate(0, 5, 0);
-	//head->attach(active_camera);
-	//active_camera->addShaderGroup(gShader);
-
-	//shared_ptr<ShaderGroup> n_shader = make_shared<ShaderGroup>("phong.vs", "phong.fs");
-	//shared_ptr<ShaderGroup> l_shader = make_shared<ShaderGroup>("light.vs", "light.fs");
-
-
-	//active_camera->addShaderGroup(n_shader);
-	//active_camera->addShaderGroup(l_shader);
-
-	//shared_ptr<Light> light = make_shared<Light>(l_shader);
-	//light->addShaderGroup(n_shader);
-	//light->translate(0, 50, 0);
-	//head->attach(light);
 
 	auto lighthouse = make_shared<Geometry>(Model("lighthouse/lighthouse.obj"));
 	lighthouse->translate(7.18f * 5.3f, 0, 0);
@@ -47,7 +33,8 @@ void SponzaWorld::initiate()
 	auto p2 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	p2->translate(7.18f, 0, 0);
 	//auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
-	//p3->translate(-7.18f, 0, 0);
+	//p3->translate(0, -6, -30);
+	//p3->scale(10);
 	bridge->attach(p1);
 	bridge->attach(p2);
 	//bridge->attach(p3);
@@ -55,7 +42,7 @@ void SponzaWorld::initiate()
 	Texture glow("glow.png");
 
 	auto lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(1.f, 10, 10));
-	lh_bulb->translate(35.6, 26.5, -1.3);
+	lh_bulb->translate(35.6f, 26.5f, -1.3f);
 	lh_bulb->model->meshes[0].material->textures.push_back({"diffuse_texture", glow.getGlId()});
 	head->attach(lh_bulb);
 

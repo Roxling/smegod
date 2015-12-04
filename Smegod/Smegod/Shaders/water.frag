@@ -59,7 +59,7 @@ void main()
     vec4 reflection = texture(skybox, R);
     vec4 refraction = texture(skybox, refract(-V, N, 1/1.33));
 
-	//geometry_normal_and_specular = vec4(N, 1);
+	geometry_normal_and_specular = vec4(N * 0.5 + 0.5, 1);
 	light = (reflection * (fresnel)) + (refraction * (1 - fresnel));
 	geometry_diffuse = color_water;
 }

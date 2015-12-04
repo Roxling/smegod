@@ -142,52 +142,43 @@ void main_loop(GLFWwindow* window) {
 
 	vector<shared_ptr<SpotLight>> lights;
 
-	Node lg;
-
 	float lightoffset = 21.54f;
 
 	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(laccbuff_shader);
 	sl1->translate(3.7f, 6.f, -3.3f);
-	sl1->rotate(180, 55, 0);
-	sl1->scale(20);
+	sl1->rotate(180, 40, 0);
+	sl1->LightIntensity *= 2;
+	sl1->scale(25);
 	sl1->LightColor = { 1.f, 1.f, 0.6f };
 
 	shared_ptr<SpotLight> sl2 = make_shared<SpotLight>(laccbuff_shader);
 	sl2->translate(-3.7f, 6.f, -3.3f);
-	sl2->rotate(180, 55, 0);
-	sl2->scale(20);
+	sl2->rotate(180, 40, 0);
+	sl2->LightIntensity *= 2;
+	sl2->scale(25);
 	sl2->LightColor = { 1.f, 1.f, 0.6f };
 
 	shared_ptr<SpotLight> sl3 = make_shared<SpotLight>(laccbuff_shader);
 	sl3->translate(3.7f + lightoffset, 6.f, -3.3f);
-	sl3->rotate(180, 55, 0);
-	sl3->scale(20);
+	sl3->rotate(180, 40, 0);
+	sl3->LightIntensity *= 2;
+	sl3->scale(25);
 	sl3->LightColor = { 1.f, 1.f, 0.6f };
 
 	shared_ptr<SpotLight> sl4 = make_shared<SpotLight>(laccbuff_shader);
 	sl4->translate(-3.7f + lightoffset, 6.f, -3.3f);
-	sl4->rotate(180, 55, 0);
-	sl4->scale(20);
+	sl4->rotate(180, 40, 0);
+	sl4->LightIntensity *= 2;
+	sl4->scale(25);
 	sl4->LightColor = { 1.f, 1.f, 0.6f };
-
-	/*shared_ptr<SpotLight> sl5 = make_shared<SpotLight>(laccbuff_shader);
-	sl5->translate(3.7f - lightoffset, 6.f, -3.3f);
-	sl5->rotate(180, 55, 0);
-	sl5->scale(20);
-	sl5->LightColor = { 1.f, 1.f, 0.6f };
-
-	shared_ptr<SpotLight> sl6 = make_shared<SpotLight>(laccbuff_shader);
-	sl6->translate(-3.7f - lightoffset, 6.f, -3.3f);
-	sl6->rotate(180, 55, 0);
-	sl6->scale(20);
-	sl6->LightColor = { 1.f, 1.f, 0.6f };
-	*/
 	
+	Node lhRotator;
+	lhRotator.translate(35.6f, 27.5f, -1.3f);
 	shared_ptr<SpotLight> lh = make_shared<SpotLight>(laccbuff_shader);
-	lh->translate(20,30,0);
-	lh->rotate(-90, 45, 0);
-	lh->scale(20);
-	lh->LightColor = { 1.f, 0, 0.0f };
+
+	lh->scale(40);
+	lh->LightIntensity *= 50;
+	lh->LightColor = { 1.f, 1.f, 1.f };
 
 	lights.push_back(sl1);
 	lights.push_back(sl2);
@@ -195,10 +186,8 @@ void main_loop(GLFWwindow* window) {
 	lights.push_back(sl3);
 	lights.push_back(sl4);
 
-	//lights.push_back(sl5);
-	//lights.push_back(sl6);
 
-	//lights.push_back(lh);
+	lights.push_back(lh);
 
 	Quad output;
 
@@ -281,7 +270,6 @@ void main_loop(GLFWwindow* window) {
 		laccbuff_shader->setUniform("view_projection_inverse", cam->view_projecion_inverse);
 		laccbuff_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 
-
 		for (int i = 0; i < lights.size(); i++) {
 			shared_ptr<SpotLight> sl = lights[i];
 
@@ -300,8 +288,9 @@ void main_loop(GLFWwindow* window) {
 			shadow_shader->setUniform("model_to_clip_matrix", model_to_clip_matrix);
 
 			world->render(shadow_shader);
-
-
+			//glCullFace(GL_BACK);
+			//water.render(water.world, shadow_shader);
+			//glCullFace(GL_FRONT);
 
 			// 2.2 blend light
 			laccbuff_shader->use();
@@ -323,7 +312,7 @@ void main_loop(GLFWwindow* window) {
 
 
 
-			sl->render(lg.world * sl->world, laccbuff_shader);
+			sl->render(sl->world, laccbuff_shader);
 
 
 			glDepthMask(GL_TRUE);
@@ -448,7 +437,10 @@ void main_loop(GLFWwindow* window) {
 
 		//lg.world = glm::translate(ident, glm::vec3(10*glm::sin(glfwGetTime()*0.1), 2 * glm::sin(glfwGetTime()*0.3)+ 2, 0));
 		//lg.world = glm::rotate(ident,(float) glfwGetTime(), glm::vec3(lg.world[1]));
-
+		lh->world = glm::rotate(lhRotator.world,(float) glfwGetTime()*0.4f, glm::vec3(lhRotator.world[1]));
+		lh->translate(1.7f, 3, 0);
+		lh->rotate(-90, 20, 0);
+		lh->scale(200);
 		PERF_PRINT();
 	}
 }

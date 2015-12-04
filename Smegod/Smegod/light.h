@@ -22,6 +22,7 @@ public:
 	float LightIntensity = 24.0f;
 private:
 	void renderSelf();
+	glm::mat4 lightProjection;
 	float LightAngleFalloff = 0.8f;
 
 	GLuint coneVao = 0u, coneVbo = 0u;

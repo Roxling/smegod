@@ -113,6 +113,7 @@ void Light::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 SpotLight::SpotLight(shared_ptr<ShaderGroup> shader)
 {
 	coneVao = loadCone(coneVbo, coneVerticesNb, shader);
+	lightProjection = glm::perspective(45.f, (float)Globals::SHADOW_WIDTH / (float)Globals::SHADOW_HEIGHT, 0.1f, 10000.0f);
 }
 
 void SpotLight::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
@@ -135,7 +136,7 @@ glm::mat4 SpotLight::getLightSpaceMatrix()
 {
 	//lightProjection * lightOffsetTransform.GetMatrixInverse() * lightTransform.GetMatrixInverse();
 
-	glm::mat4 lightProjection = glm::perspective(45.f, (float) Globals::SHADOW_WIDTH / (float) Globals::SHADOW_HEIGHT, 0.1f, 1000.0f);
+	
 	glm::mat4 lightView = glm::inverse(combined_world);
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 	return lightSpaceMatrix;

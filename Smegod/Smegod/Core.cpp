@@ -6,6 +6,7 @@
 #include "world.h"
 #include "geometries.h"
 #include "light.h"
+#include "particles.h"
 
 const string name = "Window";
 shared_ptr<World> world;
@@ -134,6 +135,8 @@ void main_loop(GLFWwindow* window) {
 	//rain
 	ArrayTexture rainTexs("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA8);
 	TestTexture testTex;
+
+	Particles rain;
 
 	// Water
 	Texture water_bump("waves.png");
@@ -374,16 +377,44 @@ void main_loop(GLFWwindow* window) {
 		glClearColor(1.f, .1f, .7f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		
+
+		//move rain
+		rain_update_shader->use();
+		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
+		rain_update_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
+		rain_update_shader->setUniform("g_heightRange", 30.0f);
+		rain_update_shader->setUniform("moveParticles", true);
+		rain_update_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
+		rain.update();
+
+		//render
+		rain_render_shader->use();
+		rain_render_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
+		rain_render_shader->setUniform("g_Near", cam->getNear());
+		rain_render_shader->setUniform("g_Far", cam->getFar());
+
+		rain_render_shader->setUniform("g_mWorldView", cam->view * ident); //TODO: ident?
+		rain_render_shader->setUniform("g_mWorldViewProj", cam->view_projection * ident);
+		rain_render_shader->setUniform("g_mProjection", cam->projection);
+
+		rain_render_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
+		rain_render_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
+
+		rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
+
+		rain.renderParticles();
+
+		//swap rain buffers
+		rain.swap();
+
 		glDepthMask(GL_FALSE);
-
-
 
 		resolve_shader->use();
 		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);
 		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
 		resolve_shader->bindTexture("bloom_buffer", 2, horizontal ? gPing : gPong);
 
-		output.render();
+		//output.render();
 
 		PERF_END(PassPerf::Pass::RESOLVE_PASS);
 

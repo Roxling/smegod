@@ -4,12 +4,6 @@ layout (points) in;
 layout (triangle_strip) out;
 layout (max_vertices = 4) out;
 
-uniform mat4 g_mProjection;
-uniform mat4 view_projection;
-uniform vec3 camera_pos;
-uniform float g_Near; 
-uniform float g_Far; 
-
 in VS_OUT {
 	vec3 pos;
 	vec3 seed;
@@ -26,12 +20,16 @@ out vec2 tex;
 flat out uint type;
 out float random;
 
+uniform vec3 camera_pos;
+uniform float g_Near; 
+uniform float g_Far; 
+
 uniform mat4 g_mWorldView;
 uniform mat4 g_mWorldViewProj;
+uniform mat4 g_mProjection;
 
 uniform float g_FrameRate;
 uniform float g_SpriteSize = 1.0;
-uniform vec3 g_eyePos;   //eye in world space
 uniform vec3 g_lightPos = vec3(10,10,0); //the directional light in world space 
 
 uniform vec3 g_TotalVel = vec3(0, -0.25, 0);
@@ -57,7 +55,7 @@ const vec3 g_PointLightPos2 = vec3(-3.7,5.8,3.15);
 
 bool cullSprite(vec3 position, float SpriteSize)
 {
-    vec4 vpos = vec4(position, 1.0) * g_mWorldView;
+    vec4 vpos = g_mWorldView * vec4(position, 1.0);
     
     if( (vpos.z < (g_Near - SpriteSize )) || ( vpos.z > (g_Far + SpriteSize)) ) 
     {
@@ -65,7 +63,7 @@ bool cullSprite(vec3 position, float SpriteSize)
     }
     else 
     {
-        vec4 ppos = vpos * g_mProjection;
+        vec4 ppos = g_mProjection * vpos;
         float wext = ppos.w + SpriteSize;
         if( (ppos.x < -wext) || (ppos.x > wext) ||
             (ppos.y < -wext) || (ppos.y > wext) ) {
@@ -100,44 +98,44 @@ void GenRainSpriteVertices(vec3 worldPos, vec3 velVec, vec3 eyePos, out vec3 out
 void main()
 {
 	float totalIntensity = g_PointLightIntensity*g_ResponsePointLight + dirLightIntensity*g_ResponseDirLight;
-    if(!cullSprite(gs_in[0].pos, 2*g_SpriteSize) && totalIntensity > 0)
+    //if(!cullSprite(gs_in[0].pos, 2*g_SpriteSize) && totalIntensity > 0)
     {
         type = gs_in[0].type;
         random = gs_in[0].random;
        
-        vec3 bpos[4];
-        GenRainSpriteVertices(gs_in[0].pos.xyz, gs_in[0].speed.xyz/g_FrameRate + g_TotalVel, g_eyePos, bpos);
+        vec3 bpos[4]; //billboard position
+        GenRainSpriteVertices(gs_in[0].pos.xyz, gs_in[0].speed.xyz/g_FrameRate + g_TotalVel, camera_pos, bpos);
         
         vec3 closestPointLight = g_PointLightPos;
         float closestDistance = length(g_PointLightPos - bpos[0]);
         if( length(g_PointLightPos2 - bpos[0]) < closestDistance )
            closestPointLight = g_PointLightPos2;
         
-        pos = vec4(bpos[0],1.0) * g_mWorldViewProj;
+        pos = g_mWorldViewProj * vec4(bpos[0], 1.0);
         lightDir = g_lightPos - bpos[0];
         pointLightDir = closestPointLight - bpos[0];
-        eyeVec = g_eyePos - bpos[0];
+        eyeVec = camera_pos - bpos[0];
         tex = g_texcoords[0];
 		EmitVertex();
 
-        pos = vec4(bpos[1],1.0) * g_mWorldViewProj;
+        pos = g_mWorldViewProj * vec4(bpos[1], 1.0);
         lightDir = g_lightPos - bpos[1];
         pointLightDir = closestPointLight - bpos[1];
-        eyeVec = g_eyePos - bpos[1];
+        eyeVec = camera_pos - bpos[1];
         tex = g_texcoords[1];
 		EmitVertex();
 
-        pos = vec4(bpos[2],1.0) * g_mWorldViewProj;
+        pos = g_mWorldViewProj * vec4(bpos[2], 1.0);
         lightDir = g_lightPos - bpos[2];
         pointLightDir = closestPointLight - bpos[2];
-        eyeVec = g_eyePos - bpos[2];
+        eyeVec = camera_pos - bpos[2];
         tex = g_texcoords[2];
 		EmitVertex();
 
-        pos = vec4(bpos[3],1.0) * g_mWorldViewProj;
+        pos = g_mWorldViewProj * vec4(bpos[3], 1.0);
         lightDir = g_lightPos - bpos[3];
         pointLightDir = closestPointLight - bpos[3];
-        eyeVec = g_eyePos - bpos[3];
+        eyeVec = camera_pos - bpos[3];
         tex = g_texcoords[3];
 		EmitVertex();
 

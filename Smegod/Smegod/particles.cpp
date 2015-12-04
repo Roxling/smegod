@@ -78,13 +78,21 @@ Particles::Particles() {
 	GL_CHECK_ERRORS();
 
 
+
+
+	const GLchar* Varyings[4];
+	Varyings[0] = "Type1";
+	Varyings[1] = "Position1";
+	Varyings[2] = "Velocity1";
+	Varyings[3] = "Age1";
+
+	glTransformFeedbackVaryings(m_shaderProg, 4, Varyings, GL_INTERLEAVED_ATTRIBS);
+
+
 }
 
-void Particles::render()
+void Particles::swap()
 {
-	update();
-	renderParticles();
-
 	m_currVB = m_currTFB;
 	m_currTFB = (m_currTFB + 1) & 0x1;
 }

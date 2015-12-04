@@ -2,6 +2,16 @@
 #include "shaders.h"
 #include "input_handling.h"
 
+float Camera::getNear() const
+{
+	return near;
+}
+
+float Camera::getFar() const
+{
+	return far;
+}
+
 Camera::Camera(float fov, int width, int height, float near, float far)
 {
 	projection = glm::perspective(fov, (float)width / (float)height, near, far);
@@ -10,6 +20,8 @@ Camera::Camera(float fov, int width, int height, float near, float far)
 	rotation_speed = 90.f; // deg/s
 	mouse_sensitivity = 0.3f;
 	updateRotation(0,0);
+	this->near = near;
+	this->far = far;
 }
 
 void Camera::translateLocal(float dx, float dy, float dz)

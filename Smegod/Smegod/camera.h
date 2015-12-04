@@ -17,6 +17,8 @@ protected:
 
 	const glm::mat4 identity = glm::mat4();
 
+	float near;
+	float far;
 
 	bool oldTakingCursorInput = false;
 
@@ -34,6 +36,9 @@ public:
 	glm::mat4 projection;
 	glm::mat4 view_projection;
 	glm::mat4 view_projecion_inverse;
+
+	float getNear() const;
+	float getFar() const;
 
 	Camera(float fov = 45.f, int width = Globals::WIDTH, int height = Globals::HEIGHT, float near = 0.1f, float far = 500000);
 	void translateLocal(float dx, float dy, float dz);

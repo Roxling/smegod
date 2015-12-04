@@ -8,7 +8,7 @@ public:
 	Particles();
 
 
-	void render();
+	void swap();
 
 	void update();
 	void renderParticles();

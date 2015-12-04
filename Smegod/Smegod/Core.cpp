@@ -6,6 +6,7 @@
 #include "world.h"
 #include "geometries.h"
 #include "light.h"
+#include "particles.h"
 
 const string name = "Window";
 shared_ptr<World> world;
@@ -134,6 +135,8 @@ void main_loop(GLFWwindow* window) {
 	//rain
 	ArrayTexture rainTexs("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA8);
 	TestTexture testTex;
+
+	Particles rain;
 
 	// Water
 	Texture water_bump("waves.png");
@@ -380,6 +383,7 @@ void main_loop(GLFWwindow* window) {
 		glDepthMask(GL_FALSE);
 
 
+		rain.render();
 
 		resolve_shader->use();
 		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);

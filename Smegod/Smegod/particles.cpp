@@ -123,7 +123,7 @@ void Particles::update()
 	glBeginTransformFeedback(GL_POINTS);
 	GL_CHECK_ERRORS_MSG("Particles update 5");
 	if (m_isFirst) {
-		glDrawArrays(GL_POINTS, 0, 1);
+		glDrawArrays(GL_POINTS, 0, NUM_RAIN);
 		m_isFirst = false;
 		GL_CHECK_ERRORS_MSG("Particles update 6");
 	}

@@ -41,8 +41,8 @@ void SponzaWorld::initiate()
 
 	Texture glow("glow.png");
 
-	auto lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(1.f, 10, 10));
-	lh_bulb->translate(35.6f, 26.5f, -1.3f);
+	auto lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(.74f, 10, 10));
+	lh_bulb->translate(35.56f, 26.3f, -1.31f);
 	lh_bulb->model->meshes[0].material->textures.push_back({"diffuse_texture", glow.getGlId()});
 	head->attach(lh_bulb);
 

@@ -181,9 +181,16 @@ void main_loop(GLFWwindow* window) {
 	lhRotator.translate(35.6f, 27.5f, -1.3f);
 	shared_ptr<SpotLight> lh = make_shared<SpotLight>(laccbuff_shader);
 
+	shared_ptr<SpotLight> lh_top = make_shared<SpotLight>(laccbuff_shader);
+	lh_top->translate(35.56f, 26.3f+2.f, -1.31f);
+	lh_top->rotate(0, 90, 0);
+	//lh_top->LightIntensity *= 2;
+	lh_top->scale(5);
+	lh_top->LightColor = { 1.f, 1.f, .4f };
+
 	lh->scale(40);
-	lh->LightIntensity *= 50;
-	lh->LightColor = { 1.f, 1.f, 1.f };
+	lh->LightIntensity *= 100;
+	lh->LightColor = { 1.f, 1.f, .9f };
 
 	lights.push_back(sl1);
 	lights.push_back(sl2);
@@ -192,6 +199,7 @@ void main_loop(GLFWwindow* window) {
 	lights.push_back(sl4);
 
 
+	lights.push_back(lh_top);
 	lights.push_back(lh);
 
 	Quad output;
@@ -445,7 +453,7 @@ void main_loop(GLFWwindow* window) {
 		lh->world = glm::rotate(lhRotator.world,(float) glfwGetTime()*0.4f, glm::vec3(lhRotator.world[1]));
 		lh->translate(1.7f, 3, 0);
 		lh->rotate(-90, 20, 0);
-		lh->scale(200);
+		lh->scale(180);
 		PERF_PRINT();
 	}
 }

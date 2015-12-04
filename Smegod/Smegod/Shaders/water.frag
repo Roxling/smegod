@@ -34,6 +34,7 @@ vec3 animateBump(float bump_time, float scalef, float speedf)
     return texture(bump, bump_coord).rgb * 2 - 1;
 }
 
+const vec3 ambient = vec3(0.1);
 void main()
 {
     float bump_time = mod(time, 100.0);
@@ -56,6 +57,7 @@ void main()
 
 
     vec4 color_water = mix(color_deep, color_shallow, 1-max(dot(V,N),0));
+	color_water.rgb *= ambient;
     vec4 reflection = texture(skybox, R);
     vec4 refraction = texture(skybox, refract(-V, N, 1/1.33));
 

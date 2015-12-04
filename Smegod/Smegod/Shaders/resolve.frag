@@ -14,7 +14,6 @@ void main()
     vec2 ndc = screen_coord * 2 - 1; // [-1,1]
 
     const float gamma = 1;
-    const vec3 ambient = vec3(0.3);
 
     vec4 diffuse = texelFetch(diffuse_buffer, ivec2(gl_FragCoord.xy), 0);
 	if (diffuse.a < 0.2)
@@ -23,7 +22,7 @@ void main()
     vec3 light = texelFetch(light_buffer, ivec2(gl_FragCoord.xy), 0).rgb;
     vec3 bloom = texture(bloom_buffer, screen_coord).rgb;
 
-    vec3 hdrColor = (light + bloom) + ambient * diffuse.rgb;
+    vec3 hdrColor = (light + bloom) + diffuse.rgb;
     float exposure =1;
     // Exposure tone mapping
     vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);

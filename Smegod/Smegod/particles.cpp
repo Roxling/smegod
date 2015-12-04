@@ -9,7 +9,7 @@ typedef struct particle_t
 	GLuint type;
 } particle_t;
 
-#define NUM_RAIN (128)
+#define NUM_RAIN (50000)
 
 #define random() ((float)rand()/(float)RAND_MAX)
 
@@ -22,10 +22,12 @@ Particles::Particles() {
 	float g_heightRange = 10;
 
 	//TODO: Init data
-	particle_t particles[NUM_RAIN];
+	vector<particle_t> particles;
 
 	for (int i = 0; i < NUM_RAIN; i++)
 	{
+		particle_t pt;
+		particles.push_back(pt);
 		float SeedX;
 		float SeedZ;
 		bool pointIsInside = false;
@@ -74,7 +76,7 @@ Particles::Particles() {
 	for (unsigned int i = 0; i < 2; i++) {
 		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, m_transformFeedback[i]);
 		glBindBuffer(GL_ARRAY_BUFFER, m_particleBuffer[i]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(particles), particles, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(particle_t) * particles.size(), particles.data(), GL_DYNAMIC_DRAW);
 		glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_particleBuffer[i]);
 	}
 	GL_CHECK_ERRORS();

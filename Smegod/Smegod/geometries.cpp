@@ -3,10 +3,12 @@
 void Geometry::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 {
 	shader->setUniform("world", combined_transform);
-
+	GL_CHECK_ERRORS_MSG("Geometry bind World matrix");
 	for (auto it = model->meshes.begin(); it != model->meshes.end(); ++it){
 		shader->bindMaterial(it->material);
+		GL_CHECK_ERRORS_MSG("Geometry bind material");
 		renderSelf(*it);
+		GL_CHECK_ERRORS_MSG("Geometry render self");
 	}
 }
 
@@ -37,7 +39,9 @@ Geometry::Geometry(Model m) : WorldObject()
 void Geometry::renderSelf(Mesh &mesh)
 {	
 	glBindVertexArray(mesh.va.VAO);
+	GL_CHECK_ERRORS_MSG("Geometry bind VAO");
 	glDrawElements(GL_TRIANGLES, mesh.va.num_indices, GL_UNSIGNED_INT, 0);
+	GL_CHECK_ERRORS_MSG("Geometry glDrawElements");
 	glBindVertexArray(0);
 }
 
@@ -126,7 +130,7 @@ void Quad::render()
 	glBindVertexArray(quadVAO);
 	GL_CHECK_ERRORS();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	GL_CHECK_ERRORS();
+	GL_CHECK_ERRORS_MSG("Quad glDrawElements");
 	glBindVertexArray(0);
 	GL_CHECK_ERRORS();
 }

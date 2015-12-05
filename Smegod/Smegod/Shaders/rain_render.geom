@@ -40,15 +40,12 @@ uniform float dirLightIntensity = 1.0;
 uniform float g_ResponseDirLight = 1.0;
 
 
-
-
-const vec2 g_texcoords[4] = 
-{ 
+const vec2 g_texcoords[4] = vec2[](
 	vec2(0,1), 
 	vec2(1,1),
 	vec2(0,0),
-	vec2(1,0),
-};
+	vec2(1,0)
+);
 
 const vec3 g_PointLightPos = vec3(3.7, 5.8, 3.15);
 const vec3 g_PointLightPos2 = vec3(-3.7,5.8,3.15);

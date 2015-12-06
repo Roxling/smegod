@@ -1,4 +1,5 @@
 #include "shaders.h"
+#include "cubemap.h"
 #include <fstream>
 #include <streambuf>
 
@@ -257,6 +258,22 @@ bool ShaderGroup::bindTexture(const string &name, const unsigned int slot, Textu
 	glUniform1i(match->second.loc, slot);
 	GL_CHECK_ERRORS();
 
+	return true;
+}
+
+bool ShaderGroup::bindCubemap(const string & name, const unsigned int slot,Cubemap &c)
+{
+	GL_CHECK_SHADER_BOUND(glId);
+	auto match = uniformLocs.find(name);
+	if (match == uniformLocs.end()) {
+		cout << "Sampler " << name << " not found in shader " << vshader->file << endl; \
+			return false;
+	}
+	match->second.isSet = true;
+	glActiveTexture(GL_TEXTURE0 + slot);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, c.texture_id);
+	glUniform1i(match->second.loc, slot);
+	GL_CHECK_ERRORS();
 	return true;
 }
 

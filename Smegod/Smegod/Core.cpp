@@ -287,11 +287,11 @@ void main_loop(GLFWwindow* window) {
 		water_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 		water_shader->setUniform("view_projection", cam->view_projection);
 		water_shader->bindTexture("bump", 1, water_bump);
+
+		water_shader->bindCubemap("skybox", 0, *cubemap.get());
 		
 		//TODO, be able to bind cubemap with function, like normal texture
-		auto slot = 0;
-		glActiveTexture(GL_TEXTURE0+slot);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap->texture_id);
+		
 
 
 		GL_CHECK_ERRORS_MSG("Before water render");

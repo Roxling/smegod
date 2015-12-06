@@ -7,14 +7,12 @@ uniform mat4 world;
 
 uniform float time;
 
-uniform vec3 light_pos;
 uniform vec3 camera_pos;
 
 out vec3 fN;
 out vec3 fB;
 out vec3 fT;
 out vec3 fV;
-out vec3 fL;
 
 
 float G(float ampl, float dirx, float dirz, float freq, float phase, float sharp, float time)
@@ -66,5 +64,4 @@ void main()
 	fB = (worldIT * vec4(b,0)).xyz;
 	fT = (worldIT * vec4(t,0)).xyz;
 	fV = camera_pos - world_pos;
-	fL = light_pos - world_pos;
 }

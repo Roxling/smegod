@@ -281,7 +281,6 @@ void main_loop(GLFWwindow* window) {
 		water_shader->setUniform("time", (float)glfwGetTime());
 		water_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 		water_shader->setUniform("view_projection", cam->view_projection);
-		water_shader->setUniform("light_pos", glm::vec3(50,30,100)); // TODO
 		water_shader->bindTexture("bump", 1, water_bump);
 		
 		//TODO, be able to bind cubemap with function, like normal texture

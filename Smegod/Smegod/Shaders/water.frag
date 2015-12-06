@@ -14,7 +14,6 @@ uniform float time;
 in vec3 fN;
 in vec3 fB;
 in vec3 fT;
-in vec3 fL;
 in vec3 fV;
 
 vec4 color_deep = vec4(0,0,0.1,1);
@@ -43,7 +42,6 @@ void main()
     vec3 B = normalize(fB);
     vec3 V = normalize(fV);
     vec3 T = normalize(fT);
-    vec3 L = normalize(fL);
     mat3 BTN = mat3(B, T, N);
 	
 

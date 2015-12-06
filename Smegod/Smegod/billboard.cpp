@@ -61,14 +61,12 @@ void BillboardList::CreatePositionBuffer()
 	for (unsigned int j = 0; j < NUM_ROWS; j++) {
 		for (unsigned int i = 0; i < NUM_COLUMNS; i++) {
 			pos_t Pos;
-			Pos.x = (float)i+10;
-			Pos.y = 3.0f;
-			Pos.z = (float)j+10;
+			Pos.x = (float)i;
+			Pos.y = 0.0f;
+			Pos.z = (float)j;
 			Positions.push_back(Pos);
-			cout << "adding point " << Pos.x << ":" << Pos.y << ":" << Pos.z << endl;
 		}
 	}
-
 
 	glGenVertexArrays(1, &m_VA);
 	glGenBuffers(1, &m_VB);
@@ -98,6 +96,6 @@ void BillboardList::Render(const glm::mat4 &view_projection, const glm::vec3 &ca
 	glDrawArrays(GL_POINTS, 0, NUM_ROWS * NUM_COLUMNS);
 	GL_CHECK_ERRORS_MSG("Billboard render#4");
 
-	glDisableVertexAttribArray(0);
+	glBindVertexArray(0);
 	GL_CHECK_ERRORS_MSG("After Billboard render");
 }

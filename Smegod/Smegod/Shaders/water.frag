@@ -45,20 +45,20 @@ void main()
     vec3 T = normalize(fT);
     vec3 L = normalize(fL);
     mat3 BTN = mat3(B, T, N);
-
+	
 
     N = BTN * n_bump;
 
     float fresnel = R0 + (1-R0) * pow(1 - dot(V,N), 5) + 0.1;
 
     vec3 R = normalize(reflect(-V,N));
-
+	
 
     vec4 color_water = mix(color_deep, color_shallow, 1-max(dot(V,N),0));
 	color_water.rgb *= ambient;
     vec4 reflection = texture(skybox, R);
     vec4 refraction = texture(skybox, refract(-V, N, 1/1.33));
-
+	
 	geometry_normal_and_specular = vec4(N * 0.5 + 0.5, 1);
 	light = (reflection * (fresnel)) + (refraction * (1 - fresnel));
 	geometry_diffuse = color_water;

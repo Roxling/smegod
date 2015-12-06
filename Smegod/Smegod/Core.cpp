@@ -94,11 +94,11 @@ void main_loop(GLFWwindow* window) {
 	ruVaryings.push_back("random");
 	ruVaryings.push_back("type");*/
 
-	shared_ptr<ShaderGroup> rain_update_shader = make_shared<ShaderGroup>("rain_update.vert", "rain_update.geom", "rain_update.frag", ruVaryings);
+	//shared_ptr<ShaderGroup> rain_update_shader = make_shared<ShaderGroup>("rain_update.vert", "rain_update.geom", "rain_update.frag", ruVaryings);
 	
 
 	vector<GLchar *> rrVaryings;
-	shared_ptr<ShaderGroup> rain_render_shader = make_shared<ShaderGroup>("rain_render.vert", "rain_render.geom", "rain_render.frag", rrVaryings);
+	//shared_ptr<ShaderGroup> rain_render_shader = make_shared<ShaderGroup>("rain_render.vert", "rain_render.geom", "rain_render.frag", rrVaryings);
 
 
 
@@ -276,15 +276,23 @@ void main_loop(GLFWwindow* window) {
 
 
 		//water
+		GL_CHECK_ERRORS_MSG("Before water uniforms");
 		water_shader->use();
 		water_shader->setUniform("time", (float)glfwGetTime());
 		water_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 		water_shader->setUniform("view_projection", cam->view_projection);
 		water_shader->setUniform("light_pos", glm::vec3(50,30,100)); // TODO
-		water_shader->bindTexture("bump", 0, water_bump);
-
-		water.render(water.world, water_shader);
+		water_shader->bindTexture("bump", 1, water_bump);
 		
+		//TODO, be able to bind cubemap with function, like normal texture
+		auto slot = 1;
+		glActiveTexture(GL_TEXTURE0+slot);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap->texture_id);
+
+
+		GL_CHECK_ERRORS_MSG("Before water render");
+		water.render(water.world, water_shader);
+		GL_CHECK_ERRORS_MSG("After water render");
 
 		PERF_END(PassPerf::Pass::GEOMETRY_PASS);
 		//
@@ -394,8 +402,9 @@ void main_loop(GLFWwindow* window) {
 		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);
 		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
 		resolve_shader->bindTexture("bloom_buffer", 2, horizontal ? gPing : gPong);
+		output.render();
 		//move rain
-		rain_update_shader->use();
+		/*rain_update_shader->use();
 		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 		rain_update_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
 		rain_update_shader->setUniform("g_heightRange", 30.0f);
@@ -424,8 +433,8 @@ void main_loop(GLFWwindow* window) {
 		//swap rain buffers
 		rain.swap();
 
-
-		//output.render();
+		*/
+		
 
 		PERF_END(PassPerf::Pass::RESOLVE_PASS);
 
@@ -440,30 +449,37 @@ void main_loop(GLFWwindow* window) {
 
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
 		buff_shader->bindTexture("buff", 0, gDiffuse);
+		buff_shader->bindTexture("buffArray", 1, rainTexs); //TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_textures.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
 		buff_shader->bindTexture("buff", 0, gNormal);
+		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_normals.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(0, 0, 0));
 		buff_shader->bindTexture("buff", 0, gNormal);
+		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_speculars.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
 		buff_shader->bindTexture("buff", 0, gDepth);
+		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_depth.render();
 
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
 		buff_shader->bindTexture("buff", 0, gAccLight);
+		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_acclight.render();
 
 		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
 		buff_shader->bindTexture("buff", 0, shadowMap);
+		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_shadowmap.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
 		buff_shader->bindTexture("buff", 0, gBloom);
+		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_bloom.render();
 
 		buff_shader->setUniform("mask", glm::vec3(2.f, 0, 0));

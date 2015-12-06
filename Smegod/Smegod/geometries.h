@@ -29,6 +29,7 @@ class Skybox : public WorldObject {
 public:
 	Skybox(shared_ptr<Cubemap> cubemap);
 	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) override;
+	GLuint getCubemapId();
 private:
 	shared_ptr<Cubemap> cubemap;
 	shared_ptr<VertexArray> skybox;

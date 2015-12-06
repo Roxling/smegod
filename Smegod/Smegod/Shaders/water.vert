@@ -49,7 +49,7 @@ void main()
 	vec3 w4 = wave(0.3,	-1,		0.4,	0.8,	1.7,	10,	time);
 	vec3 tide = wave(6,	-1,	1,	0.01,	0.1,	100, time);
 	vec3 w = w1 + w2 + w3 + w4;// + tide;
-
+	
 
 	vec3 pos = position;
 	pos.y = w.x;

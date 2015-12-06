@@ -92,6 +92,11 @@ void Skybox::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader
 	glDepthMask(GL_TRUE);
 }
 
+GLuint Skybox::getCubemapId()
+{
+	return cubemap->texture_id;
+}
+
 Quad::Quad() : Quad(-1.f, -1.f, 1.f, 1.f) { }
 Quad::Quad(glm::vec2 &lb, glm::vec2 &tr) : Quad(lb.x, lb.y, tr.x, tr.y) { }
 

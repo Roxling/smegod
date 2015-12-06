@@ -284,7 +284,7 @@ void main_loop(GLFWwindow* window) {
 		water_shader->bindTexture("bump", 1, water_bump);
 		
 		//TODO, be able to bind cubemap with function, like normal texture
-		auto slot = 1;
+		auto slot = 0;
 		glActiveTexture(GL_TEXTURE0+slot);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap->texture_id);
 

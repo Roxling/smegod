@@ -43,7 +43,7 @@ void SponzaWorld::initiate()
 
 	Texture glow("glow_stripe.png");
 
-	lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(.74f, 10, 10));
+	lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(.76f, 30, 30));
 	bulbrotator.translate(35.56f, 26.3f, -1.31f);
 	bulbrotator.world = glm::rotate(bulbrotator.world, 0.8f*glm::pi<float>(), glm::vec3(bulbrotator.world[1]));
 	lh_bulb->translate(35.56f, 26.3f, -1.31f);

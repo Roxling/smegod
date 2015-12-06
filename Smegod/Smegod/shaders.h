@@ -3,6 +3,7 @@
 #include "smegod_dep.h"
 #include "materials.h"
 #include "textures.h"
+#include "cubemap.h"
 
 using namespace std;
 
@@ -85,6 +86,7 @@ public:
 
 
 	bool bindTexture(const string &name, const unsigned int slot, Texture &t);
+	bool bindCubemap(const string &name, const unsigned int slot, Cubemap &c);
 	template<typename T> bool setUniform(const string &name, const T &value);
 
 };

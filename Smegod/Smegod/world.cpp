@@ -17,6 +17,8 @@ void World::render(shared_ptr<ShaderGroup> shader)
 	head->render(world_pos, shader);
 }
 
+shared_ptr<Geometry> lh_bulb;
+Node bulbrotator;
 void SponzaWorld::initiate()
 {
 	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 300.f);
@@ -39,11 +41,14 @@ void SponzaWorld::initiate()
 	bridge->attach(p2);
 	//bridge->attach(p3);
 
-	Texture glow("glow.png");
+	Texture glow("glow_stripe.png");
 
-	auto lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(.74f, 10, 10));
+	lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(.74f, 10, 10));
+	bulbrotator.translate(35.56f, 26.3f, -1.31f);
+	bulbrotator.world = glm::rotate(bulbrotator.world, 0.8f*glm::pi<float>(), glm::vec3(bulbrotator.world[1]));
 	lh_bulb->translate(35.56f, 26.3f, -1.31f);
 	lh_bulb->model->meshes[0].material->textures.push_back({"diffuse_texture", glow.getGlId()});
+	
 	head->attach(lh_bulb);
 
 
@@ -52,7 +57,7 @@ void SponzaWorld::initiate()
 }
 void SponzaWorld::update(double delta)
 {
-	
+	lh_bulb->world = glm::rotate(bulbrotator.world, (float)glfwGetTime()*0.4f, glm::vec3(bulbrotator.world[1]));
 }
 
 

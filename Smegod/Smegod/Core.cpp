@@ -192,7 +192,7 @@ void main_loop(GLFWwindow* window) {
 	sl4->LightColor = { 1.f, 1.f, 0.6f };
 	
 	Node lhRotator;
-	lhRotator.translate(35.6f, 27.5f, -1.3f);
+	lhRotator.translate(35.56f, 26.3f, -1.31f);
 	shared_ptr<SpotLight> lh = make_shared<SpotLight>(laccbuff_shader);
 
 	shared_ptr<SpotLight> lh_top = make_shared<SpotLight>(laccbuff_shader);
@@ -201,10 +201,10 @@ void main_loop(GLFWwindow* window) {
 	//lh_top->LightIntensity *= 2;
 	lh_top->scale(5);
 	lh_top->LightColor = { 1.f, 1.f, .4f };
-
+	lh_top->LightIntensity = 2;
 	lh->scale(40);
 	lh->LightIntensity *= 100;
-	lh->LightColor = { 1.f, 1.f, .9f };
+	lh->LightColor = { 1.f, 1.f, .6f };
 
 	lights.push_back(sl1);
 	lights.push_back(sl2);
@@ -213,8 +213,8 @@ void main_loop(GLFWwindow* window) {
 	lights.push_back(sl4);
 
 
-	lights.push_back(lh_top);
 	lights.push_back(lh);
+	lights.push_back(lh_top);
 
 	Quad output;
 
@@ -446,40 +446,35 @@ void main_loop(GLFWwindow* window) {
 		PERF_START(PassPerf::Pass::QUAD_PASS);
 		buff_shader->use();
 
+		buff_shader->bindTexture("buffArray", 1, rainTexs); //TODO: remove this and get a better solution than binding buffArray to every quad..
 
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
 		buff_shader->bindTexture("buff", 0, gDiffuse);
-		buff_shader->bindTexture("buffArray", 1, rainTexs); //TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_textures.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
 		buff_shader->bindTexture("buff", 0, gNormal);
-		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_normals.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(0, 0, 0));
 		buff_shader->bindTexture("buff", 0, gNormal);
-		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_speculars.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
 		buff_shader->bindTexture("buff", 0, gDepth);
-		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_depth.render();
 
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
 		buff_shader->bindTexture("buff", 0, gAccLight);
-		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_acclight.render();
 
 		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
 		buff_shader->bindTexture("buff", 0, shadowMap);
-		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
+
 		quad_shadowmap.render();
 		
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
 		buff_shader->bindTexture("buff", 0, gBloom);
-		buff_shader->bindTexture("buffArray", 1, rainTexs);//TODO: remove this and get a better solution than binding buffArray to every quad..
 		quad_bloom.render();
 
 		buff_shader->setUniform("mask", glm::vec3(2.f, 0, 0));
@@ -508,7 +503,14 @@ void main_loop(GLFWwindow* window) {
 
 		//lg.world = glm::translate(ident, glm::vec3(10*glm::sin(glfwGetTime()*0.1), 2 * glm::sin(glfwGetTime()*0.3)+ 2, 0));
 		//lg.world = glm::rotate(ident,(float) glfwGetTime(), glm::vec3(lg.world[1]));
+
 		lh->world = glm::rotate(lhRotator.world,(float) glfwGetTime()*0.4f, glm::vec3(lhRotator.world[1]));
+		lh_top->world = lh->world;
+		lh_top->translate(0.9f, .5f, 0);
+		lh_top->rotate(-90, 70, 0);
+		lh_top->scale(1.7f);
+		
+
 		lh->translate(1.7f, 3, 0);
 		lh->rotate(-90, 20, 0);
 		lh->scale(180);

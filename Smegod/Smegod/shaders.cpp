@@ -115,7 +115,18 @@ ShaderGroup::ShaderGroup(const string &vs, const string &fs)
 	compile();
 }
 
-ShaderGroup::ShaderGroup(const string & vs, const string & gs, const string & fs, vector<GLchar*> varyings)
+ShaderGroup::ShaderGroup(const string &vs, const string &gs, const string &fs)
+{
+	glId = glCreateProgram();
+	GL_CHECK_ERRORS();
+	all_groups->push_back(this);
+	vshader = make_unique<VertexShader>(vs);
+	gshader = make_unique<GeometryShader>(gs);
+	fshader = make_unique<FragmentShader>(fs);
+	compile();
+}
+
+ShaderGroup::ShaderGroup(const string &vs, const string &gs, const string &fs, vector<GLchar*> varyings)
 {
 	glId = glCreateProgram();
 	GL_CHECK_ERRORS();
@@ -232,7 +243,7 @@ void ShaderGroup::bindMaterial(shared_ptr<Material> material)
 	}
 }
 
-bool ShaderGroup::bindTexture(const string & name, const unsigned int slot, Texture & t)
+bool ShaderGroup::bindTexture(const string &name, const unsigned int slot, Texture &t)
 {
 	GL_CHECK_SHADER_BOUND(glId);
 	auto match = uniformLocs.find(name);

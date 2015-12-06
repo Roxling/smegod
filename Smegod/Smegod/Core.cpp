@@ -7,6 +7,7 @@
 #include "geometries.h"
 #include "light.h"
 #include "particles.h"
+#include "billboard.h"
 
 const string name = "Window";
 shared_ptr<World> world;
@@ -146,6 +147,10 @@ void main_loop(GLFWwindow* window) {
 	//rain
 	ArrayTexture rainTexs("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA8);
 	TestTexture testTex;
+
+	shared_ptr<Texture> tex = make_shared<Texture>("notex.png");
+	BillboardList billboard;
+	billboard.Init(tex);
 
 	Particles rain;
 
@@ -401,7 +406,10 @@ void main_loop(GLFWwindow* window) {
 		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);
 		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
 		resolve_shader->bindTexture("bloom_buffer", 2, horizontal ? gPing : gPong);
-		output.render();
+		//output.render();
+
+		billboard.Render(cam->view_projection, glm::vec3(cam->combined_world[3]));
+
 		//move rain
 		/*rain_update_shader->use();
 		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));

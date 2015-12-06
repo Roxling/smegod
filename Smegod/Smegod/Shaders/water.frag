@@ -43,7 +43,6 @@ void main()
     vec3 V = normalize(fV);
     vec3 T = normalize(fT);
     mat3 BTN = mat3(B, T, N);
-	
 
     N = BTN * n_bump;
 
@@ -51,7 +50,6 @@ void main()
 
     vec3 R = normalize(reflect(-V,N));
 	
-
     vec4 color_water = mix(color_deep, color_shallow, 1-max(dot(V,N),0));
 	color_water.rgb *= ambient;
     vec4 reflection = texture(skybox, R);

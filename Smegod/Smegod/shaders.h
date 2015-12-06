@@ -44,6 +44,7 @@ class GeometryShader : public Shader {
 private:
 public:
 	vector<GLchar *> varyings;
+	GeometryShader(string file) : Shader(GL_GEOMETRY_SHADER, file) {}
 	GeometryShader(string file, vector<GLchar*> varyings) : Shader(GL_GEOMETRY_SHADER, file) {
 		this->varyings = varyings;
 	}
@@ -75,7 +76,9 @@ private:
 public:
 	static void recompile_all();
 	ShaderGroup(const string &vs, const string &fs);
+	ShaderGroup(const string &vs, const string &gs, const string &fs);
 	ShaderGroup(const string &vs, const string &gs, const string &fs, vector<GLchar*> varyings);
+
 	void compile();
 	void use() { 
 		glUseProgram(glId);

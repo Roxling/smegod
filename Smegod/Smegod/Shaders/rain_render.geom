@@ -4,13 +4,11 @@ layout (points) in;
 layout (triangle_strip) out;
 layout (max_vertices = 4) out;
 
-in VS_OUT {
-	vec3 pos;
-	vec3 seed;
-	vec3 speed;
-	float random;
-	uint type;
-} gs_in[]; 
+in vec3 vs_pos[];
+in vec3 vs_seed[];
+in vec3 vs_speed[];
+in float vs_random[];
+in uint vs_type[];
 
 out vec4 pos;
 out vec3 lightDir;
@@ -95,13 +93,13 @@ void GenRainSpriteVertices(vec3 worldPos, vec3 velVec, vec3 eyePos, out vec3 out
 void main()
 {
 	float totalIntensity = g_PointLightIntensity*g_ResponsePointLight + dirLightIntensity*g_ResponseDirLight;
-    if(!cullSprite(gs_in[0].pos, 2*g_SpriteSize) && totalIntensity > 0 || true)
+    if(!cullSprite(vs_pos[0], 2*g_SpriteSize) && totalIntensity > 0 || true)
     {
-        type = gs_in[0].type;
-        random = gs_in[0].random;
+        type = vs_type[0];
+        random = vs_random[0];
        
         vec3 bpos[4]; //billboard position
-        GenRainSpriteVertices(gs_in[0].pos.xyz, gs_in[0].speed.xyz/g_FrameRate + g_TotalVel, camera_pos, bpos);
+        GenRainSpriteVertices(vs_pos[0].xyz, vs_speed[0].xyz/g_FrameRate + g_TotalVel, camera_pos, bpos);
         
         vec3 closestPointLight = g_PointLightPos;
         float closestDistance = length(g_PointLightPos - bpos[0]);

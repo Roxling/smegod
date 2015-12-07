@@ -9,11 +9,14 @@ typedef struct particle_t
 	GLuint type;
 } particle_t;
 
-#define NUM_RAIN (50000)
+#define NUM_RAIN (500)
 
 #define random() ((float)rand()/(float)RAND_MAX)
 
-Particles::Particles() {
+Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGroup> m_renderShader) {
+	this->m_billboardShader = make_unique<ShaderGroup>("billboard.vert", "billboard.geom", "billboard.frag");
+	this->m_updateShader = m_updateShader;
+	this->m_renderShader = m_renderShader;
 	m_currVB = 0;
 	m_currTFB = 1;
 	m_isFirst = true;
@@ -69,19 +72,41 @@ Particles::Particles() {
 			particles[i].random += randomIncrease;
 	}
 
+	glGenVertexArrays(2, m_vao);
 	glGenTransformFeedbacks(2, m_transformFeedback);
 	glGenBuffers(2, m_particleBuffer);
 	GL_CHECK_ERRORS();
 
 	for (unsigned int i = 0; i < 2; i++) {
+		//init buffers
+		glBindVertexArray(m_vao[i]);
+			glBindBuffer(GL_ARRAY_BUFFER, m_particleBuffer[i]);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(particle_t) * particles.size(), particles.data(), GL_DYNAMIC_DRAW);
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(particle_t), 0);                                     // vec3 pos
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(3 * sizeof GLfloat));   // vec3 seed
+				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(6 * sizeof GLfloat));   // vec3 speed
+				glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(9 * sizeof GLfloat));   // float random
+				glVertexAttribPointer(4, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(10 * sizeof GLfloat));  // unsigned int type
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
+		glEnableVertexAttribArray(4);
+		glBindVertexArray(0);
+
+		//bind feedback buffers
 		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, m_transformFeedback[i]);
-		glBindBuffer(GL_ARRAY_BUFFER, m_particleBuffer[i]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(particle_t) * particles.size(), particles.data(), GL_DYNAMIC_DRAW);
 		glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_particleBuffer[i]);
+		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
 	}
 	GL_CHECK_ERRORS();
-	glGenVertexArrays(1, &vao);
 
+
+	glGenQueries(1, &m_query);
+
+	int QueryBits(0);
+	glGetQueryiv(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, GL_QUERY_COUNTER_BITS, &QueryBits);
 }
 
 void Particles::swap()
@@ -92,36 +117,17 @@ void Particles::swap()
 
 void Particles::update()
 {
-
 	glEnable(GL_RASTERIZER_DISCARD);
-	
-	 //throws heaps of errors if no VAO is created..
-	glBindVertexArray(vao);
 
+	glBindVertexArray(m_vao[m_currVB]);
 	GL_CHECK_ERRORS_MSG("Particles update 1");
-	glBindBuffer(GL_ARRAY_BUFFER, m_particleBuffer[m_currVB]);
+
 	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, m_transformFeedback[m_currTFB]);
 	GL_CHECK_ERRORS_MSG("Particles update 2");
-	
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
 
-	GL_CHECK_ERRORS_MSG("Particles update 3");
-	glVertexAttribPointer(0, 3, GL_FLOAT,        GL_FALSE, sizeof(particle_t), 0);                                     // vec3 pos
-	GL_CHECK_ERRORS_MSG("Particles update 3.1");
-	glVertexAttribPointer(1, 3, GL_FLOAT,        GL_FALSE, sizeof(particle_t), (const GLvoid*)(3 * sizeof GLfloat));   // vec3 seed
-	GL_CHECK_ERRORS_MSG("Particles update 3.2");
-	glVertexAttribPointer(2, 3, GL_FLOAT,        GL_FALSE, sizeof(particle_t), (const GLvoid*)(6 * sizeof GLfloat));   // vec3 speed
-	GL_CHECK_ERRORS_MSG("Particles update 3.3");
-	glVertexAttribPointer(3, 1, GL_FLOAT,        GL_FALSE, sizeof(particle_t), (const GLvoid*)(9 * sizeof GLfloat));   // float random
-	GL_CHECK_ERRORS_MSG("Particles update 3.4");
-	glVertexAttribPointer(4, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(10 * sizeof GLfloat));  // unsigned int type
-	GL_CHECK_ERRORS_MSG("Particles update 4");
+	glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, m_query);
 	glBeginTransformFeedback(GL_POINTS);
-	GL_CHECK_ERRORS_MSG("Particles update 5");
+
 	if (m_isFirst) {
 		glDrawArrays(GL_POINTS, 0, NUM_RAIN);
 		m_isFirst = false;
@@ -133,48 +139,43 @@ void Particles::update()
 	}
 
 	glEndTransformFeedback();
+	glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
 	GL_CHECK_ERRORS_MSG("Particles update 8");
+	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
 
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
-	glDisableVertexAttribArray(3);
-	glDisableVertexAttribArray(4);
-	GL_CHECK_ERRORS_MSG("Particles update 9");
-	glFlush();
+	GLuint PrimitivesWritten = 0;
+	glGetQueryObjectuiv(m_query, GL_QUERY_RESULT, &PrimitivesWritten);
+	cout << "Captured " << PrimitivesWritten << " particles" << endl;
+
+	glBindVertexArray(0);
+
+	glDisable(GL_RASTERIZER_DISCARD);
 }
 
 void Particles::renderParticles()
 {
-	glDisable(GL_RASTERIZER_DISCARD);
-	//glBindVertexArray(vao);
+	glBindVertexArray(m_vao[m_currVB]);
 	GL_CHECK_ERRORS_MSG("Particles render 1");
-	glBindBuffer(GL_ARRAY_BUFFER, m_particleBuffer[m_currTFB]);
-	GL_CHECK_ERRORS_MSG("Particles render 2");
 
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-	GL_CHECK_ERRORS_MSG("Particles render 3");
-
-	glVertexAttribPointer(0, 3, GL_FLOAT,        GL_FALSE, sizeof(particle_t), 0);                                     // vec3 pos
-	glVertexAttribPointer(1, 3, GL_FLOAT,        GL_FALSE, sizeof(particle_t), (const GLvoid*)(3 * sizeof GLfloat));   // vec3 seed
-	glVertexAttribPointer(2, 3, GL_FLOAT,        GL_FALSE, sizeof(particle_t), (const GLvoid*)(6 * sizeof GLfloat));   // vec3 speed
-	glVertexAttribPointer(3, 1, GL_FLOAT,        GL_FALSE, sizeof(particle_t), (const GLvoid*)(9 * sizeof GLfloat));   // float random
-	glVertexAttribPointer(4, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(10 * sizeof GLfloat));  // unsigned int type
-	GL_CHECK_ERRORS_MSG("Particles render 4");
-
-	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]);
-
-	GL_CHECK_ERRORS_MSG("Particles render 5");
-
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
-	glDisableVertexAttribArray(3);
-	glDisableVertexAttribArray(4);
+	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currVB]);
 	GL_CHECK_ERRORS_MSG("Particles render 6");
 
+	glBindVertexArray(0);
+}
+
+void Particles::Render(const glm::mat4 &view_projection, const glm::vec3 &camera_pos, shared_ptr<Texture> m_pTexture)
+{
+	m_billboardShader->use();
+	m_billboardShader->setUniform("view_projection", view_projection);
+	m_billboardShader->setUniform("camera_pos", camera_pos);
+
+	m_billboardShader->bindTexture("tex", 0, *m_pTexture);
+
+	glBindVertexArray(m_vao[m_currVB]);
+	GL_CHECK_ERRORS_MSG("Billboard render#3");
+	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currVB]);
+	GL_CHECK_ERRORS_MSG("Billboard render#4");
+
+	glBindVertexArray(0);
+	GL_CHECK_ERRORS_MSG("After Billboard render");
 }

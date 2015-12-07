@@ -1,23 +1,21 @@
 #version 330 core
-layout (location = 0) in vec3 pos;
-layout (location = 1) in vec3 seed;
-layout (location = 2) in vec3 speed;
-layout (location = 3) in float random;
-layout (location = 4) in uint type;
+in vec3 a_pos;
+in vec3 a_seed;
+in vec3 a_speed;
+in float a_random;
+in uint a_type;
 
-out VS_OUT {
-	vec3 pos;
-	vec3 seed;
-	vec3 speed;
-	float random;
-	uint type;
-} vs_out;
+out vec3 vs_pos;
+out vec3 vs_seed;
+out vec3 vs_speed;
+out float vs_random;
+out uint vs_type;
 
 void main()
 {
-	vs_out.pos = pos;
-	vs_out.seed = seed;
-	vs_out.speed = speed;
-	vs_out.random = random;
-	vs_out.type = type;
+	vs_pos = a_pos;
+	vs_seed = a_seed;
+	vs_speed = a_speed;
+	vs_random = a_random;
+	vs_type = a_type;
 }

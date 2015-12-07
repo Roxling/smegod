@@ -10,38 +10,36 @@ uniform vec3 g_TotalVel;
 uniform float g_heightRange;
 uniform bool moveParticles;
 
-in VS_OUT {
-	vec3 pos;
-	vec3 seed;
-	vec3 speed;
-	float random;
-	uint type;
-} gs_in[];
+in vec3 vs_pos[];
+in vec3 vs_seed[];
+in vec3 vs_speed[];
+in float vs_random[];
+in uint vs_type[];
 
-out vec3 pos;
-out vec3 seed;
-out vec3 speed;
-out float random;
-out uint type;
+out vec3 gs_pos;
+out vec3 gs_seed;
+out vec3 gs_speed;
+out float gs_random;
+out uint gs_type;
 
 void main()
 {
-	pos = gs_in[0].pos;
-	seed = gs_in[0].seed;
-	speed = gs_in[0].speed;
-	random = gs_in[0].random;
-	type = gs_in[0].type;
+	gs_pos = vs_pos[0];
+	gs_seed = vs_seed[0];
+	gs_speed = vs_speed[0];
+	gs_random = vs_random[0];
+	gs_type = vs_type[0];
 
 	if(moveParticles) {
          //move forward
-         pos += speed.xyz/g_FrameRate + g_TotalVel.xyz;
+         gs_pos += gs_speed.xyz/g_FrameRate + g_TotalVel.xyz;
 
          //if the particle is outside the bounds, move it to random position near the eye         
-         if (pos.y <=  camera_pos.y-g_heightRange ) {
-            float x = seed.x + camera_pos.x;
-            float z = seed.z + camera_pos.z;
-            float y = seed.y + camera_pos.y;
-            pos = vec3(x,y,z);
+         if (gs_pos.y <=  camera_pos.y-g_heightRange ) {
+            float x = gs_seed.x + camera_pos.x;
+            float z = gs_seed.z + camera_pos.z;
+            float y = gs_seed.y + camera_pos.y;
+            gs_pos = vec3(x,y,z);
          }
     }
 

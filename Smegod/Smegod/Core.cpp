@@ -89,17 +89,17 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<ShaderGroup> water_shader = make_shared<ShaderGroup>("water.vert", "water.frag");
 
 	vector<GLchar *> ruVaryings;
-	ruVaryings.push_back("pos");
-	/*ruVaryings.push_back("seed");
-	ruVaryings.push_back("speed");
-	ruVaryings.push_back("random");
-	ruVaryings.push_back("type");*/
+	ruVaryings.push_back("gs_pos");
+	ruVaryings.push_back("gs_seed");
+	ruVaryings.push_back("gs_speed");
+	ruVaryings.push_back("gs_random");
+	ruVaryings.push_back("gs_type");
 
-	//shared_ptr<ShaderGroup> rain_update_shader = make_shared<ShaderGroup>("rain_update.vert", "rain_update.geom", "rain_update.frag", ruVaryings);
+	shared_ptr<ShaderGroup> rain_update_shader = make_shared<ShaderGroup>("rain_update.vert", "rain_update.geom", "rain_update.frag", ruVaryings);
 	
 
 	vector<GLchar *> rrVaryings;
-	//shared_ptr<ShaderGroup> rain_render_shader = make_shared<ShaderGroup>("rain_render.vert", "rain_render.geom", "rain_render.frag", rrVaryings);
+	shared_ptr<ShaderGroup> rain_render_shader = make_shared<ShaderGroup>("rain_render.vert", "rain_render.geom", "rain_render.frag", rrVaryings);
 
 
 
@@ -152,7 +152,7 @@ void main_loop(GLFWwindow* window) {
 	BillboardList billboard;
 	billboard.Init(tex);
 
-	Particles rain;
+	Particles rain(rain_update_shader, rain_render_shader);
 
 	// Water
 	Texture water_bump("waves.png");
@@ -406,12 +406,12 @@ void main_loop(GLFWwindow* window) {
 		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);
 		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
 		resolve_shader->bindTexture("bloom_buffer", 2, horizontal ? gPing : gPong);
-		//output.render();
+		output.render();
 
 		billboard.Render(cam->view_projection, glm::vec3(cam->combined_world[3]));
 
 		//move rain
-		/*rain_update_shader->use();
+		rain_update_shader->use();
 		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 		rain_update_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
 		rain_update_shader->setUniform("g_heightRange", 30.0f);
@@ -434,14 +434,12 @@ void main_loop(GLFWwindow* window) {
 
 		rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
 
-		rain.renderParticles();
-		
+		//rain.renderParticles();
+
+		rain.Render(cam->view_projection, glm::vec3(cam->combined_world[3]), tex);
 		
 		//swap rain buffers
 		rain.swap();
-
-		*/
-		
 
 		PERF_END(PassPerf::Pass::RESOLVE_PASS);
 

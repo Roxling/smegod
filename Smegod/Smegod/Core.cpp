@@ -432,7 +432,7 @@ void main_loop(GLFWwindow* window) {
 		rain_render_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
 		rain_render_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
 
-		rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
+		//rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
 
 		//rain.renderParticles();
 

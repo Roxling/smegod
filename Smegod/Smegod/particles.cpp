@@ -173,6 +173,7 @@ void Particles::Render(const glm::mat4 &view_projection, const glm::vec3 &camera
 
 	glBindVertexArray(m_vao[m_currVB]);
 	GL_CHECK_ERRORS_MSG("Billboard render#3");
+	/*Får GL error caught with error code 0x502: Invalid operation.particles.cpp : Particles::Render(177) Message : Billboard render#4 */
 	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currVB]);
 	GL_CHECK_ERRORS_MSG("Billboard render#4");
 

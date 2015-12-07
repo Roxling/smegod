@@ -8,7 +8,7 @@ in vec3 vs_pos[];
 in vec3 vs_seed[];
 in vec3 vs_speed[];
 in float vs_random[];
-in uint vs_type[];
+flat in uint vs_type[];
 
 out vec4 pos;
 out vec3 lightDir;

@@ -13,8 +13,7 @@ public:
 
 	void update();
 	void renderParticles();
-	void Particles::Render(const glm::mat4 &view_projection, const glm::vec3 &camera_pos, shared_ptr<Texture> m_pTexture);
-
+	
 private:
 
 	GLuint m_particleBuffer[2];
@@ -26,5 +25,4 @@ private:
 
 	shared_ptr<ShaderGroup> m_updateShader;
 	shared_ptr<ShaderGroup> m_renderShader;
-	shared_ptr<ShaderGroup> m_billboardShader;
 };

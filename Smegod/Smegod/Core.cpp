@@ -95,11 +95,11 @@ void main_loop(GLFWwindow* window) {
 	ruVaryings.push_back("gs_random");
 	ruVaryings.push_back("gs_type");
 
-	shared_ptr<ShaderGroup> rain_update_shader = make_shared<ShaderGroup>("rain_update.vert", "rain_update.geom", "rain_update.frag", ruVaryings);
+	shared_ptr<ShaderGroup> rain_update_shader = make_shared<ShaderGroup>("rain.vert", "rain_update.geom", "rain_update.frag", ruVaryings);
 	
 
 	vector<GLchar *> rrVaryings;
-	shared_ptr<ShaderGroup> rain_render_shader = make_shared<ShaderGroup>("billboard.vert", "billboard.geom", "billboard.frag", rrVaryings);
+	shared_ptr<ShaderGroup> rain_render_shader = make_shared<ShaderGroup>("rain.vert", "rain_render.geom", "rain_render.frag", rrVaryings);
 
 
 
@@ -248,8 +248,8 @@ void main_loop(GLFWwindow* window) {
 		}
 		update_delta();
 		world->update(time_delta);
-		cam->update(time_delta);
-		cam->render(cam->world);
+			cam->update(time_delta);
+			cam->render(cam->world);
 
 
 		// 1. Geometry Pass: render scene's geometry/color data into gbuffer
@@ -411,7 +411,7 @@ void main_loop(GLFWwindow* window) {
 		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 		rain_update_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
 		rain_update_shader->setUniform("g_heightRange", 30.0f);
-		rain_update_shader->setUniform("moveParticles", true);
+		rain_update_shader->setUniform("moveParticles", Globals::TIME_NOT_FROZEN);
 		rain_update_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
 		rain.update();
 		
@@ -425,16 +425,18 @@ void main_loop(GLFWwindow* window) {
 		//rain_render_shader->setUniform("g_mWorldViewProj", cam->view_projection * ident);
 		//rain_render_shader->setUniform("g_mProjection", cam->projection);
 
-		rain_render_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
+		//rain_render_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
 		rain_render_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
 
 		rain_render_shader->setUniform("view_projection", cam->view_projection);
 
-		rain_render_shader->bindTexture("tex", 0, *tex);
-
-		//rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
+		rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
 		//glDisable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		rain.renderParticles();
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_BLEND);
 		//glEnable(GL_CULL_FACE);
 		//rain.Render(cam->view_projection, glm::vec3(cam->combined_world[3]), tex);
 		

@@ -9,12 +9,11 @@ typedef struct particle_t
 	GLuint type;
 } particle_t;
 
-#define NUM_RAIN (50000)
+#define NUM_RAIN (500000)
 
 #define random() ((float)rand()/(float)RAND_MAX)
 
 Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGroup> m_renderShader) {
-	this->m_billboardShader = make_unique<ShaderGroup>("billboard.vert", "billboard.geom", "billboard.frag");
 	this->m_updateShader = m_updateShader;
 	this->m_renderShader = m_renderShader;
 	m_currVB = 0;
@@ -140,23 +139,6 @@ void Particles::update()
 
 void Particles::renderParticles()
 {
-	glBindVertexArray(m_vao[m_currTFB]);
-	GL_CHECK_ERRORS_MSG("Billboard render#3");
-	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]);
-	GL_CHECK_ERRORS_MSG("Billboard render#4");
-
-	glBindVertexArray(0);
-	GL_CHECK_ERRORS_MSG("After Billboard render");
-}
-
-void Particles::Render(const glm::mat4 &view_projection, const glm::vec3 &camera_pos, shared_ptr<Texture> m_pTexture)
-{
-	m_billboardShader->use();
-	m_billboardShader->setUniform("view_projection", view_projection);
-	m_billboardShader->setUniform("camera_pos", camera_pos);
-
-	m_billboardShader->bindTexture("tex", 0, *m_pTexture);
-
 	glBindVertexArray(m_vao[m_currTFB]);
 	GL_CHECK_ERRORS_MSG("Billboard render#3");
 	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]);

@@ -92,6 +92,12 @@ void CommandHandler::recompile_shaders()
 	cout << "Recompiling shaders." << endl;
 	ShaderGroup::recompile_all();
 }
+bool Globals::TIME_NOT_FROZEN = true;
+void CommandHandler::freeze_time(bool state)
+{
+	Globals::TIME_NOT_FROZEN = !state;
+	cout << "Time toggled " << (!state ? "ON" : "OFF") << "." << endl;
+}
 
 bool Globals::DRAW_FPS = false;
 void CommandHandler::draw_fps(bool state)
@@ -111,6 +117,7 @@ void CommandHandler::print_help()
 		"'H' to print help text (this). \n"
 		"'R' to recompile shaders. \n"
 		"'F' to toggle FPS counter. (Default OFF) \n"
+		"'M' to freeze time. (Default OFF) \n"
 		"\t\t --HELP-- \n";
 	cout << help;
 }
@@ -132,6 +139,8 @@ void CommandHandler::handle(GLFWwindow * window, int key, int scancode, int acti
 			break;
 		case GLFW_KEY_R:
 			recompile_shaders();
+		case GLFW_KEY_M:
+			freeze_time((*toggle_state)[key].second);
 		default:
 			break;
 		}

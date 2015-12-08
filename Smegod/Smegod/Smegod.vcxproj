@@ -170,9 +170,8 @@
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\billboard.frag" />
-    <None Include="Shaders\billboard.geom" />
-    <None Include="Shaders\billboard.vert" />
+    <None Include="Shaders\rain_render.frag" />
+    <None Include="Shaders\rain_render.geom" />
     <None Include="Shaders\bloom.frag" />
     <None Include="Shaders\bloom.vert" />
     <None Include="Shaders\buffrender.frag" />
@@ -183,12 +182,10 @@
     <None Include="Shaders\gbuffer.vert" />
     <None Include="Shaders\laccbuffer.frag" />
     <None Include="Shaders\laccbuffer.vert" />
-    <None Include="Shaders\rain_render.frag" />
-    <None Include="Shaders\rain_render.geom" />
-    <None Include="Shaders\rain_render.vert" />
+    <None Include="Shaders\rain_render_old.frag" />
     <None Include="Shaders\rain_update.frag" />
     <None Include="Shaders\rain_update.geom" />
-    <None Include="Shaders\rain_update.vert" />
+    <None Include="Shaders\rain.vert" />
     <None Include="Shaders\resolve.frag" />
     <None Include="Shaders\resolve.vert" />
     <None Include="Shaders\shadowmap.frag" />

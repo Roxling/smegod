@@ -17,6 +17,7 @@ public:
 
 	static bool DRAW_FPS;
 	static bool UNIFORM_REFRESH;
+	static bool TIME_NOT_FROZEN;
 
 	static void printVec4(glm::vec4 v) {
 		cout << v.x << " : " << v.y << " : " << v.z << endl;

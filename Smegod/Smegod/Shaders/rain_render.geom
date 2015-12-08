@@ -10,130 +10,66 @@ in vec3 vs_speed[];
 in float vs_random[];
 flat in uint vs_type[];
 
-out vec4 pos;
-out vec3 lightDir;
-out vec3 pointLightDir;
-out vec3 eyeVec;
-out vec2 tex;
-flat out uint type;
-out float random;
-
-uniform vec3 camera_pos;
-uniform float g_Near; 
-uniform float g_Far; 
-
-uniform mat4 g_mWorldView;
-uniform mat4 g_mWorldViewProj;
-uniform mat4 g_mProjection;
-
-uniform float g_FrameRate;
-uniform float g_SpriteSize = 1.0;
-uniform vec3 g_lightPos = vec3(10,10,0); //the directional light in world space 
+out vec3 gs_lightDir;
+out vec3 gs_pointLightDir;
+out vec3 gs_camVec;
+out vec2 gs_tex;
+flat out uint gs_type;
+out float gs_random;
 
 uniform vec3 g_TotalVel = vec3(0, -0.25, 0);
+uniform mat4 view_projection;
+uniform vec3 camera_pos;
 
-uniform float g_PointLightIntensity = 2.0;
-uniform float g_ResponsePointLight = 1.0;
-uniform float dirLightIntensity = 1.0;
-uniform float g_ResponseDirLight = 1.0;
+uniform float g_SpriteSize = 1.0;
 
-
-const vec2 g_texcoords[4] = vec2[](
-	vec2(0,1), 
-	vec2(1,1),
-	vec2(0,0),
-	vec2(1,0)
-);
-
-const vec3 g_PointLightPos = vec3(3.7, 5.8, 3.15);
-const vec3 g_PointLightPos2 = vec3(-3.7,5.8,3.15);
-
-bool cullSprite(vec3 position, float SpriteSize)
-{
-    vec4 vpos = g_mWorldView * vec4(position, 1.0);
-    
-    if( (vpos.z < (g_Near - SpriteSize )) || ( vpos.z > (g_Far + SpriteSize)) ) 
-    {
-        return true;
-    }
-    else 
-    {
-        vec4 ppos = g_mProjection * vpos;
-        float wext = ppos.w + SpriteSize;
-        if( (ppos.x < -wext) || (ppos.x > wext) ||
-            (ppos.y < -wext) || (ppos.y > wext) ) {
-            return true;
-        }
-        else 
-        {
-            return false;
-        }
-    }
-    
-    return false;
-}
-
-void GenRainSpriteVertices(vec3 worldPos, vec3 velVec, vec3 eyePos, out vec3 outPos[4])
-{
-    float height = g_SpriteSize/2.0;
-    float width = height/10.0;
-
-    velVec = normalize(velVec);
-    vec3 eyeVec = eyePos - worldPos;
-    vec3 eyeOnVelVecPlane = eyePos - ((dot(eyeVec, velVec)) * velVec);
-    vec3 projectedEyeVec = eyeOnVelVecPlane - worldPos;
-    vec3 sideVec = normalize(cross(projectedEyeVec, velVec));
-    
-    outPos[0] =  worldPos - (sideVec * 0.5*width);
-    outPos[1] = outPos[0] + (sideVec * width);
-    outPos[2] = outPos[0] + (velVec * height);
-    outPos[3] = outPos[2] + (sideVec * width );
-}
+uniform vec3 dirLightPos = vec3(50,100,30);
 
 void main()
 {
-	float totalIntensity = g_PointLightIntensity*g_ResponsePointLight + dirLightIntensity*g_ResponseDirLight;
-    if(!cullSprite(vs_pos[0], 2*g_SpriteSize) && totalIntensity > 0 || true)
-    {
-        type = vs_type[0];
-        random = vs_random[0];
+	gs_type = vs_type[0];
+    gs_random = vs_random[0];
        
-        vec3 bpos[4]; //billboard position
-        GenRainSpriteVertices(vs_pos[0].xyz, vs_speed[0].xyz/g_FrameRate + g_TotalVel, camera_pos, bpos);
-        
-        vec3 closestPointLight = g_PointLightPos;
-        float closestDistance = length(g_PointLightPos - bpos[0]);
-        if( length(g_PointLightPos2 - bpos[0]) < closestDistance )
-           closestPointLight = g_PointLightPos2;
-        
-        pos = g_mWorldViewProj * vec4(bpos[0], 1.0);
-        lightDir = g_lightPos - bpos[0];
-        pointLightDir = closestPointLight - bpos[0];
-        eyeVec = camera_pos - bpos[0];
-        tex = g_texcoords[0];
-		EmitVertex();
+	vec3 velVec = vs_speed[0]/30 + g_TotalVel;
 
-        pos = g_mWorldViewProj * vec4(bpos[1], 1.0);
-        lightDir = g_lightPos - bpos[1];
-        pointLightDir = closestPointLight - bpos[1];
-        eyeVec = camera_pos - bpos[1];
-        tex = g_texcoords[1];
-		EmitVertex();
+	float height = g_SpriteSize/2.0;
+    float width = height/10.0;
 
-        pos = g_mWorldViewProj * vec4(bpos[2], 1.0);
-        lightDir = g_lightPos - bpos[2];
-        pointLightDir = closestPointLight - bpos[2];
-        eyeVec = camera_pos - bpos[2];
-        tex = g_texcoords[2];
-		EmitVertex();
+    velVec = normalize(velVec);
+    vec3 camVec = camera_pos - vs_pos[0];
+    vec3 camOnVelVecPlane = camera_pos - ((dot(camVec, velVec)) * velVec);
+    vec3 projectedCamVec = camOnVelVecPlane - vs_pos[0];
+    vec3 sideVec = normalize(cross(projectedCamVec, velVec));
+    
+    vec3 pos[4];
+    pos[0] = vs_pos[0] - (sideVec * 0.5*width);
+    pos[1] = pos[0] + (velVec * height);
+    pos[2] = pos[0] + (sideVec * width);
+    pos[3] = pos[1] + (sideVec * width );
 
-        pos = g_mWorldViewProj * vec4(bpos[3], 1.0);
-        lightDir = g_lightPos - bpos[3];
-        pointLightDir = closestPointLight - bpos[3];
-        eyeVec = camera_pos - bpos[3];
-        tex = g_texcoords[3];
-		EmitVertex();
+    gl_Position = view_projection * vec4(pos[0], 1.0);
+    gs_tex = vec2(0.0, 0.0);
+	gs_camVec =  camera_pos - pos[0];
+	gs_lightDir = dirLightPos - pos[0];
+    EmitVertex();
 
-		EndPrimitive();
-    }   
+    gl_Position = view_projection * vec4(pos[1], 1.0);
+    gs_tex = vec2(0.0, 1.0);
+	gs_camVec =  camera_pos - pos[1];
+	gs_lightDir = dirLightPos - pos[1];
+    EmitVertex();
+
+    gl_Position = view_projection * vec4(pos[2], 1.0);
+    gs_tex = vec2(1.0, 0.0);
+	gs_camVec =  camera_pos - pos[2];
+	gs_lightDir = dirLightPos - pos[2];
+    EmitVertex();
+
+    gl_Position = view_projection * vec4(pos[3], 1.0);
+    gs_tex = vec2(1.0, 1.0);
+	gs_camVec =  camera_pos - pos[3];
+	gs_lightDir = dirLightPos - pos[3];
+    EmitVertex();
+
+    EndPrimitive();
 }

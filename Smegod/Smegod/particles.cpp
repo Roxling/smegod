@@ -2,14 +2,14 @@
 
 typedef struct particle_t
 {
-	GLfloat pos[3];
+	glm::vec3 pos;
 	glm::vec3 seed;
 	glm::vec3 speed;
 	GLfloat random;
 	GLuint type;
 } particle_t;
 
-#define NUM_RAIN (500)
+#define NUM_RAIN (5000)
 
 #define random() ((float)rand()/(float)RAND_MAX)
 
@@ -21,8 +21,8 @@ Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGr
 	m_currTFB = 1;
 	m_isFirst = true;
 
-	float g_radiusRange = 20;
-	float g_heightRange = 10;
+	float g_radiusRange = 40;
+	float g_heightRange = 15;
 
 	//TODO: Init data
 	vector<particle_t> particles;
@@ -58,9 +58,7 @@ Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGr
 		float x = SeedX;// +g_vecEye.x;
 		float z = SeedZ;// +g_vecEye.z;
 		float y = SeedY;// +g_vecEye.y;
-		particles[i].pos[0] = x;
-		particles[i].pos[0] = y;
-		particles[i].pos[0] = z;
+		particles[i].pos = glm::vec3(x, y, z);
 
 		//get an integer between 1 and 8 inclusive to decide which of the 8 types of rain textures the particle will use
 		particles[i].type = int(floor(random() * 8 + 1));
@@ -101,12 +99,6 @@ Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGr
 		glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
 	}
 	GL_CHECK_ERRORS();
-
-
-	glGenQueries(1, &m_query);
-
-	int QueryBits(0);
-	glGetQueryiv(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, GL_QUERY_COUNTER_BITS, &QueryBits);
 }
 
 void Particles::swap()
@@ -125,12 +117,11 @@ void Particles::update()
 	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, m_transformFeedback[m_currTFB]);
 	GL_CHECK_ERRORS_MSG("Particles update 2");
 
-	glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, m_query);
 	glBeginTransformFeedback(GL_POINTS);
 
 	if (m_isFirst) {
-		glDrawArrays(GL_POINTS, 0, NUM_RAIN);
 		m_isFirst = false;
+		glDrawArrays(GL_POINTS, 0, NUM_RAIN);
 		GL_CHECK_ERRORS_MSG("Particles update 6");
 	}
 	else {
@@ -139,13 +130,8 @@ void Particles::update()
 	}
 
 	glEndTransformFeedback();
-	glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
 	GL_CHECK_ERRORS_MSG("Particles update 8");
 	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
-
-	GLuint PrimitivesWritten = 0;
-	glGetQueryObjectuiv(m_query, GL_QUERY_RESULT, &PrimitivesWritten);
-	cout << "Captured " << PrimitivesWritten << " particles" << endl;
 
 	glBindVertexArray(0);
 
@@ -171,10 +157,10 @@ void Particles::Render(const glm::mat4 &view_projection, const glm::vec3 &camera
 
 	m_billboardShader->bindTexture("tex", 0, *m_pTexture);
 
-	glBindVertexArray(m_vao[m_currVB]);
+	glBindVertexArray(m_vao[m_currTFB]);
 	GL_CHECK_ERRORS_MSG("Billboard render#3");
 	/*Får GL error caught with error code 0x502: Invalid operation.particles.cpp : Particles::Render(177) Message : Billboard render#4 */
-	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currVB]);
+	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]);
 	GL_CHECK_ERRORS_MSG("Billboard render#4");
 
 	glBindVertexArray(0);

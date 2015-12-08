@@ -24,8 +24,6 @@ private:
 	unsigned int m_currVB;
 	unsigned int m_currTFB;
 
-	GLuint m_query = 0;
-
 	shared_ptr<ShaderGroup> m_updateShader;
 	shared_ptr<ShaderGroup> m_renderShader;
 	shared_ptr<ShaderGroup> m_billboardShader;

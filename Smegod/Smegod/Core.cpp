@@ -149,8 +149,6 @@ void main_loop(GLFWwindow* window) {
 	TestTexture testTex;
 
 	shared_ptr<Texture> tex = make_shared<Texture>("notex.png");
-	BillboardList billboard;
-	billboard.Init(tex);
 
 	Particles rain(rain_update_shader, rain_render_shader);
 
@@ -407,8 +405,6 @@ void main_loop(GLFWwindow* window) {
 		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
 		resolve_shader->bindTexture("bloom_buffer", 2, horizontal ? gPing : gPong);
 		output.render();
-
-		billboard.Render(cam->view_projection, glm::vec3(cam->combined_world[3]));
 
 		//move rain
 		rain_update_shader->use();

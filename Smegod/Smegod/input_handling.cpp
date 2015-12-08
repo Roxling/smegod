@@ -139,8 +139,10 @@ void CommandHandler::handle(GLFWwindow * window, int key, int scancode, int acti
 			break;
 		case GLFW_KEY_R:
 			recompile_shaders();
+			break;
 		case GLFW_KEY_M:
 			freeze_time((*toggle_state)[key].second);
+			break;
 		default:
 			break;
 		}

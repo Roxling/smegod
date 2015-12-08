@@ -9,7 +9,7 @@ typedef struct particle_t
 	GLuint type;
 } particle_t;
 
-#define NUM_RAIN (5000)
+#define NUM_RAIN (50000)
 
 #define random() ((float)rand()/(float)RAND_MAX)
 
@@ -140,13 +140,13 @@ void Particles::update()
 
 void Particles::renderParticles()
 {
-	glBindVertexArray(m_vao[m_currVB]);
-	GL_CHECK_ERRORS_MSG("Particles render 1");
-
-	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currVB]);
-	GL_CHECK_ERRORS_MSG("Particles render 6");
+	glBindVertexArray(m_vao[m_currTFB]);
+	GL_CHECK_ERRORS_MSG("Billboard render#3");
+	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]);
+	GL_CHECK_ERRORS_MSG("Billboard render#4");
 
 	glBindVertexArray(0);
+	GL_CHECK_ERRORS_MSG("After Billboard render");
 }
 
 void Particles::Render(const glm::mat4 &view_projection, const glm::vec3 &camera_pos, shared_ptr<Texture> m_pTexture)
@@ -159,7 +159,6 @@ void Particles::Render(const glm::mat4 &view_projection, const glm::vec3 &camera
 
 	glBindVertexArray(m_vao[m_currTFB]);
 	GL_CHECK_ERRORS_MSG("Billboard render#3");
-	/*Får GL error caught with error code 0x502: Invalid operation.particles.cpp : Particles::Render(177) Message : Billboard render#4 */
 	glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]);
 	GL_CHECK_ERRORS_MSG("Billboard render#4");
 

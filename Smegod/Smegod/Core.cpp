@@ -302,7 +302,7 @@ void main_loop(GLFWwindow* window) {
 		rain_update_shader->use();
 		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 		rain_update_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
-		rain_update_shader->setUniform("g_heightRange", 30.0f);
+		rain_update_shader->setUniform("g_heightRange", 25.0f);
 		rain_update_shader->setUniform("moveParticles", Globals::TIME_NOT_FROZEN);
 		rain_update_shader->setUniform("g_FrameRate", (float)1 / (float)time_delta);
 		rain.update();
@@ -454,7 +454,7 @@ void main_loop(GLFWwindow* window) {
 		glDepthMask(GL_TRUE);
 		GL_CHECK_ERRORS();
 
-
+#if DEBUG_LEVEL >= 1
 		//Draw debug window
 		PERF_START(PassPerf::Pass::QUAD_PASS);
 		buff_shader->use();
@@ -497,7 +497,7 @@ void main_loop(GLFWwindow* window) {
 		quad_ping.render();
 
 		PERF_END(PassPerf::Pass::QUAD_PASS);
-
+#endif
 		//Swap buffers
 		PERF_START(PassPerf::Pass::SWAP_PASS);
 		glfwSwapBuffers(window);

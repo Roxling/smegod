@@ -8,8 +8,6 @@ flat in uint gs_type;
 void main()
 {
     vec4 color =texture(rainTextureArray, vec3(gs_tex,1));
-
-	color.a = clamp(0,1,pow(color.r,0.5));
 	gRain = color;
 }
 

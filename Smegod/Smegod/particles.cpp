@@ -9,7 +9,7 @@ typedef struct particle_t
 	GLuint type;
 } particle_t;
 
-#define NUM_RAIN (500000)
+#define NUM_RAIN (1000000)
 
 #define random() ((float)rand()/(float)RAND_MAX)
 
@@ -20,7 +20,7 @@ Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGr
 	m_currTFB = 1;
 	m_isFirst = true;
 
-	float g_radiusRange = 40;
+	float g_radiusRange = 150;
 	float g_heightRange = 15;
 
 	//TODO: Init data

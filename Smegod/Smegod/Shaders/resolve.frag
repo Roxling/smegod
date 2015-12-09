@@ -3,6 +3,7 @@
 uniform sampler2D diffuse_buffer;
 uniform sampler2D light_buffer;
 uniform sampler2D bloom_buffer;
+uniform sampler2D rain_buffer;
 
 uniform vec2 invRes;
 
@@ -21,8 +22,9 @@ void main()
 
     vec3 light = texelFetch(light_buffer, ivec2(gl_FragCoord.xy), 0).rgb;
     vec3 bloom = texture(bloom_buffer, screen_coord).rgb;
+	vec3 rain = texelFetch(rain_buffer, ivec2(gl_FragCoord.xy), 0).rgb;
 
-    vec3 hdrColor = (light + bloom) + diffuse.rgb;
+    vec3 hdrColor = (light + bloom) + diffuse.rgb + rain;
     float exposure =1;
     // Exposure tone mapping
     vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);

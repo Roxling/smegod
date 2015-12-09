@@ -178,14 +178,14 @@
     <None Include="Shaders\bloom.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\billboard.frag">
-      <Filter>Shader</Filter>
+    <None Include="Shaders\rain_update.frag">
+      <Filter>Shader\Rain</Filter>
     </None>
-    <None Include="Shaders\billboard.vert">
-      <Filter>Shader</Filter>
+    <None Include="Shaders\rain_update.geom">
+      <Filter>Shader\Rain</Filter>
     </None>
-    <None Include="Shaders\billboard.geom">
-      <Filter>Shader</Filter>
+    <None Include="Shaders\rain_render_old.frag">
+      <Filter>Shader\Rain</Filter>
     </None>
     <None Include="Shaders\rain_render.frag">
       <Filter>Shader\Rain</Filter>
@@ -193,16 +193,7 @@
     <None Include="Shaders\rain_render.geom">
       <Filter>Shader\Rain</Filter>
     </None>
-    <None Include="Shaders\rain_render.vert">
-      <Filter>Shader\Rain</Filter>
-    </None>
-    <None Include="Shaders\rain_update.frag">
-      <Filter>Shader\Rain</Filter>
-    </None>
-    <None Include="Shaders\rain_update.geom">
-      <Filter>Shader\Rain</Filter>
-    </None>
-    <None Include="Shaders\rain_update.vert">
+    <None Include="Shaders\rain.vert">
       <Filter>Shader\Rain</Filter>
     </None>
   </ItemGroup>

@@ -9,7 +9,7 @@ out vec3 vs_pos;
 out vec3 vs_seed;
 out vec3 vs_speed;
 out float vs_random;
-out uint vs_type;
+flat out uint vs_type;
 
 void main()
 {

@@ -29,13 +29,15 @@ protected:
 	virtual void handleMouse(float delta);
 	virtual void handleKeyboard(float delta);
 
-	void updateRotation(float ry, float rx);
+	
 
 public:
 	glm::mat4 view = glm::mat4();
 	glm::mat4 projection;
 	glm::mat4 view_projection;
 	glm::mat4 view_projecion_inverse;
+
+	void updateRotation(float ry, float rx);
 
 	float getNear() const;
 	float getFar() const;

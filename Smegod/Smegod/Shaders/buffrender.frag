@@ -3,12 +3,11 @@
 in vec2 tex_coord;
 out vec4 color;
 uniform sampler2D buff;
-uniform sampler2DArray buffArray;
 uniform vec3 mask;
 
 
-float near = 0.1; 
-float far  = 5.0; 
+uniform float near; 
+uniform float far;
   
 float LinearizeDepth(float depth) 
 {
@@ -18,24 +17,17 @@ float LinearizeDepth(float depth)
 
 void main()
 {
-	if (mask.x == 2) {
-		float gray = texture(buffArray, vec3(tex_coord, 0)).r;
-		color = vec4(gray);
-		color.a = 1;
+	vec4 text = texture(buff, tex_coord);
+	vec4 ncolor = vec4(1);
+	if(mask.x == 1){
+		ncolor.rgb = text.rgb;
+	}else{
+			ncolor.rgb = vec3(text.a);
 	}
-	else {
-		vec4 text = texture(buff, tex_coord);
-		vec4 ncolor = vec4(1);
-		if(mask.x == 1){
-			ncolor.rgb = text.rgb;
-		}else{
-			 ncolor.rgb = vec3(text.a);
-		}
-		if(mask.y == 1){
-			float linearDepth = LinearizeDepth(text.r);
-			ncolor.rgb = vec3(linearDepth);
-		}
-		color = ncolor;
-		color.a = 1;
+	if(mask.y == 1){
+		float linearDepth = LinearizeDepth(text.r);
+		ncolor.rgb = vec3(linearDepth);
 	}
+	color = ncolor;
+	color.a = 1;
 } 

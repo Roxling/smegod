@@ -56,6 +56,8 @@ void Camera::update(double d)
 
 void Camera::handleKeyboard(float delta)
 {
+	if (delta <= 0)
+		return;
 
 	int moveLeft = InputHandler::getKeystate(GLFW_KEY_A) != GLFW_RELEASE ? -1 : 0;
 	int moveRight = InputHandler::getKeystate(GLFW_KEY_D) != GLFW_RELEASE ? 1 : 0;
@@ -72,7 +74,6 @@ void Camera::handleKeyboard(float delta)
 	int rotateDown = InputHandler::getKeystate(GLFW_KEY_DOWN) != GLFW_RELEASE ? -1 : 0;
 
 	float rot_factor = rotation_speed * delta;
-
 	updateRotation((rotateLeft + rotateRight)*rot_factor, (rotateUp + rotateDown)*rot_factor);
 }
 

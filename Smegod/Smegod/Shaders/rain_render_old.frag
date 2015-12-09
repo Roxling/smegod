@@ -227,5 +227,4 @@ void main()
 
 	float totalOpacity = pointLight.a + directionalLight.a;
 	frag_color = vec4( vec3(pointLight.rgb*pointLight.a/totalOpacity + directionalLight.rgb*directionalLight.a/totalOpacity), totalOpacity);
-	frag_color = vec4(1,0,0,1);
 }

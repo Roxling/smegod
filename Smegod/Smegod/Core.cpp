@@ -110,8 +110,9 @@ void main_loop(GLFWwindow* window) {
 	RenderTexture gNormal(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);  // - NormalSpecular buffer
 	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 	DepthTexture gDepth(Globals::WIDTH, Globals::HEIGHT); // - Depth buffer
+	RenderTexture gRain(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE); //Rain buffer
 
-	vector<Texture *> gAttachments = { &gDiffuse, &gNormal, &gBloom, &gAccLight};
+	vector<Texture *> gAttachments = { &gDiffuse, &gNormal, &gBloom, &gAccLight, &gRain};
 	FrameBuffer gBuffer(&gAttachments, &gDepth);
 
 	// Setup light buffer
@@ -135,6 +136,7 @@ void main_loop(GLFWwindow* window) {
 
 	FrameBuffer* pingpongBuffer[2] = { &pingBuffer, &pongBuffer };
 	Texture* pingpongTextures[2] = { &gPing, &gPong };
+
 
 
 	//Setup unifroms
@@ -288,13 +290,50 @@ void main_loop(GLFWwindow* window) {
 
 		water_shader->bindCubemap("skybox", 0, *cubemap.get());
 		
-		//TODO, be able to bind cubemap with function, like normal texture
+		
 		
 
 
 		GL_CHECK_ERRORS_MSG("Before water render");
 		water.render(water.world, water_shader);
 		GL_CHECK_ERRORS_MSG("After water render");
+
+		//move rain
+		rain_update_shader->use();
+		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
+		rain_update_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
+		rain_update_shader->setUniform("g_heightRange", 30.0f);
+		rain_update_shader->setUniform("moveParticles", Globals::TIME_NOT_FROZEN);
+		rain_update_shader->setUniform("g_FrameRate", (float)1 / (float)time_delta);
+		rain.update();
+
+		//render
+		rain_render_shader->use();
+		rain_render_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
+		//rain_render_shader->setUniform("g_Near", cam->getNear());
+		//rain_render_shader->setUniform("g_Far", cam->getFar());
+
+		//rain_render_shader->setUniform("g_mWorldView", cam->view * ident); //TODO: ident?
+		//rain_render_shader->setUniform("g_mWorldViewProj", cam->view_projection * ident);
+		//rain_render_shader->setUniform("g_mProjection", cam->projection);
+
+		//rain_render_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
+		rain_render_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
+
+		rain_render_shader->setUniform("view_projection", cam->view_projection);
+
+		rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
+		//rain_render_shader->bindTexture("gRain", 0, gRain);
+		glEnable(GL_BLEND);
+		glDepthMask(GL_FALSE);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		rain.renderParticles();
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDepthMask(GL_TRUE);
+		glDisable(GL_BLEND);
+
+		//swap rain buffers
+		rain.swap();
 
 		PERF_END(PassPerf::Pass::GEOMETRY_PASS);
 		//
@@ -391,6 +430,7 @@ void main_loop(GLFWwindow* window) {
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		PERF_END(PassPerf::Pass::BLOOM_PASS);
+		
 
 		// PASS 3 -- Resolve
 		PERF_START(PassPerf::Pass::RESOLVE_PASS);
@@ -404,44 +444,10 @@ void main_loop(GLFWwindow* window) {
 		resolve_shader->bindTexture("diffuse_buffer", 0, gDiffuse);
 		resolve_shader->bindTexture("light_buffer", 1, gAccLight);
 		resolve_shader->bindTexture("bloom_buffer", 2, horizontal ? gPing : gPong);
+		resolve_shader->bindTexture("rain_buffer", 3, gRain);
 		output.render();
 
-		//move rain
-		rain_update_shader->use();
-		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
-		rain_update_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
-		rain_update_shader->setUniform("g_heightRange", 30.0f);
-		rain_update_shader->setUniform("moveParticles", Globals::TIME_NOT_FROZEN);
-		rain_update_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
-		rain.update();
-		
-		//render
-		rain_render_shader->use();
-		rain_render_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
-		//rain_render_shader->setUniform("g_Near", cam->getNear());
-		//rain_render_shader->setUniform("g_Far", cam->getFar());
-
-		//rain_render_shader->setUniform("g_mWorldView", cam->view * ident); //TODO: ident?
-		//rain_render_shader->setUniform("g_mWorldViewProj", cam->view_projection * ident);
-		//rain_render_shader->setUniform("g_mProjection", cam->projection);
-
-		//rain_render_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
-		rain_render_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
-
-		rain_render_shader->setUniform("view_projection", cam->view_projection);
-
-		rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
-		//glDisable(GL_CULL_FACE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		rain.renderParticles();
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_BLEND);
-		//glEnable(GL_CULL_FACE);
-		//rain.Render(cam->view_projection, glm::vec3(cam->combined_world[3]), tex);
-		
-		//swap rain buffers
-		rain.swap();
+	
 
 		PERF_END(PassPerf::Pass::RESOLVE_PASS);
 
@@ -452,8 +458,6 @@ void main_loop(GLFWwindow* window) {
 		//Draw debug window
 		PERF_START(PassPerf::Pass::QUAD_PASS);
 		buff_shader->use();
-
-		buff_shader->bindTexture("buffArray", 1, rainTexs); //TODO: remove this and get a better solution than binding buffArray to every quad..
 
 		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
 		buff_shader->bindTexture("buff", 0, gDiffuse);
@@ -467,6 +471,8 @@ void main_loop(GLFWwindow* window) {
 		buff_shader->bindTexture("buff", 0, gNormal);
 		quad_speculars.render();
 		
+		buff_shader->setUniform("near", 0.1f);
+		buff_shader->setUniform("far", 1.f);
 		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
 		buff_shader->bindTexture("buff", 0, gDepth);
 		quad_depth.render();
@@ -475,6 +481,8 @@ void main_loop(GLFWwindow* window) {
 		buff_shader->bindTexture("buff", 0, gAccLight);
 		quad_acclight.render();
 
+		buff_shader->setUniform("near", 0.1f);
+		buff_shader->setUniform("far", 5.f);
 		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
 		buff_shader->bindTexture("buff", 0, shadowMap);
 
@@ -484,8 +492,8 @@ void main_loop(GLFWwindow* window) {
 		buff_shader->bindTexture("buff", 0, gBloom);
 		quad_bloom.render();
 
-		buff_shader->setUniform("mask", glm::vec3(2.f, 0, 0));
-		buff_shader->bindTexture("buffArray", 1, rainTexs);
+		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+		buff_shader->bindTexture("buff", 1, gRain);
 		quad_ping.render();
 
 		PERF_END(PassPerf::Pass::QUAD_PASS);

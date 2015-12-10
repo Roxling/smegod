@@ -14,7 +14,7 @@ void main()
     vec2 screen_coord = gl_FragCoord.xy * invRes; // [0,1]
     vec2 ndc = screen_coord * 2 - 1; // [-1,1]
 
-    const float gamma = 1;
+    const float gamma = 2.2;
 
     vec4 diffuse = texelFetch(diffuse_buffer, ivec2(gl_FragCoord.xy), 0);
 	diffuse.rgb *= diffuse.a;

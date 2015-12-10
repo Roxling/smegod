@@ -97,7 +97,7 @@ Texture::Texture(string file, bool use_defaultfolder)
 
 	this->mipLevels = 3;
 
-	this->internalFormat = GL_RGBA;
+	this->internalFormat = GL_SRGB_ALPHA;
 	this->format = GL_RGBA;
 	this->precision = GL_UNSIGNED_BYTE;
 

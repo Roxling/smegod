@@ -45,6 +45,7 @@ private:
 	static void set_wireframe(bool state);
 	static void recompile_shaders();
 	static void freeze_time(bool state);
+	static void draw_buffers(bool state);
 	static void draw_fps(bool state);
 public:
 	static void print_help();

@@ -13,7 +13,7 @@ uniform sampler2D diffuse_texture;
 uniform sampler2D specular_texture;
 uniform sampler2D normal_texture;
 
-const vec3 ambient = vec3(0.4);
+const float ambient = 0.2;
 
 void main()
 {
@@ -23,7 +23,7 @@ void main()
     if (geometry_diffuse.a < 0.5) {
         bloom_filter = vec4(20, 20, 2, 1);
     }
-	geometry_diffuse.rgb *= ambient;
+	geometry_diffuse.a = ambient;
 	// Worldspace normal
 	//geometry_normal_and_specular.xyz = texture(normal_texture, pass_texcoords).rgb;
     vec3 bump = texture(normal_texture, pass_texcoords).rgb;

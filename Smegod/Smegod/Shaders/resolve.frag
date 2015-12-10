@@ -17,8 +17,8 @@ void main()
     const float gamma = 1;
 
     vec4 diffuse = texelFetch(diffuse_buffer, ivec2(gl_FragCoord.xy), 0);
-	if (diffuse.a < 0.2)
-		discard;
+	diffuse.rgb *= diffuse.a;
+	diffuse.a = 1;
 
     vec3 light = texelFetch(light_buffer, ivec2(gl_FragCoord.xy), 0).rgb;
     vec3 bloom = texture(bloom_buffer, screen_coord).rgb;

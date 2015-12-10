@@ -3,6 +3,7 @@
 uniform sampler2D depthBuffer;
 uniform sampler2D normalAndSpecularBuffer;
 uniform sampler2D shadowMap;
+uniform sampler2D diffuseBuffer;
 
 uniform vec2 invRes;
 
@@ -12,12 +13,6 @@ uniform mat4 view_projection_inverse;
 
 uniform vec3 camera_pos;
 uniform mat4 worldToLight;
-
-uniform vec3 light_color;
-uniform vec3 light_pos;
-uniform vec3 light_dir;
-uniform float light_intensity;
-uniform float light_anglefalloff;
 
 uniform vec2 shadow_texelsize;
 
@@ -40,15 +35,15 @@ struct Light {
 	float linear;
 	float quadratic;
 };
-uniform Light light;
+uniform Light u_light;
 
 
 void main()
 {
     vec2 screen_coord = gl_FragCoord.xy * invRes; // [0,1]
-    vec2 ndc = screen_coord * 2 - 1;
+    vec2 ndc = screen_coord * 2 - 1; // [-1,1]
 
-    float depth = texture(depthBuffer, screen_coord).r * 2 - 1;
+    float depth = texture(depthBuffer, screen_coord).r * 2 - 1; // [-1,1]
     vec4 ndc_pos = vec4(ndc, depth, 1);
     vec4 pixel_world = view_projection_inverse * ndc_pos;
     pixel_world /= pixel_world.w;
@@ -58,8 +53,8 @@ void main()
     pixel_in_light /= pixel_in_light.w;
 
     float shadowdepth = texture(shadowMap, pixel_in_light.xy*0.5 +0.5).r * 2 - 1;
-	
-	float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+
+    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
     bias = 0;
     float shadow_factor = 0.0;
     for(int x = -1; x <= 1; ++x)
@@ -77,7 +72,7 @@ void main()
     vec3 N = NnS.xyz*2 - 1;
 
     N = normalize(N);
-    vec3 L = normalize(light.position - pixel_world.xyz);
+    vec3 L = normalize(u_light.position - pixel_world.xyz);
     vec3 V = normalize(camera_pos - pixel_world.xyz);
     vec3 H = normalize(L + V);
 
@@ -90,18 +85,17 @@ void main()
 	float dist =  distance(light.position, pixel_world.xyz);
     float attenuation = 1.0f / (1.0 + light.linear * dist + light.quadratic * (dist * dist));
 
-   
+	// Diffuse color
+    vec3 diffuse = texture(diffuseBuffer, screen_coord).rgb * u_light.color * max(dot(L,N),0.0);;
 
+	// Specular color
 	float specular_factor = NnS.a;
+    vec3 specular = specular_factor * u_light.color * pow(max(dot(N,H),0.0), u_specular_power);
 
-    vec3 diff = max(dot(L,N),0.0);
-	vec3 specular = pow(max(dot(N,H),0.0), u_specular_power);
-	
 	float total_intensity = intensity * attenuation * shadow_factor;
-
-
+   
 	//nått i diffuse och/eller specular
-    vec3 full_color = (diffuse + specular)*shadow_factor;
+    vec3 full_color = (diffuse + specular)*total_intensity;
 
 	light_contribution = vec4(full_color, 1.0);
     float brightness = dot(full_color, vec3(0.2126, 0.7152, 0.0722));

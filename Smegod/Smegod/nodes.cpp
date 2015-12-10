@@ -5,6 +5,11 @@ void Node::translate(float dx, float dy, float dz)
 	world = glm::translate(world, { dx, dy, dz });
 }
 
+void Node::setTranslate(float x, float y, float z)
+{
+	world = glm::mat4(world[0], world[1], world[2], glm::vec4(x, y, z, 1));
+}
+
 void Node::rotate(float dyaw, float dpitch, float droll)
 {
 	auto rot = glm::mat4(glm::quat({ glm::radians(-dpitch),{ glm::radians(dyaw) },glm::radians(-droll) }));

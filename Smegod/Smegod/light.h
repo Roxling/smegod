@@ -11,20 +11,24 @@ public:
 
 class SpotLight : public WorldObject {
 public:
-
-	SpotLight(shared_ptr<ShaderGroup> shader);
+	SpotLight(glm::vec3 &color, float cutoff_deg = 12.5f, float outer_cutoff_deg = 17.5f, float linear_attenuation = 0.035f, float quadratic_attenuation = 0.044f);
 
 	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) override;
 	
 	glm::mat4 getLightSpaceMatrix();
 
-	glm::vec3 LightColor = {.7,.7,.7};
-	float LightIntensity = 24.0f;
 private:
 	void renderSelf();
-	glm::mat4 lightProjection;
-	float LightAngleFalloff = 0.8f;
+	glm::mat4 m_light_projection;
+	glm::vec3 m_color;
+	float m_cutoff;
+	float m_outer_cutoff;
 
-	GLuint coneVao = 0u, coneVbo = 0u;
-	GLsizei coneVerticesNb = 0;
+	float m_linear_attenuation;
+	float m_quadratic_attenuation;
+
+	GLuint m_cone_vao = 0u;
+	GLuint m_cone_vbo = 0u;
+	GLsizei m_cone_vertices_nb = 0;
+	void generate_cone(float outer_cutoff_deg);
 };

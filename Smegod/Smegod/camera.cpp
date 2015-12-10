@@ -34,7 +34,7 @@ void Camera::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader
 	combined_world = combined_transform;
 	view = glm::inverse(combined_transform);
 	view_projection = projection * view;
-	view_projecion_inverse = glm::inverse(view_projection);
+	view_projection_inverse = glm::inverse(view_projection);
 
 	/*for (auto it = shader_groups.begin(); it != shader_groups.end(); ++it) {
 		auto program = *it;

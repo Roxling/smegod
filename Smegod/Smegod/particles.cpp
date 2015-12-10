@@ -9,7 +9,7 @@ typedef struct particle_t
 	GLuint type;
 } particle_t;
 
-#define NUM_RAIN (1000000)
+#define NUM_RAIN (2)
 
 #define random() ((float)rand()/(float)RAND_MAX)
 

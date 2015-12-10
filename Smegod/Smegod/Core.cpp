@@ -165,48 +165,29 @@ void main_loop(GLFWwindow* window) {
 
 	float lightoffset = 21.54f;
 
-	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(laccbuff_shader);
-	sl1->translate(3.7f, 6.f, -3.3f);
+	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(glm::vec3{ 3.f, 3.f, 1.8f }, 30.f, 45.f, 0.05f, 0.01f);
+	sl1->setTranslate(3.7f, 6.f, -2.9f);
 	sl1->rotate(180, 40, 0);
-	sl1->LightIntensity *= 2;
-	sl1->scale(25);
-	sl1->LightColor = { 1.f, 1.f, 0.6f };
 
-	shared_ptr<SpotLight> sl2 = make_shared<SpotLight>(laccbuff_shader);
-	sl2->translate(-3.7f, 6.f, -3.3f);
+	shared_ptr<SpotLight> sl2 = make_shared<SpotLight>(glm::vec3{ 3.f, 3.f, 1.8f }, 30.f, 45.f, 0.05f, 0.01f);
+	sl2->translate(-3.7f, 6.f, -2.9f);
 	sl2->rotate(180, 40, 0);
-	sl2->LightIntensity *= 2;
-	sl2->scale(25);
-	sl2->LightColor = { 1.f, 1.f, 0.6f };
 
-	shared_ptr<SpotLight> sl3 = make_shared<SpotLight>(laccbuff_shader);
-	sl3->translate(3.7f + lightoffset, 6.f, -3.3f);
+	shared_ptr<SpotLight> sl3 = make_shared<SpotLight>(glm::vec3{ 3.f, 3.f, 1.8f }, 30.f, 45.f, 0.05f, 0.01f);
+	sl3->translate(3.7f + lightoffset, 6.f, -2.9f);
 	sl3->rotate(180, 40, 0);
-	sl3->LightIntensity *= 2;
-	sl3->scale(25);
-	sl3->LightColor = { 1.f, 1.f, 0.6f };
 
-	shared_ptr<SpotLight> sl4 = make_shared<SpotLight>(laccbuff_shader);
-	sl4->translate(-3.7f + lightoffset, 6.f, -3.3f);
+	shared_ptr<SpotLight> sl4 = make_shared<SpotLight>(glm::vec3{ 3.f, 3.f, 1.8f }, 30.f, 45.f, 0.05f, 0.01f);
+	sl4->translate(-3.7f + lightoffset, 6.f, -2.9f);
 	sl4->rotate(180, 40, 0);
-	sl4->LightIntensity *= 2;
-	sl4->scale(25);
-	sl4->LightColor = { 1.f, 1.f, 0.6f };
 	
 	Node lhRotator;
 	lhRotator.translate(35.56f, 26.3f, -1.31f);
-	shared_ptr<SpotLight> lh = make_shared<SpotLight>(laccbuff_shader);
+	shared_ptr<SpotLight> lh = make_shared<SpotLight>(glm::vec3{ 100.f, 100.f, 100.f }, 30.f, 45.f, 0.00005f, 0.000001f);
 
-	shared_ptr<SpotLight> lh_top = make_shared<SpotLight>(laccbuff_shader);
+	shared_ptr<SpotLight> lh_top = make_shared<SpotLight>(glm::vec3{1.f, 1.f, .4f }, 30.f, 45.f, 0.05f, 0.01f);
 	lh_top->translate(35.56f, 26.3f+2.f, -1.31f);
 	lh_top->rotate(0, 90, 0);
-	//lh_top->LightIntensity *= 2;
-	lh_top->scale(5);
-	lh_top->LightColor = { 1.f, 1.f, .4f };
-	lh_top->LightIntensity = 2;
-	lh->scale(40);
-	lh->LightIntensity *= 200;
-	lh->LightColor = { 1.f, 1.f, 1.f };
 
 	lights.push_back(sl1);
 	lights.push_back(sl2);
@@ -215,8 +196,8 @@ void main_loop(GLFWwindow* window) {
 	lights.push_back(sl4);
 
 
-	lights.push_back(lh);
 	lights.push_back(lh_top);
+	lights.push_back(lh);
 
 	Quad output;
 
@@ -240,8 +221,8 @@ void main_loop(GLFWwindow* window) {
 			resolve_shader->use();
 			resolve_shader->setUniform("invRes", invRes);
 			laccbuff_shader->use();
-			laccbuff_shader->setUniform("invRes", invRes);
-			laccbuff_shader->setUniform("shadow_texelsize", shadowMapTexelSize);
+			laccbuff_shader->setUniform("u_inv_res", invRes);
+			laccbuff_shader->setUniform("u_shadow_texelsize", shadowMapTexelSize);
 
 			Globals::UNIFORM_REFRESH = false;
 		}
@@ -276,7 +257,6 @@ void main_loop(GLFWwindow* window) {
 		
 		world->render(gbuffer_shader);
 
-
 		//water
 		GL_CHECK_ERRORS_MSG("Before water uniforms");
 		water_shader->use();
@@ -287,9 +267,6 @@ void main_loop(GLFWwindow* window) {
 
 		water_shader->bindCubemap("skybox", 0, *cubemap.get());
 		
-		
-		
-
 
 		GL_CHECK_ERRORS_MSG("Before water render");
 		water.render(water.world, water_shader);
@@ -339,9 +316,10 @@ void main_loop(GLFWwindow* window) {
 		PERF_START(PassPerf::Pass::FULL_LIGHT_PASS);
 
 		laccbuff_shader->use();
-		laccbuff_shader->setUniform("view_projection", cam->view_projection);
-		laccbuff_shader->setUniform("view_projection_inverse", cam->view_projecion_inverse);
-		laccbuff_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
+		
+		laccbuff_shader->setUniform("u_view_projection", cam->view_projection);
+		laccbuff_shader->setUniform("u_view_projection_inverse", cam->view_projection_inverse);
+		laccbuff_shader->setUniform("u_camera_pos", glm::vec3(cam->combined_world[3]));
 
 		for (int i = 0; i < lights.size(); i++) {
 			shared_ptr<SpotLight> sl = lights[i];
@@ -373,12 +351,11 @@ void main_loop(GLFWwindow* window) {
 			laccbuff_shader->bindTexture("normalAndSpecularBuffer", 1, gNormal);
 			laccbuff_shader->bindTexture("shadowMap", 2, shadowMap);
 			laccbuff_shader->bindTexture("diffuseBuffer", 3, gDiffuse);
-			laccbuff_shader->setUniform("worldToLight", model_to_clip_matrix);
+			laccbuff_shader->setUniform("u_world_to_light", model_to_clip_matrix);
 
 			lBuffer.activate();
 			glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-			//glClear(GL_COLOR_BUFFER_BIT);
 			glEnable(GL_BLEND);
 			glDepthFunc(GL_GREATER);
 			glDepthMask(GL_FALSE);
@@ -386,10 +363,7 @@ void main_loop(GLFWwindow* window) {
 			glBlendEquationSeparate(GL_FUNC_ADD, GL_MIN);
 			glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
 
-
-
 			sl->render(sl->world, laccbuff_shader);
-
 
 			glDepthMask(GL_TRUE);
 			glDepthFunc(GL_LESS);
@@ -482,7 +456,7 @@ void main_loop(GLFWwindow* window) {
 			quad_acclight.render();
 
 			buff_shader->setUniform("near", 0.1f);
-			buff_shader->setUniform("far", 5.f);
+			buff_shader->setUniform("far", 1.f);
 			buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
 			buff_shader->bindTexture("buff", 0, shadowMap);
 

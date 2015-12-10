@@ -170,6 +170,7 @@
     <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\pointlight.frag" />
     <None Include="Shaders\rain_render.frag" />
     <None Include="Shaders\rain_render.geom" />
     <None Include="Shaders\bloom.frag" />
@@ -190,6 +191,7 @@
     <None Include="Shaders\resolve.vert" />
     <None Include="Shaders\shadowmap.frag" />
     <None Include="Shaders\shadowmap.vert" />
+    <None Include="Shaders\spotlight.frag" />
     <None Include="Shaders\water.frag" />
     <None Include="Shaders\water.vert" />
   </ItemGroup>

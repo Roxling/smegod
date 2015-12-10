@@ -19,6 +19,9 @@
     <Filter Include="Shader\Rain">
       <UniqueIdentifier>{8ccbd6a2-daba-4653-abed-0b265c0e566c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader\Lights">
+      <UniqueIdentifier>{ecdf4a52-99fc-4e62-8f15-a58c608dfe00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp">
@@ -130,12 +133,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\laccbuffer.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shaders\laccbuffer.vert">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="Shaders\gbuffer.vert">
       <Filter>Shader</Filter>
     </None>
@@ -195,6 +192,18 @@
     </None>
     <None Include="Shaders\rain.vert">
       <Filter>Shader\Rain</Filter>
+    </None>
+    <None Include="Shaders\laccbuffer.vert">
+      <Filter>Shader\Lights</Filter>
+    </None>
+    <None Include="Shaders\laccbuffer.frag">
+      <Filter>Shader\Lights</Filter>
+    </None>
+    <None Include="Shaders\spotlight.frag">
+      <Filter>Shader\Lights</Filter>
+    </None>
+    <None Include="Shaders\pointlight.frag">
+      <Filter>Shader\Lights</Filter>
     </None>
   </ItemGroup>
 </Project>

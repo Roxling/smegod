@@ -35,7 +35,5 @@ void main()
 
 	geometry_normal_and_specular.xyz = (N*0.5 + 0.5);
 	// Specularity
-    vec4 spec = texture(specular_texture, pass_texcoords);
-    float mspec = (spec.r+spec.g+spec.b)/3;
-	geometry_normal_and_specular.a = mspec;
+	geometry_normal_and_specular.a = texture(specular_texture, pass_texcoords).r;
 }

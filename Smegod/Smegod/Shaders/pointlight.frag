@@ -21,26 +21,18 @@ uniform float light_anglefalloff;
 
 uniform vec2 shadow_texelsize;
 
-uniform float u_specular_power = 100;
-
 layout (location = 0) out vec4 light_contribution;
 layout (location = 1) out vec4 bloom_filter;
 
 #define saturate(a) clamp( a, 0.0, 1.0 )
 #define whiteCompliment(a) ( 1.0 - saturate( a ) )
 
-
-struct Light {
-	vec3 position;
-	vec3 direction;
-	vec3 color;
-	float cutOff;
-	float outerCutOff;
-
-	float linear;
-	float quadratic;
-};
-uniform Light light;
+float calcLightAttenuation( float lightDistance, float cutoffDistance, float decayExponent ) {
+	if ( decayExponent > 0.0 ) {
+	  return pow( saturate( -lightDistance / cutoffDistance + 1.0 ), decayExponent );
+	}
+	return 1.0;
+}
 
 
 void main()
@@ -53,55 +45,56 @@ void main()
     vec4 pixel_world = view_projection_inverse * ndc_pos;
     pixel_world /= pixel_world.w;
 
-    // Shadow
+    //SHADOW
     vec4 pixel_in_light = worldToLight * pixel_world;
     pixel_in_light /= pixel_in_light.w;
 
     float shadowdepth = texture(shadowMap, pixel_in_light.xy*0.5 +0.5).r * 2 - 1;
-	
-	float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
+
+    // PHONG
+    //Composite light using phong shading, falloffs and LightIntensity and LightColor
+
+
+    float length = distance(light_pos, pixel_world.xyz);
+  
+    vec4 NnS = texture(normalAndSpecularBuffer, screen_coord);
+    vec3 N = NnS.xyz*2 - 1;
+    float shininess = NnS.a*100;
+
+    N = normalize(N);
+    vec3 L = normalize(light_pos - pixel_world.xyz);
+    vec3 V = normalize(camera_pos - pixel_world.xyz);
+    vec3 H = normalize(L + V);
+
+    float bias = max(0.05 * (1.0 - dot(N, L)), 0.005);
     bias = 0;
-    float shadow_factor = 0.0;
+    float shadow = 0.0;
     for(int x = -1; x <= 1; ++x)
     {
         for(int y = -1; y <= 1; ++y)
         {
             float pcfDepth = texture(shadowMap, pixel_in_light.xy*0.5 +0.5 + vec2(x, y) * shadow_texelsize).r * 2 - 1; 
-            shadow_factor += (pixel_in_light.z - bias) < pcfDepth ? 1.0 : 0.0;        
+            shadow +=(pixel_in_light.z - bias) < pcfDepth ? 1.0 : 0.0;        
         }    
     }
-    shadow_factor /= 9.0;
+    shadow /= 9.0;
 
-    // Blinn-Phong
-    vec4 NnS = texture(normalAndSpecularBuffer, screen_coord);
-    vec3 N = NnS.xyz*2 - 1;
+    float rad = acos(dot(L, normalize(light_dir)));
+    if(rad > light_anglefalloff)
+        rad = light_anglefalloff;
 
-    N = normalize(N);
-    vec3 L = normalize(light.position - pixel_world.xyz);
-    vec3 V = normalize(camera_pos - pixel_world.xyz);
-    vec3 H = normalize(L + V);
+    float radialFalloff = 1 - rad/light_anglefalloff;
+	float distfalloff = 1 / (length * length);
 
-	// Radial attenuation
-    float theta = dot(L, normalize(-light.direction)); 
-    float epsilon = (light.cutOff - light.outerCutOff);
-    float intensity = saturate((theta - light.outerCutOff) / epsilon);
-
-	// Distance attenuation
-	float dist =  distance(light.position, pixel_world.xyz);
-    float attenuation = 1.0f / (1.0 + light.linear * dist + light.quadratic * (dist * dist));
-
+	vec3 color = light_color * radialFalloff * distfalloff * light_intensity;
    
-
-	float specular_factor = NnS.a;
-
-    vec3 diff = max(dot(L,N),0.0);
-	vec3 specular = pow(max(dot(N,H),0.0), u_specular_power);
-	
-	float total_intensity = intensity * attenuation * shadow_factor;
-
+    vec3 diffuse = color * max(dot(L,N),0.0);
+    vec3 specular = color * pow(max(dot(N,H),0.0), shininess);
+    if(NnS.a == 0)
+        specular = vec3(0);
 
 	//nått i diffuse och/eller specular
-    vec3 full_color = (diffuse + specular)*shadow_factor;
+    vec3 full_color = (diffuse + specular)*shadow;
 
 	light_contribution = vec4(full_color, 1.0);
     float brightness = dot(full_color, vec3(0.2126, 0.7152, 0.0722));

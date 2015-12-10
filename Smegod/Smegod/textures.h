@@ -6,9 +6,10 @@
 
 class DefaultTextures {
 public:
-	DefaultTextures(GLuint t, GLuint b) : texture(t), bump(b) {}
+	DefaultTextures(GLuint t, GLuint b, GLuint s) : texture(t), bump(b), spec(s) {}
 	GLuint texture;
 	GLuint bump;
+	GLuint spec;
 };
 
 class Texture : public GLResource {

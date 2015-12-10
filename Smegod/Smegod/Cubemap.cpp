@@ -27,7 +27,7 @@ Cubemap::Cubemap(vector<string> imgs)
 		image = SOIL_load_image(imgs[i].c_str(), &width, &height, &channels, SOIL_LOAD_RGB);
 		glTexImage2D(
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-			0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image
+			0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image
 			);
 		SOIL_free_image_data(image);
 	}

@@ -97,8 +97,11 @@ void main_loop(GLFWwindow* window) {
 
 	shared_ptr<ShaderGroup> rain_update_shader = make_shared<ShaderGroup>("rain.vert", "rain_update.geom", "rain_update.frag", ruVaryings);
 	
+
 	vector<GLchar *> rrVaryings;
 	shared_ptr<ShaderGroup> rain_render_shader = make_shared<ShaderGroup>("rain.vert", "rain_render.geom", "rain_render.frag", rrVaryings);
+
+
 
 	RenderTexture gBloom(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
@@ -144,7 +147,7 @@ void main_loop(GLFWwindow* window) {
 
 
 	//rain
-	ArrayTexture rainTexs("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA8);
+	ArrayTexture rainTexs("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_SRGB8_ALPHA8);
 	TestTexture testTex;
 
 	shared_ptr<Texture> tex = make_shared<Texture>("notex.png");
@@ -255,7 +258,7 @@ void main_loop(GLFWwindow* window) {
 		PERF_START(PassPerf::Pass::GEOMETRY_PASS);
 
 		if (Globals::WIREFRAME) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 		}
 
 		glDepthFunc(GL_LESS);

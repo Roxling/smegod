@@ -98,6 +98,7 @@ void main()
     vec3 full_color = (diffuse + specular)*shadow;
 
 	light_contribution = vec4(full_color, 1.0);
+	
     float brightness = dot(full_color, vec3(0.2126, 0.7152, 0.0722));
     if(brightness > 1.0)
         bloom_filter = vec4(full_color, 1.0);

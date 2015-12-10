@@ -16,6 +16,7 @@ public:
 	static bool WIREFRAME;
 
 	static bool DRAW_FPS;
+	static bool DRAW_BUFFERS;
 	static bool UNIFORM_REFRESH;
 	static bool TIME_NOT_FROZEN;
 

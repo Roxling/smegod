@@ -208,8 +208,8 @@ void main_loop(GLFWwindow* window) {
 	lh_top->LightColor = { 1.f, 1.f, .4f };
 	lh_top->LightIntensity = 2;
 	lh->scale(40);
-	lh->LightIntensity *= 100;
-	lh->LightColor = { 1.f, 1.f, .6f };
+	lh->LightIntensity *= 200;
+	lh->LightColor = { 1.f, 1.f, 1.f };
 
 	lights.push_back(sl1);
 	lights.push_back(sl2);
@@ -373,6 +373,7 @@ void main_loop(GLFWwindow* window) {
 			laccbuff_shader->bindTexture("depthBuffer", 0, gDepth);
 			laccbuff_shader->bindTexture("normalAndSpecularBuffer", 1, gNormal);
 			laccbuff_shader->bindTexture("shadowMap", 2, shadowMap);
+			laccbuff_shader->bindTexture("diffuseBuffer", 3, gDiffuse);
 			laccbuff_shader->setUniform("worldToLight", model_to_clip_matrix);
 
 			lBuffer.activate();
@@ -454,50 +455,50 @@ void main_loop(GLFWwindow* window) {
 		glDepthMask(GL_TRUE);
 		GL_CHECK_ERRORS();
 
-#if DEBUG_LEVEL >= 1
-		//Draw debug window
 		PERF_START(PassPerf::Pass::QUAD_PASS);
-		buff_shader->use();
+		if (Globals::DRAW_BUFFERS) {
+			//Draw debug window
+			buff_shader->use();
 
-		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
-		buff_shader->bindTexture("buff", 0, gDiffuse);
-		quad_textures.render();
+			buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+			buff_shader->bindTexture("buff", 0, gDiffuse);
+			quad_textures.render();
 		
-		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
-		buff_shader->bindTexture("buff", 0, gNormal);
-		quad_normals.render();
+			buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+			buff_shader->bindTexture("buff", 0, gNormal);
+			quad_normals.render();
 		
-		buff_shader->setUniform("mask", glm::vec3(0, 0, 0));
-		buff_shader->bindTexture("buff", 0, gNormal);
-		quad_speculars.render();
+			buff_shader->setUniform("mask", glm::vec3(0, 0, 0));
+			buff_shader->bindTexture("buff", 0, gNormal);
+			quad_speculars.render();
 		
-		buff_shader->setUniform("near", 0.1f);
-		buff_shader->setUniform("far", 1.f);
-		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
-		buff_shader->bindTexture("buff", 0, gDepth);
-		quad_depth.render();
+			buff_shader->setUniform("near", 0.1f);
+			buff_shader->setUniform("far", 1.f);
+			buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
+			buff_shader->bindTexture("buff", 0, gDepth);
+			quad_depth.render();
 
-		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
-		buff_shader->bindTexture("buff", 0, gAccLight);
-		quad_acclight.render();
+			buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+			buff_shader->bindTexture("buff", 0, gAccLight);
+			quad_acclight.render();
 
-		buff_shader->setUniform("near", 0.1f);
-		buff_shader->setUniform("far", 5.f);
-		buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
-		buff_shader->bindTexture("buff", 0, shadowMap);
+			buff_shader->setUniform("near", 0.1f);
+			buff_shader->setUniform("far", 5.f);
+			buff_shader->setUniform("mask", glm::vec3(0, 1.f, 0));
+			buff_shader->bindTexture("buff", 0, shadowMap);
 
-		quad_shadowmap.render();
+			quad_shadowmap.render();
 		
-		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
-		buff_shader->bindTexture("buff", 0, gBloom);
-		quad_bloom.render();
+			buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+			buff_shader->bindTexture("buff", 0, gBloom);
+			quad_bloom.render();
 
-		buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
-		buff_shader->bindTexture("buff", 1, gRain);
-		quad_ping.render();
+			buff_shader->setUniform("mask", glm::vec3(1.f, 0, 0));
+			buff_shader->bindTexture("buff", 1, gRain);
+			quad_ping.render();
 
+		}
 		PERF_END(PassPerf::Pass::QUAD_PASS);
-#endif
 		//Swap buffers
 		PERF_START(PassPerf::Pass::SWAP_PASS);
 		glfwSwapBuffers(window);

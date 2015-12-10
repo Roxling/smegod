@@ -99,6 +99,20 @@ void CommandHandler::freeze_time(bool state)
 	cout << "Time toggled " << (!state ? "ON" : "OFF") << "." << endl;
 }
 
+#if DEBUG_LEVEL >= 1
+bool Globals::DRAW_BUFFERS = true;
+#else
+bool Globals::DRAW_BUFFERS = false;
+#endif
+void CommandHandler::draw_buffers(bool state)
+{
+#if DEBUG_LEVEL >= 1
+	Globals::DRAW_BUFFERS = !state;
+#else
+	Globals::DRAW_BUFFERS = state;
+#endif
+}
+
 bool Globals::DRAW_FPS = false;
 void CommandHandler::draw_fps(bool state)
 {
@@ -118,6 +132,7 @@ void CommandHandler::print_help()
 		"'R' to recompile shaders. \n"
 		"'F' to toggle FPS counter. (Default OFF) \n"
 		"'M' to freeze time. (Default OFF) \n"
+		"'B' to toggle debug buffers.\n"
 		"\t\t --HELP-- \n";
 	cout << help;
 }
@@ -142,6 +157,9 @@ void CommandHandler::handle(GLFWwindow * window, int key, int scancode, int acti
 			break;
 		case GLFW_KEY_M:
 			freeze_time((*toggle_state)[key].second);
+			break;
+		case GLFW_KEY_B:
+			draw_buffers((*toggle_state)[key].second);
 			break;
 		default:
 			break;

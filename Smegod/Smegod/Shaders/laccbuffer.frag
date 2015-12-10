@@ -3,6 +3,7 @@
 uniform sampler2D depthBuffer;
 uniform sampler2D normalAndSpecularBuffer;
 uniform sampler2D shadowMap;
+uniform sampler2D diffuseBuffer;
 
 uniform vec2 invRes;
 
@@ -88,7 +89,7 @@ void main()
 
 	vec3 color = light_color * radialFalloff * distfalloff * light_intensity;
    
-    vec3 diffuse = color * max(dot(L,N),0.0);
+    vec3 diffuse = texture(diffuseBuffer, screen_coord).rgb * color* max(dot(L,N),0.0);
     vec3 specular = color * pow(max(dot(N,H),0.0), shininess);
     if(NnS.a == 0)
         specular = vec3(0);

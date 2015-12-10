@@ -183,7 +183,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 			id = spec.getGlId();
 		}
 		else {
-			id = 0; //TODO load default specmap.
+			id = Texture::getDefaults()->spec;
 		}
 
 		new_mesh.material->textures.push_back({"specular_texture", id});

@@ -9,7 +9,8 @@ shared_ptr<DefaultTextures> Texture::getDefaults()
 	if (!Texture::defaultInstance) {
 		Texture def("notex.png");
 		Texture def_bump("nobump.png");
-		Texture::defaultInstance = make_shared<DefaultTextures>(def.getGlId(), def_bump.getGlId());
+		Texture def_spec("nospec.png");
+		Texture::defaultInstance = make_shared<DefaultTextures>(def.getGlId(), def_bump.getGlId(), def_spec.getGlId());
 	}
 	return Texture::defaultInstance;
 }

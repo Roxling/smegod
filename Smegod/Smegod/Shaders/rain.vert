@@ -1,4 +1,4 @@
-#version 330 core
+#version 420 core
 in vec3 a_pos;
 in vec3 a_seed;
 in vec3 a_speed;

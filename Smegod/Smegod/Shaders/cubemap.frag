@@ -1,4 +1,4 @@
-#version 330 core
+#version 420 core
 in vec3 texCoords;
 layout (location = 0) out vec4 geometry_diffuse;
 

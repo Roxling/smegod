@@ -1,4 +1,4 @@
-#version 330 core
+#version 420 core
 layout (location = 0) out vec4 geometry_diffuse;
 layout (location = 1) out vec4 geometry_normal_and_specular;
 layout (location = 2) out vec4 bloom_filter;

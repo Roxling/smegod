@@ -1,4 +1,4 @@
-#version 330 core
+#version 420 core
 uniform sampler2DArray rainTextureArray;
 
 out vec4 frag_color;

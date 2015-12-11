@@ -1,4 +1,4 @@
-#version 330 core
+#version 420 core
 uniform sampler2DArray rainTextureArray;
 layout (location = 4) out vec4 gRain;
 in vec2 gs_tex;

@@ -1,4 +1,4 @@
-#version 330 core
+#version 420 core
 in vec2 tex_coord;
 
 layout (location = 0) out vec4 geometry_diffuse;
@@ -22,7 +22,7 @@ vec4 color_shallow = vec4(0.05,0.2,0.2,1);
 vec2 tex_scale = vec2(8, 4);
 vec2 bump_speed = vec2(-0.05, 0.0);
 
-float R0 = pow((1.0 - 1.33)/(1.0 + 1.33), 2);
+float R0 = pow((1.0 - 1.33)/(1.0 + 1.33), 2.0);
 
 vec3 animateBump(float bump_time, float scalef, float speedf)
 {

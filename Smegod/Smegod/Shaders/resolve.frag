@@ -1,4 +1,4 @@
-#version 330 core
+#version 420 core
 
 uniform sampler2D diffuse_buffer;
 uniform sampler2D light_buffer;

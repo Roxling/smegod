@@ -1,9 +1,10 @@
 #pragma once
 #include "smegod_dep.h"
+#include "textures.h"
 
 class Material {
 public:
-	vector<pair<string, GLuint>> textures;
+	vector<pair<string, shared_ptr<Texture>>> textures;
 	glm::vec3 color = { 1.f,1.f,1.f };
 	glm::vec3 ambient;
 	glm::vec3 diffuse;

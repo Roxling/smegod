@@ -51,7 +51,7 @@ const float g_rainfactors[370] = float[](
 
 void main()
 {
-    vec4 color =texture(rainTextureArray, vec3(gs_tex,1));
+    vec4 color = texture(rainTextureArray, vec3(gs_tex,1));
 	gRain = color;
 }
 

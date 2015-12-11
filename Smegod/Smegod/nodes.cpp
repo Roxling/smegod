@@ -36,21 +36,21 @@ void Node::attach(shared_ptr<Node> child)
 	children.push_back(child);
 }
 
-void Node::render(glm::mat4 combined_transforms, shared_ptr<ShaderGroup> shader)
+void Node::render(glm::mat4 combined_transforms, shared_ptr<ShaderGroup> shader, bool renderMaterials)
 {
 	combined_world = combined_transforms * world;
-	renderSelf(combined_world, shader);
+	renderSelf(combined_world, shader, renderMaterials);
 	for (auto it = children.begin(); it != children.end(); ++it) {
-		(*it)->render(combined_world, shader);
+		(*it)->render(combined_world, shader, renderMaterials);
 	}
 }
 
-void WorldObject::renderSelf(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
+void WorldObject::renderSelf(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader, bool renderMaterials)
 {
 	if (shader != nullptr) {
 		world_location = glGetUniformLocation(shader->getGlId(), "world");
 		worldIT_location = glGetUniformLocation(shader->getGlId(), "worldIT");
 	}
-	render(combined_transform, shader);
+	render(combined_transform, shader, renderMaterials);
 }
 

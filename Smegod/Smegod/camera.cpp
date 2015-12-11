@@ -29,7 +29,7 @@ void Camera::translateLocal(float dx, float dy, float dz)
 	world = glm::translate(world, { dx,dy,dz });
 }
 
-void Camera::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
+void Camera::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader, bool renderMaterials)
 {
 	combined_world = combined_transform;
 	view = glm::inverse(combined_transform);

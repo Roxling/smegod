@@ -47,5 +47,5 @@ public:
 
 	void update(double delta);
 
-	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader = nullptr) override;
+	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader = nullptr, bool renderMaterials = false) override;
 };

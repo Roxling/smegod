@@ -13,9 +13,9 @@ public:
 	Geometry(Model model);
 	
 	virtual void renderSelf(Mesh &mesh);
-	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) override;
+	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader, bool renderMaterials) override;
 	void setColor(glm::vec3 rgb);
-	void bindTexture(string glslName, GLuint id);
+	void bindTexture(string glslName, shared_ptr<Texture> tex);
 	unique_ptr<Model> model;
 protected:
 };
@@ -28,7 +28,7 @@ public:
 class Skybox : public WorldObject {
 public:
 	Skybox(shared_ptr<Cubemap> cubemap);
-	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) override;
+	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader, bool renderMaterials) override;
 	GLuint getCubemapId();
 private:
 	shared_ptr<Cubemap> cubemap;

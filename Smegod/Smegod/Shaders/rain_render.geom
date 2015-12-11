@@ -17,13 +17,13 @@ out vec2 gs_tex;
 flat out uint gs_type;
 out float gs_random;
 
-uniform vec3 g_TotalVel = vec3(0, -0.25, 0);
+uniform vec3 g_TotalVel;
 uniform mat4 view_projection;
 uniform vec3 camera_pos;
 
-uniform float g_SpriteSize = 1.0;
+uniform float g_SpriteSize;
 
-uniform vec3 dirLightPos = vec3(50,100,30);
+uniform vec3 dirLightPos;
 
 void main()
 {

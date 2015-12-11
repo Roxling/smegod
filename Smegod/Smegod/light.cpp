@@ -8,7 +8,7 @@ Light::Light(shared_ptr<ShaderGroup> mshader_group)
 	attach(source);
 }
 
-void Light::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
+void Light::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader, bool renderMaterials)
 {
 	GLuint light_pos;//for vs
 	for (auto it = shader_groups.begin(); it != shader_groups.end(); ++it) {
@@ -32,7 +32,7 @@ SpotLight::SpotLight(glm::vec3 &color, float cutoff_deg, float outer_cutoff_deg,
 	generate_cone(outer_cutoff_deg, sizescale);
 }
 
-void SpotLight::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
+void SpotLight::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader, bool renderMaterials)
 {
 	combined_world = combined_transform;
 

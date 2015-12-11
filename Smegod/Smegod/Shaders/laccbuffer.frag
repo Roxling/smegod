@@ -11,7 +11,7 @@ uniform vec3 u_camera_pos;
 uniform mat4 u_world_to_light;
 uniform vec2 u_shadow_texelsize;
 
-uniform float u_specular_power = 100;
+uniform float u_specular_power;
 
 layout (location = 0) out vec4 out_light_contribution;
 layout (location = 1) out vec4 out_bloom_filter;

@@ -1,11 +1,13 @@
 #include "geometries.h"
 
-void Geometry::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
+void Geometry::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader, bool renderMaterials)
 {
 	shader->setUniform("world", combined_transform);
 	GL_CHECK_ERRORS_MSG("Geometry bind World matrix");
 	for (auto it = model->meshes.begin(); it != model->meshes.end(); ++it){
-		shader->bindMaterial(it->material);
+		if (renderMaterials) {
+			shader->bindMaterial(it->material);
+		}
 		GL_CHECK_ERRORS_MSG("Geometry bind material");
 		renderSelf(*it);
 		GL_CHECK_ERRORS_MSG("Geometry render self");
@@ -19,10 +21,10 @@ void Geometry::setColor(glm::vec3 rgb)
 	}
 }
 
-void Geometry::bindTexture(string glslName, GLuint id)
+void Geometry::bindTexture(string glslName, shared_ptr<Texture> tex)
 {
 	for (auto it = model->meshes.begin(); it != model->meshes.end(); ++it) {
-		it->material->textures.push_back({glslName,id});
+		it->material->textures.push_back({ glslName, tex });
 	}
 }
 
@@ -79,7 +81,7 @@ Skybox::Skybox(shared_ptr<Cubemap> cubemap) : cubemap(cubemap) {
 	skybox = make_shared<VertexArray>(ParametricShapes::createSphere(200, 4, 4, true));
 }
 
-void Skybox::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) {
+void Skybox::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader, bool renderMaterials) {
 	glDepthMask(GL_FALSE);
 	shader->use();
 	glActiveTexture(GL_TEXTURE0);

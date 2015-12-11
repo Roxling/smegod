@@ -233,19 +233,11 @@ void ShaderGroup::bindMaterial(shared_ptr<Material> material)
 {
 	GL_CHECK_SHADER_BOUND(glId);
 	for (int i = 0; i < material->textures.size(); ++i) {
-		string name = material->textures[i].first;
-		GLuint id = material->textures[i].second;
-		glActiveTexture(GL_TEXTURE0 + i);
-		GL_CHECK_ERRORS();
-		glBindTexture(GL_TEXTURE_2D, id);
-		GL_CHECK_ERRORS();
-		glUniform1i(glGetUniformLocation(glId, name.c_str()), i);
-		GL_CHECK_ERRORS();
-		//bind sampler?
+		bindTexture(material->textures[i].first, i, material->textures[i].second);
 	}
 }
 
-bool ShaderGroup::bindTexture(const string &name, const unsigned int slot, Texture &t)
+bool ShaderGroup::bindTexture(const string &name, const unsigned int slot, shared_ptr<Texture> t)
 {
 	GL_CHECK_SHADER_BOUND(glId);
 	auto match = uniformLocs.find(name);
@@ -255,7 +247,9 @@ bool ShaderGroup::bindTexture(const string &name, const unsigned int slot, Textu
 	}
 	match->second.isSet = true;
 	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(t.getLayout(), t.getGlId());
+	GL_CHECK_ERRORS();
+	glBindTexture(t->getLayout(), t->getGlId());
+	GL_CHECK_ERRORS();
 	glUniform1i(match->second.loc, slot);
 	GL_CHECK_ERRORS();
 

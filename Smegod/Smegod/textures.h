@@ -4,19 +4,21 @@
 #include <SOIL.h>
 #include <unordered_map>
 
+class Texture;
+
 class DefaultTextures {
 public:
-	DefaultTextures(GLuint t, GLuint b, GLuint s) : texture(t), bump(b), spec(s) {}
-	GLuint texture;
-	GLuint bump;
-	GLuint spec;
+	DefaultTextures(shared_ptr<Texture> t, shared_ptr<Texture> b, shared_ptr<Texture> s) : texture(t), bump(b), spec(s) {}
+	shared_ptr<Texture> texture;
+	shared_ptr<Texture> bump;
+	shared_ptr<Texture> spec;
 };
 
 class Texture : public GLResource {
 protected:
 	static shared_ptr<DefaultTextures> defaultInstance;
 
-	static unique_ptr<unordered_map<string, GLuint>> cache;
+	static unique_ptr<unordered_map<string, shared_ptr<Texture>>> cache;
 	const string FOLDER = "Textures/";
 
 	GLenum format;
@@ -37,8 +39,11 @@ protected:
 
 	bool create(const unsigned char *data);
 
+	Texture(string file, bool use_defaultfolder = true, bool SRGBA = false);
 public:
 	~Texture();
+
+	static shared_ptr<Texture> loadFromFile(string file, bool use_defaultfolder = true, bool SRGBA = false);
 
 	//disable copy
 	Texture(const Texture& that) = delete;
@@ -49,7 +54,6 @@ public:
 	GLenum getLayout() const { return layout; }
 
 
-	Texture(string file, bool use_defaultfolder = true, bool SRGBA = false);
 	Texture(const unsigned char *data, unsigned int width, unsigned int height, unsigned int depth, unsigned int layers, unsigned int msaa,
 		unsigned int mipLevels, GLenum format, GLenum internalFormat, GLenum precision);
 	static shared_ptr<DefaultTextures> getDefaults();
@@ -155,7 +159,7 @@ public:
 
 class FrameBuffer : public GLResource {
 public:
-	FrameBuffer(vector<Texture *> *colorAttachments, Texture *depthAttachment = nullptr, Texture *stencilAttachment = nullptr, Texture *depthStencilAttachment = nullptr);
+	FrameBuffer(vector<shared_ptr<Texture>> &colorAttachments, shared_ptr<Texture> depthAttachment = nullptr, shared_ptr<Texture> stencilAttachment = nullptr, shared_ptr<Texture> depthStencilAttachment = nullptr);
 
 	void activate() const;
 

@@ -7,7 +7,6 @@
 #include "geometries.h"
 #include "light.h"
 #include "particles.h"
-#include "billboard.h"
 
 const string name = "Window";
 shared_ptr<World> world;
@@ -103,40 +102,40 @@ void main_loop(GLFWwindow* window) {
 
 
 
-	RenderTexture gBloom(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	shared_ptr<RenderTexture> gBloom = make_shared<RenderTexture>(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
 	// Setup g-buffer
-	RenderTexture gDiffuse(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE); // - Diffuse buffer
-	RenderTexture gNormal(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);  // - NormalSpecular buffer
-	RenderTexture gAccLight(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
-	DepthTexture gDepth(Globals::WIDTH, Globals::HEIGHT); // - Depth buffer
-	RenderTexture gRain(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE); //Rain buffer
+	shared_ptr<RenderTexture> gDiffuse = make_shared<RenderTexture>(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE); // - Diffuse buffer
+	shared_ptr<RenderTexture> gNormal = make_shared<RenderTexture>(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);  // - NormalSpecular buffer
+	shared_ptr<RenderTexture> gAccLight = make_shared<RenderTexture>(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	shared_ptr<DepthTexture> gDepth = make_shared<DepthTexture>(Globals::WIDTH, Globals::HEIGHT); // - Depth buffer
+	shared_ptr<RenderTexture> gRain = make_shared<RenderTexture>(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE); //Rain buffer
 
-	vector<Texture *> gAttachments = { &gDiffuse, &gNormal, &gBloom, &gAccLight, &gRain};
-	FrameBuffer gBuffer(&gAttachments, &gDepth);
+	vector<shared_ptr<Texture>> gAttachments = { gDiffuse, gNormal, gBloom, gAccLight, gRain};
+	FrameBuffer gBuffer(gAttachments, gDepth);
 
 	// Setup light buffer
-	vector<Texture *> lAttachments = { &gAccLight, &gBloom };
-	FrameBuffer lBuffer(&lAttachments, &gDepth);
+	vector<shared_ptr<Texture>> lAttachments = { gAccLight, gBloom };
+	FrameBuffer lBuffer(lAttachments, gDepth);
 
 
 	// Setup shadow buffer
-	DepthTexture shadowMap(Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT);
-	FrameBuffer sBuffer(nullptr, &shadowMap);
+	shared_ptr<DepthTexture> shadowMap = make_shared<DepthTexture>(Globals::SHADOW_WIDTH, Globals::SHADOW_HEIGHT);
+	vector<shared_ptr<Texture>> empty_indeed;
+	FrameBuffer sBuffer(empty_indeed, shadowMap);
 
 
 	//Setup blur step
-	RenderTexture gPing(Globals::WIDTH / 2, Globals::HEIGHT / 2, GL_RGBA, GL_RGBA16F, GL_FLOAT);
-	RenderTexture gPong(Globals::WIDTH / 2, Globals::HEIGHT / 2, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	shared_ptr<RenderTexture> gPing = make_shared<RenderTexture>(Globals::WIDTH / 2, Globals::HEIGHT / 2, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	shared_ptr<RenderTexture> gPong = make_shared<RenderTexture>(Globals::WIDTH / 2, Globals::HEIGHT / 2, GL_RGBA, GL_RGBA16F, GL_FLOAT);
 
-	vector<Texture *> pingAttachments = { &gPing };
-	vector<Texture *> pongAttachments = { &gPong };
-	FrameBuffer pingBuffer(&pingAttachments);
-	FrameBuffer pongBuffer(&pongAttachments);
+	vector<shared_ptr<Texture>> pingAttachments = { gPing };
+	vector<shared_ptr<Texture>> pongAttachments = { gPong };
+	FrameBuffer pingBuffer(pingAttachments);
+	FrameBuffer pongBuffer(pongAttachments);
 
 	FrameBuffer* pingpongBuffer[2] = { &pingBuffer, &pongBuffer };
-	Texture* pingpongTextures[2] = { &gPing, &gPong };
-
+	vector<shared_ptr<Texture>> pingpongTextures = { gPing, gPong };
 
 
 	//Setup unifroms
@@ -147,15 +146,14 @@ void main_loop(GLFWwindow* window) {
 
 
 	//rain
-	ArrayTexture rainTexs("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_SRGB8_ALPHA8);
-	TestTexture testTex;
+	shared_ptr<ArrayTexture> rainTexs = make_shared<ArrayTexture>("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_SRGB8_ALPHA8);
 
-	shared_ptr<Texture> tex = make_shared<Texture>("notex.png");
+	shared_ptr<Texture> tex = Texture::loadFromFile("notex.png");
 
 	Particles rain(rain_update_shader, rain_render_shader);
 
 	// Water
-	Texture water_bump("waves.png");
+	shared_ptr<Texture> water_bump = Texture::loadFromFile("waves.png");
 	Geometry water(ParametricShapes::createSurface(600, 600, 300));
 	water.translate(-300, 0, -300);
 
@@ -216,6 +214,7 @@ void main_loop(GLFWwindow* window) {
 	Quad quad_ping(-.2f, .6f, .2f, 1.f);
 
 	glm::mat4 ident;
+	glm::vec3 moon(50, 100, 30);
 
 	world->initiate();
 	shared_ptr<Camera> cam = world->active_camera;
@@ -254,7 +253,7 @@ void main_loop(GLFWwindow* window) {
 		skybox_shader->setUniform("projection", cam->projection);
 		skybox_shader->setUniform("view", cam->view);
 		skybox_shader->bindCubemap("skybox", 0, *cubemap.get());
-		skybox->render(ident, skybox_shader);
+		skybox->render(ident, skybox_shader, false);
 
 		gbuffer_shader->use();
 		gbuffer_shader->setUniform("view_projection", cam->view_projection);
@@ -273,7 +272,7 @@ void main_loop(GLFWwindow* window) {
 		
 
 		GL_CHECK_ERRORS_MSG("Before water render");
-		water.render(water.world, water_shader);
+		water.render(water.world, water_shader, true);
 		GL_CHECK_ERRORS_MSG("After water render");
 
 		//move rain
@@ -297,6 +296,8 @@ void main_loop(GLFWwindow* window) {
 
 		//rain_render_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
 		rain_render_shader->setUniform("g_TotalVel", glm::vec3(0, -0.25, 0));
+		rain_render_shader->setUniform("g_SpriteSize", 1.f);
+		rain_render_shader->setUniform("dirLightPos", moon);
 
 		rain_render_shader->setUniform("view_projection", cam->view_projection);
 
@@ -344,7 +345,7 @@ void main_loop(GLFWwindow* window) {
 			glm::mat4 model_to_clip_matrix = sl->getLightSpaceMatrix();
 			shadow_shader->setUniform("model_to_clip_matrix", model_to_clip_matrix);
 
-			world->render(shadow_shader);
+			world->render(shadow_shader, false);
 			//glCullFace(GL_BACK);
 			//water.render(water.world, shadow_shader);
 			//glCullFace(GL_FRONT);
@@ -356,6 +357,7 @@ void main_loop(GLFWwindow* window) {
 			laccbuff_shader->bindTexture("shadowMap", 2, shadowMap);
 			laccbuff_shader->bindTexture("diffuseBuffer", 3, gDiffuse);
 			laccbuff_shader->setUniform("u_world_to_light", model_to_clip_matrix);
+			laccbuff_shader->setUniform("u_specular_power", 100.f);
 
 			lBuffer.activate();
 			glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
@@ -367,7 +369,7 @@ void main_loop(GLFWwindow* window) {
 			glBlendEquationSeparate(GL_FUNC_ADD, GL_MIN);
 			glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
 
-			sl->render(sl->world, laccbuff_shader);
+			sl->render(sl->world, laccbuff_shader, false);
 
 			glDepthMask(GL_TRUE);
 			glDepthFunc(GL_LESS);
@@ -508,7 +510,7 @@ void main_loop(GLFWwindow* window) {
 		PERF_PRINT();
 
 
-#ifdef DEBUG_LEVEL >= 1
+#if DEBUG_LEVEL >= 1
 		ShaderGroup::checkUniforms();
 #endif
 	}

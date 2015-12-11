@@ -135,7 +135,6 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 			vertex.texz = 0;
 		}
 
-
 		vertices->push_back(vertex);
 	}
 	for (GLuint i = 0; i < mesh->mNumFaces; i++)
@@ -159,34 +158,30 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		
 		aiString str;
-		GLuint id;
 		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &str) == AI_SUCCESS) {
-			Texture text(path + str.C_Str(), false, true);
-			id = text.getGlId();
+			shared_ptr<Texture> text = Texture::loadFromFile(path + str.C_Str(), false, true);
+			new_mesh.material->textures.push_back({ "diffuse_texture", text });
 		}
 		else {
-			id = Texture::getDefaults()->texture;
+			new_mesh.material->textures.push_back({ "diffuse_texture", Texture::getDefaults()->texture });
 		}
-		new_mesh.material->textures.push_back({"diffuse_texture", id});
+		
 
 		if (material->GetTexture(aiTextureType_HEIGHT, 0, &str) == AI_SUCCESS) {
-			Texture bump(path + str.C_Str(), false, false);
-			id = bump.getGlId();
+			shared_ptr<Texture> bump = Texture::loadFromFile(path + str.C_Str(), false, false);
+			new_mesh.material->textures.push_back({ "normal_texture", bump });
 		}
 		else {
-			id = Texture::getDefaults()->bump;
+			new_mesh.material->textures.push_back({ "normal_texture", Texture::getDefaults()->bump });
 		}
-		new_mesh.material->textures.push_back({"normal_texture", id});
 		
 		if (material->GetTexture(aiTextureType_SPECULAR, 0, &str) == AI_SUCCESS) {
-			Texture spec(path + str.C_Str(), false, false);
-			id = spec.getGlId();
+			shared_ptr<Texture> spec = Texture::loadFromFile(path + str.C_Str(), false, false);
+			new_mesh.material->textures.push_back({ "specular_texture", spec });
 		}
 		else {
-			id = Texture::getDefaults()->spec;
+			new_mesh.material->textures.push_back({ "specular_texture", Texture::getDefaults()->spec });
 		}
-
-		new_mesh.material->textures.push_back({"specular_texture", id});
 	}
 	
 	new_mesh.va = VertexArray::CreateVertexArray(vertices, indices);

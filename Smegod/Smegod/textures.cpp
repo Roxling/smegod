@@ -1,20 +1,19 @@
 #include "textures.h"
 
-unique_ptr<unordered_map<string, GLuint>> Texture::cache = make_unique<unordered_map<string, GLuint>>();
+unique_ptr<unordered_map<string, shared_ptr<Texture>>> Texture::cache = make_unique<unordered_map<string, shared_ptr<Texture>>>();
 
 shared_ptr<DefaultTextures> Texture::defaultInstance;
 
 shared_ptr<DefaultTextures> Texture::getDefaults()
 {
 	if (!Texture::defaultInstance) {
-		Texture def("notex.png", true, true);
-		Texture def_bump("nobump.png", true, false);
-		Texture def_spec("nospec.png", true, false);
-		Texture::defaultInstance = make_shared<DefaultTextures>(def.getGlId(), def_bump.getGlId(), def_spec.getGlId());
+		shared_ptr<Texture> def = Texture::loadFromFile("notex.png", true, true);
+		shared_ptr<Texture> def_bump = Texture::loadFromFile("nobump.png", true, false);
+		shared_ptr<Texture> def_spec = Texture::loadFromFile("nospec.png", true, false);
+		Texture::defaultInstance = make_shared<DefaultTextures>(def, def_bump, def_spec);
 	}
 	return Texture::defaultInstance;
 }
-
 
 Texture::~Texture()
 {
@@ -67,16 +66,24 @@ bool Texture::upload(const unsigned char *source, const int mipLevel) const
 	return true;
 }
 
+shared_ptr<Texture> Texture::loadFromFile(string file, bool use_defaultfolder, bool SRGBA)
+{
+	auto lookup = cache->find(file);
+	if (lookup != cache->end()) {
+		return lookup->second;
+	}
+
+	shared_ptr<Texture> tex(new Texture(file, use_defaultfolder, SRGBA));
+
+	cache->insert({ file, tex });
+
+	return tex;
+}
+
 Texture::Texture(string file, bool use_defaultfolder, bool SRGBA)
 {
 	if (use_defaultfolder) {
 		file = FOLDER + file;
-	}
-
-	auto lookup = cache->find(file);
-	if (lookup != cache->end()) {
-		glId = lookup->second;
-		return;
 	}
 
 	if (!Globals::File_Exists(file)) {
@@ -118,8 +125,6 @@ Texture::Texture(string file, bool use_defaultfolder, bool SRGBA)
 	GL_CHECK_ERRORS();
 
 	SOIL_free_image_data(image);
-
-	cache->insert({ file, glId });
 }
 
 Texture::Texture(const unsigned char *data, unsigned int w, unsigned int h, unsigned int d, unsigned int l, unsigned int msaa, 
@@ -271,7 +276,7 @@ ArrayTexture::ArrayTexture(string tmpl, int num, const unsigned int width, const
 	GL_CHECK_ERRORS();
 }
 
-FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttachment, Texture *stencilAttachment, Texture *depthStencilAttachment)
+FrameBuffer::FrameBuffer(vector<shared_ptr<Texture>> &colorAttachments, shared_ptr<Texture> depthAttachment, shared_ptr<Texture> stencilAttachment, shared_ptr<Texture> depthStencilAttachment)
 {
 	glGenFramebuffers(1, &glId);
 	GL_CHECK_ERRORS();
@@ -279,9 +284,9 @@ FrameBuffer::FrameBuffer(vector<Texture*> *colorAttachments, Texture *depthAttac
 	GL_CHECK_ERRORS();
 
 	vector<GLenum> attachments;
-	if (colorAttachments) {
+	if (!colorAttachments.empty()) {
 		unsigned int i = 0;
-		for (auto it = colorAttachments->begin(); it != colorAttachments->end(); ++it, i++) {
+		for (auto it = colorAttachments.begin(); it != colorAttachments.end(); ++it, i++) {
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, (*it)->getLayout(), (*it)->getGlId(), 0);
 			GL_CHECK_ERRORS();
 			GLint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);

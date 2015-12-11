@@ -12,9 +12,9 @@ World::World()
 	head = make_shared<Node>();
 }
 
-void World::render(shared_ptr<ShaderGroup> shader)
+void World::render(shared_ptr<ShaderGroup> shader, bool renderMaterials)
 {
-	head->render(world_pos, shader);
+	head->render(world_pos, shader, renderMaterials);
 }
 
 shared_ptr<Geometry> lh_bulb;
@@ -42,13 +42,13 @@ void SponzaWorld::initiate()
 	bridge->attach(p2);
 	//bridge->attach(p3);
 
-	Texture glow("glow_stripe.png");
+	shared_ptr<Texture> glow = Texture::loadFromFile("glow_stripe.png");
 
 	lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(.76f, 30, 30));
 	bulbrotator.translate(35.56f, 26.3f, -1.31f);
 	bulbrotator.world = glm::rotate(bulbrotator.world, 0.8f*glm::pi<float>(), glm::vec3(bulbrotator.world[1]));
 	lh_bulb->translate(35.56f, 26.3f, -1.31f);
-	lh_bulb->model->meshes[0].material->textures.push_back({"diffuse_texture", glow.getGlId()});
+	lh_bulb->model->meshes[0].material->textures.push_back({"diffuse_texture", glow});
 	
 	head->attach(lh_bulb);
 

@@ -69,9 +69,6 @@
     <ClCompile Include="particles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="billboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaders.h">
@@ -126,9 +123,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="particles.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="billboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

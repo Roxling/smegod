@@ -12,7 +12,7 @@ public:
 	World();
 	virtual void update(double delta) = 0;
 	virtual void initiate() = 0;
-	void render(shared_ptr<ShaderGroup> gShader);
+	void render(shared_ptr<ShaderGroup> gShader, bool renderMaterials = true);
 };
 
 class ExampleWorld : public World {

@@ -22,8 +22,8 @@ Node bulbrotator;
 void SponzaWorld::initiate()
 {
 	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 300.f);
-	active_camera->translate(0, 5, 0);
-	active_camera->updateRotation(180, 0);
+	active_camera->translate(-35, 40, 50);
+	active_camera->updateRotation(45, -30);
 
 	auto lighthouse = make_shared<Geometry>(Model("lighthouse/lighthouse.obj"));
 	lighthouse->translate(7.18f * 5.3f, 0, 0);

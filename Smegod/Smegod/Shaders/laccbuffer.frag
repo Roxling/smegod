@@ -91,7 +91,7 @@ void main()
     vec3 diffuse = texture(diffuseBuffer, screen_coord).rgb * u_light.color * intens * max(dot(L,N), 0.0);;
 
 	// Specular color
-	float specular_factor = NnS.a;
+	float specular_factor = NnS.a * 2;
     vec3 specular = specular_factor * u_light.color * intens * pow(max(dot(N, H), 0.0), u_specular_power);
 
 	// Final light

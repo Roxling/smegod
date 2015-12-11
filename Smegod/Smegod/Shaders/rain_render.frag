@@ -3,6 +3,7 @@ uniform sampler2DArray rainTextureArray;
 layout (location = 4) out vec4 gRain;
 in vec2 gs_tex;
 flat in uint gs_type;
+in float gs_random;
 //out vec4 frag_color;
 
 #define PI 3.14159265
@@ -51,7 +52,9 @@ const float g_rainfactors[370] = float[](
 
 void main()
 {
-    vec4 color = texture(rainTextureArray, vec3(gs_tex,1));
+    vec4 color = texture(rainTextureArray, vec3(gs_tex,gs_type)) + texture(rainTextureArray, vec3(gs_tex,gs_random)) + texture(rainTextureArray, vec3(gs_tex,gs_type*gs_random));
+	color = normalize(color);
+	color.a = 1;
 	gRain = color;
 }
 

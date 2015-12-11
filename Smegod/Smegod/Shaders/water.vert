@@ -44,7 +44,7 @@ void main()
 	vec3 w1 = wave(0.8,	-1,		1,		0.2,	0.5,	2,	time);
 	vec3 w2 = wave(0.5,	-0.6,	0.7,	0.4,	1.3,	4,	time);
 	vec3 w3 = wave(0.2,	-0.8,	0.4,	0.1,	0.3,	6,	time);
-	vec3 w4 = wave(0.3,	-1,		0.4,	0.8,	1.7,	10,	time);
+	vec3 w4 = wave(0.3,	-1,		0.4,	0.8,	1.7,	3,	time);
 	vec3 tide = wave(6,	-1,	1,	0.01,	0.1,	100, time);
 	vec3 w = w1 + w2 + w3 + w4;// + tide;
 	

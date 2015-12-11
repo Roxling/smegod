@@ -48,9 +48,9 @@ Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGr
 
 		//add some random speed to the particles, to prevent all the particles from following exactly the same trajectory
 		//additionally, random speeds in the vertical direction ensure that temporal aliasing is minimized
-		float SpeedX = 40.0f*(random() / 20.0f);
-		float SpeedZ = 40.0f*(random() / 20.0f);
-		float SpeedY = 40.0f*(random() / 10.0f);
+		float SpeedX = 40.0f*(random() / 10.0f);
+		float SpeedZ = 40.0f*(random() / -10.0f);
+		float SpeedY = -40.0f*(random() / 10.0f);
 		particles[i].speed = glm::vec3(SpeedX, SpeedY, SpeedZ);
 
 		//move the rain particles to a random positions in a cylinder above the camera

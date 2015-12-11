@@ -6,6 +6,7 @@ uniform sampler2D bloom_buffer;
 uniform sampler2D rain_buffer;
 
 uniform vec2 invRes;
+uniform float u_lightning;
 
 out vec4 frag_color;
 
@@ -25,7 +26,7 @@ void main()
 	vec3 rain = texelFetch(rain_buffer, ivec2(gl_FragCoord.xy), 0).rgb;
 
     vec3 hdrColor = (light + bloom) + diffuse.rgb + rain;
-    float exposure =0.5;
+    float exposure =0.5+u_lightning;
     // Exposure tone mapping
     vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
     // Gamma correction 

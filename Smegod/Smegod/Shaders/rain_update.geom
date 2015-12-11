@@ -32,7 +32,7 @@ void main()
 
 	if(moveParticles) {
          //move forward
-         gs_pos += gs_speed.xyz/g_FrameRate + g_TotalVel.xyz;
+         gs_pos += (gs_speed.xyz + g_TotalVel.xyz) /g_FrameRate;
 
          //if the particle is outside the bounds, move it to random position near the eye         
          if (gs_pos.y <=  camera_pos.y-g_heightRange ) {

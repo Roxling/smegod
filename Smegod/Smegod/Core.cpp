@@ -156,8 +156,8 @@ void main_loop(GLFWwindow* window) {
 
 	// Water
 	Texture water_bump("waves.png");
-	Geometry water(ParametricShapes::createSurface(400, 400, 200));
-	water.translate(-200, 0, -200);
+	Geometry water(ParametricShapes::createSurface(600, 600, 300));
+	water.translate(-300, 0, -300);
 
 
 	auto cubemap = make_shared<Cubemap>("Textures/grimmnight_cubemap/grimmnight_", ".tga");
@@ -168,38 +168,38 @@ void main_loop(GLFWwindow* window) {
 
 	float lightoffset = 21.54f;
 
-	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(glm::vec3{ 3.f, 3.f, 1.8f }, 30.f, 45.f, 0.35f, 0.31f);
+	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(glm::vec3{ 30.f, 30.f, 15.f }, 30.f, 40.f, 0.5f, 0.3f);
 	sl1->setTranslate(3.7f, 6.f, -2.9f);
 	sl1->rotate(180, 40, 0);
 
-	shared_ptr<SpotLight> sl2 = make_shared<SpotLight>(glm::vec3{ 3.f, 3.f, 1.8f }, 30.f, 45.f, 0.05f, 0.01f);
+	shared_ptr<SpotLight> sl2 = make_shared<SpotLight>(glm::vec3{ 30.f, 30.f, 15.f }, 30.f, 40.f, 0.5f, 0.3f);
 	sl2->translate(-3.7f, 6.f, -2.9f);
 	sl2->rotate(180, 40, 0);
 
-	shared_ptr<SpotLight> sl3 = make_shared<SpotLight>(glm::vec3{ 3.f, 3.f, 1.8f }, 30.f, 45.f, 0.05f, 0.01f);
+	shared_ptr<SpotLight> sl3 = make_shared<SpotLight>(glm::vec3{ 30.f, 30.f, 15.f }, 30.f, 40.f, 0.5f, 0.3f);
 	sl3->translate(3.7f + lightoffset, 6.f, -2.9f);
 	sl3->rotate(180, 40, 0);
 
-	shared_ptr<SpotLight> sl4 = make_shared<SpotLight>(glm::vec3{ 3.f, 3.f, 1.8f }, 30.f, 45.f, 0.05f, 0.01f);
+	shared_ptr<SpotLight> sl4 = make_shared<SpotLight>(glm::vec3{ 30.f, 30.f, 15.f }, 30.f, 40.f, 0.5f, 0.3f);
 	sl4->translate(-3.7f + lightoffset, 6.f, -2.9f);
 	sl4->rotate(180, 40, 0);
 	
 	Node lhRotator;
 	lhRotator.translate(35.56f, 26.3f, -1.31f);
-	shared_ptr<SpotLight> lh = make_shared<SpotLight>(glm::vec3{ 1.f, 1.f, 1.f }, 30.f, 45.f, 0.05f, 0.01f);
+	shared_ptr<SpotLight> lh = make_shared<SpotLight>(glm::vec3{ 5.f, 5.f, 4.f }, 30.f, 45.f, 0.02f, 0.001f,0.35f);
 
-	shared_ptr<SpotLight> lh_top = make_shared<SpotLight>(glm::vec3{1.f, 1.f, .4f }, 30.f, 45.f, 0.05f, 0.01f);
+	shared_ptr<SpotLight> lh_top = make_shared<SpotLight>(glm::vec3{7.f, 7.f, 2.0f }, 30.f, 45.f, 2.f, 3.f,0.4f);
 	lh_top->translate(35.56f, 26.3f+2.f, -1.31f);
 	lh_top->rotate(0, 90, 0);
 
-	/*lights.push_back(sl1);
+	lights.push_back(sl1);
 	lights.push_back(sl2);
 
 	lights.push_back(sl3);
-	lights.push_back(sl4);*/
+	lights.push_back(sl4);
 
 
-	//lights.push_back(lh_top);
+	lights.push_back(lh_top);
 	lights.push_back(lh);
 
 	Quad output;
@@ -253,6 +253,7 @@ void main_loop(GLFWwindow* window) {
 		skybox_shader->use();
 		skybox_shader->setUniform("projection", cam->projection);
 		skybox_shader->setUniform("view", cam->view);
+		skybox_shader->bindCubemap("skybox", 0, *cubemap.get());
 		skybox->render(ident, skybox_shader);
 
 		gbuffer_shader->use();

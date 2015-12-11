@@ -1,11 +1,12 @@
 #version 330 core
 in vec3 texCoords;
-out vec4 color;
+layout (location = 0) out vec4 geometry_diffuse;
+
 
 uniform samplerCube skybox;
 
-const float ambient = 0.7;
+const float ambient = 0.5;
 void main() {
-    color = texture(skybox, texCoords);
-	color.a = ambient;
+    geometry_diffuse = texture(skybox, texCoords);
+	geometry_diffuse.a = ambient;
 }

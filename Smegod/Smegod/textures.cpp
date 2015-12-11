@@ -7,9 +7,9 @@ shared_ptr<DefaultTextures> Texture::defaultInstance;
 shared_ptr<DefaultTextures> Texture::getDefaults()
 {
 	if (!Texture::defaultInstance) {
-		Texture def("notex.png");
-		Texture def_bump("nobump.png");
-		Texture def_spec("nospec.png");
+		Texture def("notex.png", true, true);
+		Texture def_bump("nobump.png", true, false);
+		Texture def_spec("nospec.png", true, false);
 		Texture::defaultInstance = make_shared<DefaultTextures>(def.getGlId(), def_bump.getGlId(), def_spec.getGlId());
 	}
 	return Texture::defaultInstance;
@@ -67,7 +67,7 @@ bool Texture::upload(const unsigned char *source, const int mipLevel) const
 	return true;
 }
 
-Texture::Texture(string file, bool use_defaultfolder)
+Texture::Texture(string file, bool use_defaultfolder, bool SRGBA)
 {
 	if (use_defaultfolder) {
 		file = FOLDER + file;
@@ -97,7 +97,7 @@ Texture::Texture(string file, bool use_defaultfolder)
 
 	this->mipLevels = 3;
 
-	this->internalFormat = GL_SRGB_ALPHA;
+	this->internalFormat = SRGBA ? GL_SRGB_ALPHA : GL_RGBA;
 	this->format = GL_RGBA;
 	this->precision = GL_UNSIGNED_BYTE;
 

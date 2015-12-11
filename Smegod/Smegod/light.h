@@ -11,7 +11,7 @@ public:
 
 class SpotLight : public WorldObject {
 public:
-	SpotLight(glm::vec3 &color, float cutoff_deg = 12.5f, float outer_cutoff_deg = 17.5f, float linear_attenuation = 0.035f, float quadratic_attenuation = 0.044f);
+	SpotLight(glm::vec3 &color, float cutoff_deg = 12.5f, float outer_cutoff_deg = 17.5f, float linear_attenuation = 0.035f, float quadratic_attenuation = 0.044f, float sizescale = 1);
 
 	void render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader) override;
 	
@@ -30,5 +30,5 @@ private:
 	GLuint m_cone_vao = 0u;
 	GLuint m_cone_vbo = 0u;
 	GLsizei m_cone_vertices_nb = 0;
-	void generate_cone(float outer_cutoff_deg);
+	void generate_cone(float outer_cutoff_deg, float sizescale);
 };

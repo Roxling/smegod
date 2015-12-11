@@ -20,16 +20,16 @@ void Light::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 	}
 }
 
-SpotLight::SpotLight(glm::vec3 &color, float cutoff_deg, float outer_cutoff_deg, float linear_attenuation, float quadratic_attenuation) :
+SpotLight::SpotLight(glm::vec3 &color, float cutoff_deg, float outer_cutoff_deg, float linear_attenuation, float quadratic_attenuation, float sizescale) :
 	m_color(color),
 	m_cutoff(glm::cos(glm::radians(cutoff_deg))),
 	m_outer_cutoff(glm::cos(glm::radians(outer_cutoff_deg))),
 	m_linear_attenuation(linear_attenuation),
 	m_quadratic_attenuation(quadratic_attenuation)
 {
-	m_light_projection = glm::perspective(45.f, (float)Globals::SHADOW_WIDTH / (float)Globals::SHADOW_HEIGHT, 0.1f, 10000.0f);
+	m_light_projection = glm::perspective(45.f, (float)Globals::SHADOW_WIDTH / (float)Globals::SHADOW_HEIGHT, 0.1f, 500.0f);
 
-	generate_cone(outer_cutoff_deg);
+	generate_cone(outer_cutoff_deg, sizescale);
 }
 
 void SpotLight::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
@@ -65,7 +65,7 @@ void SpotLight::renderSelf()
 	glBindVertexArray(0u);
 }
 
-void SpotLight::generate_cone(float outer_cutoff_deg)
+void SpotLight::generate_cone(float outer_cutoff_deg, float sizescale)
 {
 	m_cone_vertices_nb = 65;
 	float vertexArrayData[65 * 3] = {
@@ -138,7 +138,7 @@ void SpotLight::generate_cone(float outer_cutoff_deg)
 
 	// Scale to fit light volume... DRAGONS!
 	GLfloat max_component = std::fmaxf(std::fmaxf(m_color.r, m_color.g), m_color.b);
-	GLfloat max_cone_height = (-m_linear_attenuation + std::sqrtf(m_linear_attenuation * m_linear_attenuation - 4 * m_quadratic_attenuation * (1.0f - (256.0f / 5.0f) * max_component))) / (2 * m_quadratic_attenuation);
+	GLfloat max_cone_height = sizescale * (-m_linear_attenuation + std::sqrtf(m_linear_attenuation * m_linear_attenuation - 4 * m_quadratic_attenuation * (1.0f - (256.0f / 5.0f) * max_component))) / (2 * m_quadratic_attenuation);
 	GLfloat base_radius = max_cone_height * std::tan(glm::radians(outer_cutoff_deg));
 
 	for (int i = 0; i < 65; i++) {

@@ -58,15 +58,15 @@ void main()
 	pixel_in_light = pixel_in_light * 0.5 + 0.5; // [0, 1]
 
 
-    float bias = max(0.0005 * (1.0 - dot(N, L)), 0.0002);
-	//bias = 0.0002;
+    float bias = max(0.0002 * (1.0 - dot(N, L)), 0.0001);
+	bias = 0;
     float shadow_factor = 0.0;
     for(int x = -1; x <= 1; ++x)
     {
         for(int y = -1; y <= 1; ++y)
         {
             float pcfDepth = texture(shadowMap, pixel_in_light.xy + vec2(x, y) * u_shadow_texelsize).r; // [0, 1]
-            shadow_factor += (pixel_in_light.z + bias) < pcfDepth ? 1.0 : 0.0;
+            shadow_factor += (pixel_in_light.z - bias) < pcfDepth ? 1.0 : 0.0;
         }
     }
     shadow_factor /= 9.0;
@@ -81,23 +81,26 @@ void main()
 	// Distance attenuation
 	float la = u_light.linear;
 	float qa = u_light.quadratic;
+	//la = 0.02;
+	//qa  =0.002;
+	float intens = 1;// .5;
 	float dist =  distance(u_light.position, pixel_pos_world.xyz);
     float attenuation = 1.0 / (1.0 + la * dist + qa * (dist * dist));
 
 	// Diffuse color
-    vec3 diffuse = texture(diffuseBuffer, screen_coord).rgb * u_light.color * max(dot(L,N), 0.0);;
+    vec3 diffuse = texture(diffuseBuffer, screen_coord).rgb * u_light.color * intens * max(dot(L,N), 0.0);;
 
 	// Specular color
 	float specular_factor = NnS.a;
-    vec3 specular = specular_factor * u_light.color * pow(max(dot(N, H), 0.0), u_specular_power);
+    vec3 specular = specular_factor * u_light.color * intens * pow(max(dot(N, H), 0.0), u_specular_power);
 
 	// Final light
-	float total_intensity = intensity * attenuation ;//* shadow_factor;
+	float total_intensity = intensity * attenuation * shadow_factor;
     vec3 full_color = (diffuse + specular) * total_intensity;
 
 	// Send "over bright" regions to the bloom filter
 	out_light_contribution = vec4(full_color, 1.0);
-	out_light_contribution = vec4(vec3(total_intensity, total_intensity, 1.0), 1.0);
+	//out_light_contribution = vec4(vec3(total_intensity, total_intensity, 1.0), 1.0);
 	//out_light_contribution = vec4(normalize(-u_light.direction)*0.5 + 0.5, 1.0);
 	
     float brightness = dot(full_color, vec3(0.2126, 0.7152, 0.0722));

@@ -161,7 +161,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		aiString str;
 		GLuint id;
 		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &str) == AI_SUCCESS) {
-			Texture text(path + str.C_Str(), false);
+			Texture text(path + str.C_Str(), false, true);
 			id = text.getGlId();
 		}
 		else {
@@ -170,7 +170,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		new_mesh.material->textures.push_back({"diffuse_texture", id});
 
 		if (material->GetTexture(aiTextureType_HEIGHT, 0, &str) == AI_SUCCESS) {
-			Texture bump(path + str.C_Str(), false);
+			Texture bump(path + str.C_Str(), false, false);
 			id = bump.getGlId();
 		}
 		else {
@@ -179,7 +179,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		new_mesh.material->textures.push_back({"normal_texture", id});
 		
 		if (material->GetTexture(aiTextureType_SPECULAR, 0, &str) == AI_SUCCESS) {
-			Texture spec(path + str.C_Str(), false);
+			Texture spec(path + str.C_Str(), false, false);
 			id = spec.getGlId();
 		}
 		else {

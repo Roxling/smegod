@@ -18,7 +18,6 @@ void Light::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 		light_pos = glGetUniformLocation(program, "light_pos");
 		glUniform3fv(light_pos, 1, glm::value_ptr(combined_transform[3]));
 	}
-	
 }
 
 SpotLight::SpotLight(glm::vec3 &color, float cutoff_deg, float outer_cutoff_deg, float linear_attenuation, float quadratic_attenuation, float sizescale) :
@@ -35,7 +34,6 @@ SpotLight::SpotLight(glm::vec3 &color, float cutoff_deg, float outer_cutoff_deg,
 
 void SpotLight::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader)
 {
-
 	combined_world = combined_transform;
 
 	shader->setUniform("u_world", combined_transform);
@@ -140,7 +138,7 @@ void SpotLight::generate_cone(float outer_cutoff_deg, float sizescale)
 
 	// Scale to fit light volume... DRAGONS!
 	GLfloat max_component = std::fmaxf(std::fmaxf(m_color.r, m_color.g), m_color.b);
-	GLfloat max_cone_height = sizescale * (-m_linear_attenuation + std::sqrtf(m_linear_attenuation * m_linear_attenuation - 4 * m_quadratic_attenuation * (1.0 - (256.0 / 5.0) * max_component))) / (2 * m_quadratic_attenuation);
+	GLfloat max_cone_height = sizescale * (-m_linear_attenuation + std::sqrtf(m_linear_attenuation * m_linear_attenuation - 4 * m_quadratic_attenuation * (1.0f - (256.0f / 5.0f) * max_component))) / (2 * m_quadratic_attenuation);
 	GLfloat base_radius = max_cone_height * std::tan(glm::radians(outer_cutoff_deg));
 
 	for (int i = 0; i < 65; i++) {

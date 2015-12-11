@@ -59,7 +59,7 @@ void main()
 
 
     float bias = max(0.0002 * (1.0 - dot(N, L)), 0.0001);
-	//bias = -0.0001;
+	bias = 0;
     float shadow_factor = 0.0;
     for(int x = -1; x <= 1; ++x)
     {

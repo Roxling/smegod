@@ -505,6 +505,11 @@ void main_loop(GLFWwindow* window) {
 		lh->translate(1.7f, 3, 0);
 		lh->rotate(-90, 20, 0);
 		PERF_PRINT();
+
+
+#ifdef DEBUG_LEVEL >= 1
+		ShaderGroup::checkUniforms();
+#endif
 	}
 }
 

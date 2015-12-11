@@ -105,6 +105,7 @@ void ShaderGroup::recompile_all()
 		(*it)->compile();
 	}
 }
+
 ShaderGroup::ShaderGroup(const string &vs, const string &fs)
 {
 	glId = glCreateProgram();
@@ -294,6 +295,24 @@ bool ShaderGroup::link()
 	return true;
 }
 
+void ShaderGroup::checkUniforms()
+{
+	for (auto it = all_groups->begin(); it != all_groups->end(); ++it) {
+		(*it)->debugUnsetUniforms();
+	}
+}
+
+
+void ShaderGroup::debugUnsetUniforms()
+{
+	bool allSet = true;
+	for (auto it = uniformLocs.begin(); it != uniformLocs.end(); ++it) {
+		if (!it->second.isSet) {
+			cout << "Uniform " << it->second.name.c_str() << " for shader program id " << vshader->file << " does not appear to be set" << endl;
+			allSet = false;
+		}
+	}
+}
 
 bool ShaderGroup::getUniformLocation(GLuint &dst, const string &name) {
 	auto match = uniformLocs.find(name);

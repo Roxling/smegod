@@ -68,6 +68,7 @@ private:
 	unique_ptr<GeometryShader> gshader;
 	bool link();
 
+
 	//cached locations
 	unordered_map<string, ShaderLocation> attributeLocs;
 	unordered_map<string, ShaderLocation> uniformLocs;
@@ -76,6 +77,7 @@ private:
 
 public:
 	static void recompile_all();
+	static void checkUniforms();
 	ShaderGroup(const string &vs, const string &fs);
 	ShaderGroup(const string &vs, const string &gs, const string &fs);
 	ShaderGroup(const string &vs, const string &gs, const string &fs, vector<GLchar*> varyings);
@@ -87,6 +89,7 @@ public:
 	}
 	void bindMaterial(shared_ptr<Material> material);
 
+	void debugUnsetUniforms();
 
 	bool bindTexture(const string &name, const unsigned int slot, Texture &t);
 	bool bindCubemap(const string &name, const unsigned int slot, Cubemap &c);

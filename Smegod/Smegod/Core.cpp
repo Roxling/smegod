@@ -253,6 +253,7 @@ void main_loop(GLFWwindow* window) {
 		skybox_shader->use();
 		skybox_shader->setUniform("projection", cam->projection);
 		skybox_shader->setUniform("view", cam->view);
+		skybox_shader->bindCubemap("skybox", 0, *cubemap.get());
 		skybox->render(ident, skybox_shader);
 
 		gbuffer_shader->use();

@@ -4,7 +4,7 @@ out vec4 color;
 
 uniform samplerCube skybox;
 
-const float ambient = 0.7;
+const float ambient = 0.5;
 void main() {
     color = texture(skybox, texCoords);
 	color.a = ambient;

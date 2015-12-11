@@ -49,7 +49,7 @@ public:
 	GLenum getLayout() const { return layout; }
 
 
-	Texture(string file, bool use_defaultfolder = true);
+	Texture(string file, bool use_defaultfolder = true, bool SRGBA = false);
 	Texture(const unsigned char *data, unsigned int width, unsigned int height, unsigned int depth, unsigned int layers, unsigned int msaa,
 		unsigned int mipLevels, GLenum format, GLenum internalFormat, GLenum precision);
 	static shared_ptr<DefaultTextures> getDefaults();

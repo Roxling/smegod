@@ -16,8 +16,8 @@ in vec3 fB;
 in vec3 fT;
 in vec3 fV;
 
-vec4 color_deep = vec4(0,0,0.1,1);
-vec4 color_shallow = vec4(0,0.2,0.2,1);
+vec4 color_deep = vec4(0.005,0.005,0.04,1);
+vec4 color_shallow = vec4(0.05,0.2,0.2,1);
 
 vec2 tex_scale = vec2(8, 4);
 vec2 bump_speed = vec2(-0.05, 0.0);
@@ -31,7 +31,7 @@ vec3 animateBump(float bump_time, float scalef, float speedf)
     return texture(bump, bump_coord).rgb * 2 - 1;
 }
 
-const float ambient = 0.1;
+const float ambient = 0.0;
 void main()
 {
     float bump_time = mod(time, 100.0);
@@ -56,6 +56,6 @@ void main()
     vec4 refraction = texture(skybox, refract(-V, N, 1/1.33));
 	
 	geometry_normal_and_specular = vec4(N * 0.5 + 0.5, 1);
-	light = (reflection * (fresnel)) + (refraction * (1 - fresnel));
+	light = (reflection * (fresnel))*0.3 + (refraction * (1 - fresnel));
 	geometry_diffuse = color_water;
 }

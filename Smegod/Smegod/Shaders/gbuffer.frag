@@ -13,7 +13,7 @@ uniform sampler2D diffuse_texture;
 uniform sampler2D specular_texture;
 uniform sampler2D normal_texture;
 
-const float ambient = 0.2;
+const float ambient = 0.08;
 
 void main()
 {

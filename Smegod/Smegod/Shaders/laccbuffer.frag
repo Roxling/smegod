@@ -92,12 +92,12 @@ void main()
     vec3 specular = specular_factor * u_light.color * pow(max(dot(N, H), 0.0), u_specular_power);
 
 	// Final light
-	float total_intensity = intensity * attenuation * shadow_factor;
+	float total_intensity = intensity * attenuation ;//* shadow_factor;
     vec3 full_color = (diffuse + specular) * total_intensity;
 
 	// Send "over bright" regions to the bloom filter
 	out_light_contribution = vec4(full_color, 1.0);
-	//out_light_contribution = vec4(vec3(total_intensity), 1.0);
+	out_light_contribution = vec4(vec3(total_intensity, total_intensity, 1.0), 1.0);
 	//out_light_contribution = vec4(normalize(-u_light.direction)*0.5 + 0.5, 1.0);
 	
     float brightness = dot(full_color, vec3(0.2126, 0.7152, 0.0722));

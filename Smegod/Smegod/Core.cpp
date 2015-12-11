@@ -168,7 +168,7 @@ void main_loop(GLFWwindow* window) {
 
 	float lightoffset = 21.54f;
 
-	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(glm::vec3{ 3.f, 3.f, 1.8f }, 30.f, 45.f, 0.05f, 0.01f);
+	shared_ptr<SpotLight> sl1 = make_shared<SpotLight>(glm::vec3{ 3.f, 3.f, 1.8f }, 30.f, 45.f, 0.35f, 0.31f);
 	sl1->setTranslate(3.7f, 6.f, -2.9f);
 	sl1->rotate(180, 40, 0);
 
@@ -186,20 +186,20 @@ void main_loop(GLFWwindow* window) {
 	
 	Node lhRotator;
 	lhRotator.translate(35.56f, 26.3f, -1.31f);
-	shared_ptr<SpotLight> lh = make_shared<SpotLight>(glm::vec3{ 100.f, 100.f, 100.f }, 30.f, 45.f, 0.00005f, 0.000001f);
+	shared_ptr<SpotLight> lh = make_shared<SpotLight>(glm::vec3{ 1.f, 1.f, 1.f }, 30.f, 45.f, 0.05f, 0.01f);
 
 	shared_ptr<SpotLight> lh_top = make_shared<SpotLight>(glm::vec3{1.f, 1.f, .4f }, 30.f, 45.f, 0.05f, 0.01f);
 	lh_top->translate(35.56f, 26.3f+2.f, -1.31f);
 	lh_top->rotate(0, 90, 0);
 
-	lights.push_back(sl1);
+	/*lights.push_back(sl1);
 	lights.push_back(sl2);
 
 	lights.push_back(sl3);
-	lights.push_back(sl4);
+	lights.push_back(sl4);*/
 
 
-	lights.push_back(lh_top);
+	//lights.push_back(lh_top);
 	lights.push_back(lh);
 
 	Quad output;
@@ -500,12 +500,10 @@ void main_loop(GLFWwindow* window) {
 		lh_top->world = lh->world;
 		lh_top->translate(0.9f, .5f, 0);
 		lh_top->rotate(-90, 70, 0);
-		lh_top->scale(1.7f);
 		
 
 		lh->translate(1.7f, 3, 0);
 		lh->rotate(-90, 20, 0);
-		lh->scale(180);
 		PERF_PRINT();
 	}
 }

@@ -78,7 +78,7 @@ Frame::Frame(shared_ptr<ShaderGroup> mshader_group)
 
 
 Skybox::Skybox(shared_ptr<Cubemap> cubemap) : cubemap(cubemap) {
-	skybox = make_shared<VertexArray>(ParametricShapes::createSphere(200, 4, 4, true));
+	skybox = make_shared<VertexArray>(ParametricShapes::createSphere(20, 4, 4, true));
 }
 
 void Skybox::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader, bool renderMaterials) {

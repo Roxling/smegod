@@ -152,7 +152,7 @@ void main_loop(GLFWwindow* window) {
 	shared_ptr<DepthTexture> gDepth = make_shared<DepthTexture>(Globals::WIDTH, Globals::HEIGHT); // - Depth buffer
 	shared_ptr<RenderTexture> gRain = make_shared<RenderTexture>(Globals::WIDTH, Globals::HEIGHT, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE); //Rain buffer
 
-	vector<shared_ptr<Texture>> gAttachments = { gDiffuse, gNormal, gBloom, gAccLight, gRain};
+	vector<shared_ptr<Texture>> gAttachments = { gDiffuse, gNormal, gBloom, gAccLight};
 	FrameBuffer gBuffer(gAttachments, gDepth);
 
 	vector<shared_ptr<Texture>> rainAttachments = { gRain };
@@ -298,8 +298,16 @@ void main_loop(GLFWwindow* window) {
 		glClearColor(0, 0, 0, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-		
+		// skybox
+		skyboxBuffer.activate();
+		skybox_shader->use();
+		skybox_shader->setUniform("projection", cam->projection);
+		skybox_shader->setUniform("view", cam->view);
+		skybox_shader->bindCubemap("skybox", 0, *cubemap.get());
+		skybox->render(ident, skybox_shader, false);
 
+		//geometry
+		gBuffer.activate();
 		gbuffer_shader->use();
 		gbuffer_shader->setUniform("view_projection", cam->view_projection);
 		
@@ -320,15 +328,10 @@ void main_loop(GLFWwindow* window) {
 		water.render(water.world, water_shader, true);
 		GL_CHECK_ERRORS_MSG("After water render");
 
-		// skybox
-		skyboxBuffer.activate();
-		skybox_shader->use();
-		skybox_shader->setUniform("projection", cam->projection);
-		skybox_shader->setUniform("view", cam->view);
-		skybox_shader->bindCubemap("skybox", 0, *cubemap.get());
-		skybox->render(ident, skybox_shader, false);
+		
 
 		rainBuffer.activate();
+		glClear(GL_COLOR_BUFFER_BIT);
 		//move rain
 		rain_update_shader->use();
 		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));

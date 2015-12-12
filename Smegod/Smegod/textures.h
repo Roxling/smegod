@@ -163,4 +163,22 @@ public:
 
 	void activate() const;
 
+	static void printFramebufferLimits() {
+		int res;
+		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &res);
+		cout << "Max Color Attachments: " << res << endl;
+
+		glGetIntegerv(GL_MAX_FRAMEBUFFER_WIDTH, &res);
+		cout << "Max Framebuffer Width: " << res << endl;
+
+		glGetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT, &res);
+		cout << "Max Framebuffer Height: " << res << endl;
+
+		glGetIntegerv(GL_MAX_FRAMEBUFFER_SAMPLES, &res);
+		cout << "Max Framebuffer Samples: " << res << endl;
+
+		glGetIntegerv(GL_MAX_FRAMEBUFFER_LAYERS, &res);
+		cout << "Max Framebuffer Layers: " << res << endl;
+	}
+
 };

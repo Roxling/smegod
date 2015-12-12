@@ -10,34 +10,11 @@ uniform bool horizontal;
 vec3 GaussianBlur(sampler2D tex0, vec2 centreUV, vec2 pixelOffset)
 {
     vec3 colOut = vec3( 0, 0, 0 );
-	/*
-    // Kernel width 11 x 11
-    const int stepCount = 3;
-    const float gWeights[stepCount] ={
-       0.33023,
-       0.15701,
-       0.01276
-    };
-    const float gOffsets[stepCount] ={
-       0.62184,
-       2.27310,
-       4.14653
-    }; */
-	const int stepCount = 1;
-    //
-    const float gWeights[stepCount] = float[](
-       0.49551
-    );
-    const float gOffsets[stepCount] = float[](
-       0.36786
-    );
-    for( int i = 0; i < stepCount; i++ )
-    {
-        vec2 texCoordOffset = gOffsets[i] * pixelOffset;
-        vec3 col = texture( tex0, centreUV + texCoordOffset ).xyz + 
-			       texture( tex0, centreUV - texCoordOffset ).xyz;
-        colOut += gWeights[i] * col; 
-    }
+
+    vec2 texCoordOffset = 0.36786 * pixelOffset;
+    vec3 col = texture( tex0, centreUV + texCoordOffset ).xyz + 
+			    texture( tex0, centreUV - texCoordOffset ).xyz;
+    colOut += 0.49551 * col; 
 
     return colOut;
 }

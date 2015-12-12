@@ -326,6 +326,12 @@ FrameBuffer::FrameBuffer(vector<shared_ptr<Texture>> &colorAttachments, shared_p
 	if (size > 0) {
 		glDrawBuffers(size, attachments.data());
 	}
+
+	GLint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (result != GL_FRAMEBUFFER_COMPLETE) {
+		cout << "Failed to create frame buffer object: DrawBuffers" << endl;
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	GL_CHECK_ERRORS();
 }

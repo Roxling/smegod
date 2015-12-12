@@ -155,6 +155,12 @@ void main_loop(GLFWwindow* window) {
 	vector<shared_ptr<Texture>> gAttachments = { gDiffuse, gNormal, gBloom, gAccLight, gRain};
 	FrameBuffer gBuffer(gAttachments, gDepth);
 
+	vector<shared_ptr<Texture>> rainAttachments = { gRain };
+	FrameBuffer rainBuffer(rainAttachments, gDepth);
+
+	vector<shared_ptr<Texture>> skyboxAttachments = { gDiffuse };
+	FrameBuffer skyboxBuffer(skyboxAttachments, gDepth);
+
 	// Setup light buffer
 	vector<shared_ptr<Texture>> lAttachments = { gAccLight, gBloom };
 	FrameBuffer lBuffer(lAttachments, gDepth);
@@ -257,6 +263,8 @@ void main_loop(GLFWwindow* window) {
 	glm::mat4 ident;
 	glm::vec3 moon(50, 100, 30);
 
+	//FrameBuffer::printFramebufferLimits();
+
 	world->initiate();
 	shared_ptr<Camera> cam = world->active_camera;
 	while (!glfwWindowShouldClose(window)) {
@@ -290,11 +298,7 @@ void main_loop(GLFWwindow* window) {
 		glClearColor(0, 0, 0, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-		skybox_shader->use();
-		skybox_shader->setUniform("projection", cam->projection);
-		skybox_shader->setUniform("view", cam->view);
-		skybox_shader->bindCubemap("skybox", 0, *cubemap.get());
-		skybox->render(ident, skybox_shader, false);
+		
 
 		gbuffer_shader->use();
 		gbuffer_shader->setUniform("view_projection", cam->view_projection);
@@ -316,6 +320,15 @@ void main_loop(GLFWwindow* window) {
 		water.render(water.world, water_shader, true);
 		GL_CHECK_ERRORS_MSG("After water render");
 
+		// skybox
+		skyboxBuffer.activate();
+		skybox_shader->use();
+		skybox_shader->setUniform("projection", cam->projection);
+		skybox_shader->setUniform("view", cam->view);
+		skybox_shader->bindCubemap("skybox", 0, *cubemap.get());
+		skybox->render(ident, skybox_shader, false);
+
+		rainBuffer.activate();
 		//move rain
 		rain_update_shader->use();
 		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
@@ -338,7 +351,7 @@ void main_loop(GLFWwindow* window) {
 		//rain_render_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
 		rain_render_shader->setUniform("g_TotalVel", glm::vec3(0, -0.35, 0));
 		rain_render_shader->setUniform("g_SpriteSize", 1.f);
-		rain_render_shader->setUniform("dirLightPos", moon);
+		//rain_render_shader->setUniform("dirLightPos", moon);
 
 		rain_render_shader->setUniform("view_projection", cam->view_projection);
 

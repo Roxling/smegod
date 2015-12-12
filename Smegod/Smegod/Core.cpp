@@ -11,6 +11,47 @@
 const string name = "Window";
 shared_ptr<World> world;
 
+double lightning_time = 0;
+int lightning_type = 0;
+const int LIGHTNING_TYPES = 3;
+bool first_light = true;
+float lightning_offset = 0;
+
+float lightning_intensity() {
+	float lightning = 0;
+	if (glfwGetTime() > lightning_time + 2) {
+		float nextLightning = ((float)rand() / (float)RAND_MAX) * 30 + 2; //(2-30s) between lightnings
+		lightning_type = (int)rand() % LIGHTNING_TYPES;
+		lightning_time = glfwGetTime() + nextLightning;
+		cout << "Next lightning in " << nextLightning << "s, type: " << lightning_type << endl;
+		first_light = true;
+	}
+	else if (glfwGetTime() > lightning_time) {
+		float time =(float) glfwGetTime();
+		if (first_light) {
+			first_light = false;
+			lightning_offset = time;
+		}
+		time = time - lightning_offset + 1.0f;
+		switch (lightning_type)
+		{
+		case 0: //one peak;
+			lightning += glm::pow<float>(glm::sin(time), 1500.f) * 40;
+			break;
+		case 1: // two peaks
+			lightning += glm::pow<float>(glm::sin(time), 1500.f) * 40;
+			lightning += glm::pow<float>(glm::sin(time - 0.2f), 500.f) * 20;
+			break;
+		case 2: // three lightnings
+			lightning += glm::pow<float>(glm::sin(time), 2500.f) * 50;
+			lightning += glm::pow<float>(glm::sin(time - 0.15f), 300.f) * 30;
+			break;
+		default:
+			break;
+		}
+	}
+	return lightning;
+}
 
 double time_start = glfwGetTime();
 double time_end = time_start;
@@ -418,8 +459,7 @@ void main_loop(GLFWwindow* window) {
 		glClearColor(1.f, .1f, .7f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		
-		float lightning = glm::pow(glm::sin(glfwGetTime()),1500.f)*40;
-		lightning += glm::pow(glm::sin(glfwGetTime()-0.2f), 500.f) * 20;
+		float lightning = lightning_intensity();
 
 		glDepthMask(GL_FALSE);
 		resolve_shader->use();

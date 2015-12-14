@@ -5,6 +5,7 @@ layout (location = 2) in vec3 normal;
 layout (location = 3) in vec3 binormal;
 layout (location = 4) in vec3 tangent;
 
+out vec4 worldspace_position;
 out vec3 worldspace_normal;
 out vec3 worldspace_binormal;
 out vec3 worldspace_tangent;
@@ -21,5 +22,6 @@ void main()
 	worldspace_binormal = normalize((worldIT * vec4(binormal, 0.0)).xyz);
     pass_texcoords = texture_coord.xy;
 
-    gl_Position = view_projection * world * vec4(position, 1.0);
+	worldspace_position =  world * vec4(position, 1.0);
+    gl_Position = view_projection * worldspace_position;
 }

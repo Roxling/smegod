@@ -2,6 +2,7 @@
 #include "smegod_dep.h"
 #include "core.h"
 #include <SOIL.h>
+#include <gli/gli.hpp>
 #include <unordered_map>
 
 class Texture;
@@ -24,7 +25,7 @@ protected:
 	GLenum format;
 	GLenum internalFormat;
 	GLenum precision;
-	GLenum layout;
+	GLenum target;
 
 	unsigned int width;
 	unsigned int height;
@@ -51,7 +52,7 @@ public:
 	Texture() = default;
 
 	GLenum getFormat() const { return format; }
-	GLenum getLayout() const { return layout; }
+	GLenum getTarget() const { return target; }
 
 
 	Texture(const unsigned char *data, unsigned int width, unsigned int height, unsigned int depth, unsigned int layers, unsigned int msaa,
@@ -64,6 +65,11 @@ public:
 	ArrayTexture(string tmpl, int num, const unsigned int width, const unsigned int height, GLenum format, GLenum internalFormat, GLenum precision);
 };
 
+
+class DDSTexture : public Texture {
+public:
+	DDSTexture(string filename);
+};
 
 class TestTexture : public Texture {
 public:
@@ -112,7 +118,7 @@ public:
 		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		this->glId = texture;
-		this->layout = GL_TEXTURE_2D_ARRAY;
+		this->target = GL_TEXTURE_2D_ARRAY;
 	}
 };
 
@@ -121,18 +127,18 @@ public:
 	DepthTexture(const unsigned int width, const unsigned int height) : 
 		Texture(nullptr, width, height, 0/*depth*/, 0/*layers*/, 1 /*msaa*/, 0/*mipLevels*/, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT) {
 		
-		glBindTexture(layout, glId);
+		glBindTexture(target, glId);
 		GL_CHECK_ERRORS();
 
 		/* Texture options */
-		glTexParameteri(layout, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(layout, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(layout, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(layout, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		GLfloat c[4] = { 1.f, 1.f,1.f, 1.f };
-		glTexParameterfv(layout, GL_TEXTURE_BORDER_COLOR, c);
+		glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR, c);
 
-		glBindTexture(layout, 0);
+		glBindTexture(target, 0);
 		GL_CHECK_ERRORS();
 	}
 };
@@ -142,17 +148,17 @@ public:
 	RenderTexture(const unsigned int width, const unsigned int height, GLenum format, GLenum internalFormat, GLenum precision) :
 		Texture(nullptr, width, height, 0/*depth*/, 0/*layers*/, 1 /*msaa*/, 0/*mipLevels*/, format, internalFormat, precision) {
 
-		glBindTexture(layout, glId);
+		glBindTexture(target, glId);
 		GL_CHECK_ERRORS();
 
 		/* Texture options */
-		glTexParameteri(layout, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(layout, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glTexParameteri(layout, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(layout, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glBindTexture(layout, 0);
+		glBindTexture(target, 0);
 		GL_CHECK_ERRORS();
 	}
 };

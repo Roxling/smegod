@@ -191,6 +191,22 @@ void main_loop(GLFWwindow* window) {
 
 
 
+	shared_ptr<DDSTexture> rainSplashBump = make_shared<DDSTexture>("rainTextures/splashes/SBumpVolume.dds");
+	glBindTexture(rainSplashBump->getTarget(), rainSplashBump->getGlId());
+	glTexParameteri(rainSplashBump->getTarget(), GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(rainSplashBump->getTarget(), GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameteri(rainSplashBump->getTarget(), GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
+	glTexParameteri(rainSplashBump->getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(rainSplashBump->getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(rainSplashBump->getTarget(), 0);
+	shared_ptr<DDSTexture> rainSplashDiffuse = make_shared<DDSTexture>("rainTextures/splashes/SDiffuseVolume.dds");
+	glBindTexture(rainSplashDiffuse->getTarget(), rainSplashBump->getGlId());
+	glTexParameteri(rainSplashDiffuse->getTarget(), GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(rainSplashDiffuse->getTarget(), GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameteri(rainSplashDiffuse->getTarget(), GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
+	glTexParameteri(rainSplashDiffuse->getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(rainSplashDiffuse->getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(rainSplashDiffuse->getTarget(), 0);
 
 	//rain
 	shared_ptr<ArrayTexture> rainTexs = make_shared<ArrayTexture>("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_SRGB8_ALPHA8);
@@ -275,6 +291,12 @@ void main_loop(GLFWwindow* window) {
 			laccbuff_shader->setUniform("u_inv_res", invRes);
 			laccbuff_shader->setUniform("u_shadow_texelsize", shadowMapTexelSize);
 
+			gbuffer_shader->use();
+			gbuffer_shader->setUniform("u_KsDir", 2.0f);
+			gbuffer_shader->setUniform("u_splash_offset", glm::vec2(random() * 2, random() * 2));
+			gbuffer_shader->bindTexture("splash_bump_texture", 3, rainSplashBump);
+			gbuffer_shader->bindTexture("splash_texture", 4, rainSplashDiffuse);
+
 			Globals::UNIFORM_REFRESH = false;
 		}
 		update_delta();
@@ -303,6 +325,15 @@ void main_loop(GLFWwindow* window) {
 		//geometry
 		gBuffer.activate();
 		gbuffer_shader->use();
+		static float timeCycle = 0;
+		if (Globals::TIME_NOT_FROZEN)
+			timeCycle += (float)fps/(16.f*4.f);
+		gbuffer_shader->setUniform("u_timeCycle", timeCycle);
+		if (timeCycle >= 0.7f)
+		{
+			timeCycle = 0;
+			gbuffer_shader->setUniform("u_splash_offset", glm::vec2(random() * 2, random() * 2));
+		}
 		gbuffer_shader->setUniform("view_projection", cam->view_projection);
 		
 		world->render(gbuffer_shader);

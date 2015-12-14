@@ -11,6 +11,9 @@ public:
 	GLuint getGlId() const { return glId; }
 };
 
+
+#define random() ((float)rand()/(float)RAND_MAX)
+
 // 1 check all gl calls
 // 2 + check uniforms
 // 3 + query performance

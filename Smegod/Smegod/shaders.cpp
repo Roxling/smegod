@@ -248,7 +248,7 @@ bool ShaderGroup::bindTexture(const string &name, const unsigned int slot, share
 	match->second.isSet = true;
 	glActiveTexture(GL_TEXTURE0 + slot);
 	GL_CHECK_ERRORS();
-	glBindTexture(t->getLayout(), t->getGlId());
+	glBindTexture(t->getTarget(), t->getGlId());
 	GL_CHECK_ERRORS();
 	glUniform1i(match->second.loc, slot);
 	GL_CHECK_ERRORS();

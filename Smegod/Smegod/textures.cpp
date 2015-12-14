@@ -32,10 +32,10 @@ void Texture::destroy()
 
 bool Texture::upload(const unsigned char *source, const int mipLevel) const
 {
-	glBindTexture(layout, glId);
+	glBindTexture(target, glId);
 	GL_CHECK_ERRORS();
 
-	switch (layout) {
+	switch (target) {
 	case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
 		glTexImage3DMultisample(GL_TEXTURE_2D_MULTISAMPLE_ARRAY, multisamples, internalFormat, width, height, layers, GL_TRUE);
 		break;
@@ -58,7 +58,7 @@ bool Texture::upload(const unsigned char *source, const int mipLevel) const
 		glTexImage2D(GL_TEXTURE_1D_ARRAY, mipLevel, internalFormat, width, height, 0, format, precision, source);
 		break;
 	default:
-		cout << "Invalid texture format: 0x" << hex << layout << dec << endl;
+		cout << "Invalid texture format: 0x" << hex << target << dec << endl;
 		return false;
 	}
 
@@ -112,16 +112,16 @@ Texture::Texture(string file, bool use_defaultfolder, bool SRGBA)
 
 	create(image);
 
-	glBindTexture(layout, glId);
+	glBindTexture(target, glId);
 	GL_CHECK_ERRORS();
 
 	/* Texture options */
-	glTexParameteri(layout, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(layout, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(layout, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(layout, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glBindTexture(layout, 0);
+	glBindTexture(target, 0);
 	GL_CHECK_ERRORS();
 
 	SOIL_free_image_data(image);
@@ -148,42 +148,42 @@ bool Texture::create(const unsigned char *data)
 		assert(depth == 0);
 		assert(multisamples == 0);
 		if (layers > 0) {
-			layout = GL_TEXTURE_1D_ARRAY;
+			target = GL_TEXTURE_1D_ARRAY;
 		}
 		else {
-			layout = GL_TEXTURE_1D;
+			target = GL_TEXTURE_1D;
 		}
 	}
 	else if (depth == 0) { // no depth -> 2D
 		if (layers > 0) {
 			if (multisamples > 1) {
 				assert(mipLevels == 0);
-				layout = GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
+				target = GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
 			}
 			else {
-				layout = GL_TEXTURE_2D_ARRAY;
+				target = GL_TEXTURE_2D_ARRAY;
 			}
 		}
 		else {
 			if (multisamples > 1) {
 				assert(mipLevels == 0);
-				layout = GL_TEXTURE_2D_MULTISAMPLE;
+				target = GL_TEXTURE_2D_MULTISAMPLE;
 			}
 			else {
-				layout = GL_TEXTURE_2D;
+				target = GL_TEXTURE_2D;
 			}
 		}
 	}
 	else { // ovtherwise -> 3D
 		assert(layers == 0);
 		assert(multisamples == 0);
-		layout = GL_TEXTURE_3D;
+		target = GL_TEXTURE_3D;
 	}
 
-	glBindTexture(layout, glId);
+	glBindTexture(target, glId);
 	GL_CHECK_ERRORS();
-	glTexParameteri(layout, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(layout, GL_TEXTURE_MAX_LEVEL, mipLevels);
+	glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, 0);
+	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, mipLevels);
 
 	//detect format
 	//this->internalFormat;
@@ -208,9 +208,9 @@ bool Texture::create(const unsigned char *data)
 	}
 
 	if (mipLevels > 0)
-		glGenerateMipmap(layout);
+		glGenerateMipmap(target);
 
-	glBindTexture(layout, 0);
+	glBindTexture(target, 0);
 	GL_CHECK_ERRORS();
 
 	return true;
@@ -223,24 +223,24 @@ ArrayTexture::ArrayTexture(string tmpl, int num, const unsigned int width, const
 	this->format = format;
 	this->internalFormat = internalFormat;
 	this->precision = precision;
-	this->layout = GL_TEXTURE_2D_ARRAY;
+	this->target = GL_TEXTURE_2D_ARRAY;
 	mipLevels = 10;
 	this->layers = num;
 
 	glGenTextures(1, &glId);
 	GL_CHECK_ERRORS();
-	glBindTexture(layout, glId);
+	glBindTexture(target, glId);
 	GL_CHECK_ERRORS();
 
-	glTexParameteri(layout, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(layout, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(layout, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(layout, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexParameteri(layout, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(layout, GL_TEXTURE_MAX_LEVEL, mipLevels);
+	glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, 0);
+	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, mipLevels);
 
-	glTexStorage3D(layout, mipLevels, precision, width, height, layers);
+	glTexStorage3D(target, mipLevels, precision, width, height, layers);
 
 	tmpl = FOLDER + tmpl;
 
@@ -265,14 +265,14 @@ ArrayTexture::ArrayTexture(string tmpl, int num, const unsigned int width, const
 		assert(width == load_width);
 		assert(height == load_height);
 
-		glTexSubImage3D(layout, 0, 0, 0, i, width, height, 1, format, internalFormat, image);
+		glTexSubImage3D(target, 0, 0, 0, i, width, height, 1, format, internalFormat, image);
 		SOIL_free_image_data(image);
 	}
 
 	if (mipLevels > 0)
-		glGenerateMipmap(layout);
+		glGenerateMipmap(target);
 
-	glBindTexture(layout, 0);
+	glBindTexture(target, 0);
 	GL_CHECK_ERRORS();
 }
 
@@ -287,7 +287,7 @@ FrameBuffer::FrameBuffer(vector<shared_ptr<Texture>> &colorAttachments, shared_p
 	if (!colorAttachments.empty()) {
 		unsigned int i = 0;
 		for (auto it = colorAttachments.begin(); it != colorAttachments.end(); ++it, i++) {
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, (*it)->getLayout(), (*it)->getGlId(), 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, (*it)->getTarget(), (*it)->getGlId(), 0);
 			GL_CHECK_ERRORS();
 			GLint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 			if (result != GL_FRAMEBUFFER_COMPLETE) {
@@ -299,7 +299,7 @@ FrameBuffer::FrameBuffer(vector<shared_ptr<Texture>> &colorAttachments, shared_p
 		
 	}
 	if (depthAttachment) {
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, (GLenum)depthAttachment->getLayout(), depthAttachment->getGlId(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, (GLenum)depthAttachment->getTarget(), depthAttachment->getGlId(), 0);
 		GL_CHECK_ERRORS();
 		GLint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (result != GL_FRAMEBUFFER_COMPLETE) {
@@ -307,7 +307,7 @@ FrameBuffer::FrameBuffer(vector<shared_ptr<Texture>> &colorAttachments, shared_p
 		}
 	}
 	if (stencilAttachment) {
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, (GLenum)stencilAttachment->getLayout(), stencilAttachment->getGlId(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, (GLenum)stencilAttachment->getTarget(), stencilAttachment->getGlId(), 0);
 		GL_CHECK_ERRORS();
 		GLint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (result != GL_FRAMEBUFFER_COMPLETE) {
@@ -315,7 +315,7 @@ FrameBuffer::FrameBuffer(vector<shared_ptr<Texture>> &colorAttachments, shared_p
 		}
 	}
 	if (depthStencilAttachment) {
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, (GLenum)depthStencilAttachment->getLayout(), depthStencilAttachment->getGlId(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, (GLenum)depthStencilAttachment->getTarget(), depthStencilAttachment->getGlId(), 0);
 		GL_CHECK_ERRORS();
 		GLint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (result != GL_FRAMEBUFFER_COMPLETE) {
@@ -340,4 +340,110 @@ void FrameBuffer::activate() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, glId);
 	GL_CHECK_ERRORS();
+}
+
+#include <gli/texture.hpp>
+#include <gli/load.hpp>
+#include <gli/gl.hpp>
+
+DDSTexture::DDSTexture(string filename) {
+	filename = FOLDER + filename;
+	gli::texture texture = gli::load(filename);
+	if (texture.empty())
+		return;
+
+	gli::gl GL;
+	gli::gl::format const Format = GL.translate(texture.format());
+	this->target = GL.translate(texture.target());
+	glGenTextures(1, &glId);
+	glBindTexture(target, glId);
+	glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, 0);
+	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(texture.levels() - 1));
+	glTexParameteri(target, GL_TEXTURE_SWIZZLE_R, Format.Swizzle[0]);
+	glTexParameteri(target, GL_TEXTURE_SWIZZLE_G, Format.Swizzle[1]);
+	glTexParameteri(target, GL_TEXTURE_SWIZZLE_B, Format.Swizzle[2]);
+	glTexParameteri(target, GL_TEXTURE_SWIZZLE_A, Format.Swizzle[3]);
+	glm::tvec3<GLsizei> const Dimensions(texture.dimensions());
+	GLsizei const FaceTotal = static_cast<GLsizei>(texture.layers() * texture.faces());
+	switch (texture.target())
+	{
+	case gli::TARGET_1D:
+		glTexStorage1D(target, static_cast<GLint>(texture.levels()), Format.Internal, Dimensions.x);
+		break;
+	case gli::TARGET_1D_ARRAY:
+	case gli::TARGET_2D:
+	case gli::TARGET_CUBE:
+		glTexStorage2D(
+			target, static_cast<GLint>(texture.levels()), Format.Internal,
+			Dimensions.x, texture.target() == gli::TARGET_2D ? Dimensions.y : FaceTotal);
+		break;
+	case gli::TARGET_2D_ARRAY:
+	case gli::TARGET_3D:
+	case gli::TARGET_CUBE_ARRAY:
+		glTexStorage3D(
+			target, static_cast<GLint>(texture.levels()), Format.Internal,
+			Dimensions.x, Dimensions.y, texture.target() == gli::TARGET_3D ? Dimensions.z : FaceTotal);
+		break;
+	default: assert(0); break;
+	}
+	for (std::size_t Layer = 0; Layer < texture.layers(); ++Layer) {
+		for (std::size_t Face = 0; Face < texture.faces(); ++Face) {
+			for (std::size_t Level = 0; Level < texture.levels(); ++Level)
+			{
+				GLsizei const LayerGL = static_cast<GLsizei>(Layer);
+				glm::tvec3<GLsizei> Dimensions(texture.dimensions(Level));
+				if (gli::is_target_cube(texture.target()))
+					target = static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face);
+				switch (texture.target())
+				{
+				case gli::TARGET_1D:
+					if (gli::is_compressed(texture.format()))
+						glCompressedTexSubImage1D(
+							target, static_cast<GLint>(Level), 0, Dimensions.x,
+							Format.Internal, static_cast<GLsizei>(texture.size(Level)),
+							texture.data(Layer, Face, Level));
+					else
+						glTexSubImage1D(
+							target, static_cast<GLint>(Level), 0, Dimensions.x, Format.External, Format.Type,
+							texture.data(Layer, Face, Level));
+					break;
+				case gli::TARGET_1D_ARRAY:
+				case gli::TARGET_2D:
+				case gli::TARGET_CUBE:
+					if (gli::is_compressed(texture.format()))
+						glCompressedTexSubImage2D(
+							target, static_cast<GLint>(Level), 0, 0,
+							Dimensions.x, texture.target() == gli::TARGET_1D_ARRAY ? 0 : Dimensions.y,
+							Format.Internal, static_cast<GLsizei>(texture.size(Level)),
+							texture.data(Layer, Face, Level));
+					else
+						glTexSubImage2D(
+							target, static_cast<GLint>(Level), 0, 0,
+							Dimensions.x, texture.target() == gli::TARGET_1D_ARRAY ? LayerGL : Dimensions.y,
+							Format.External, Format.Type, texture.data(Layer, Face, Level));
+					break;
+				case gli::TARGET_2D_ARRAY:
+				case gli::TARGET_3D:
+				case gli::TARGET_CUBE_ARRAY:
+					if (gli::is_compressed(texture.format()))
+						glCompressedTexSubImage3D(
+							target, static_cast<GLint>(Level), 0, 0, 0,
+							Dimensions.x, Dimensions.y, texture.target() == gli::TARGET_3D ? Dimensions.z : LayerGL,
+							Format.Internal, static_cast<GLsizei>(texture.size(Level)),
+							texture.data(Layer, Face, Level));
+					else
+						glTexSubImage3D(
+							target, static_cast<GLint>(Level), 0, 0, 0,
+							Dimensions.x, Dimensions.y, texture.target() == gli::TARGET_3D ? Dimensions.z : LayerGL,
+							Format.External, Format.Type, texture.data(Layer, Face, Level));
+					break;
+				default: assert(0); break;
+				}
+			}
+		}
+	}
+
+	glGenerateMipmap(target);
+
+	glBindTexture(target, 0);
 }

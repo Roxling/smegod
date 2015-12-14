@@ -11,7 +11,7 @@ typedef struct particle_t
 
 #define NUM_RAIN (1000000)
 
-#define random() ((float)rand()/(float)RAND_MAX)
+
 
 Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGroup> m_renderShader) {
 	this->m_updateShader = m_updateShader;

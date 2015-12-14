@@ -21,7 +21,7 @@ void main()
 	geometry_diffuse = texture(diffuse_texture, pass_texcoords);
 	if (geometry_diffuse.a < 0.2) discard;
     if (geometry_diffuse.a < 0.5) {
-        bloom_filter = vec4(20, 20, 2, 1);
+        bloom_filter = vec4(geometry_diffuse.rgb*10,1);//  vec4(20, 20, 2, 1);
     }
 	geometry_diffuse.a = ambient;
 	// Worldspace normal

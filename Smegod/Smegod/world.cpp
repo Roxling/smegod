@@ -30,20 +30,23 @@ void SponzaWorld::initiate()
 	lighthouse->scale(10);
 	head->attach(lighthouse);
 
-
+	shared_ptr<Texture> bt = Texture::loadFromFile("Models/bridge/textures/bridge_color_ll_4.png",false,true);
 	auto bridge = make_shared<Node>();
 	auto p1 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	auto p2 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	p2->translate(7.18f, 0, 0);
-	//auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
-	//p3->translate(0, -6, -30);
+	for (int i = 0; i < 2; i++) {
+		auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
+		p3->model->meshes[0].material->textures.push_back({ "diffuse_texture", bt });
+		p3->translate(-7.18f -(7.18f*i), 0, 0);
+		bridge->attach(p3);
+	}
 	//p3->scale(10);
 	bridge->attach(p1);
 	bridge->attach(p2);
-	//bridge->attach(p3);
 
+	
 	shared_ptr<Texture> glow = Texture::loadFromFile("glow_stripe.png");
-
 	lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(.76f, 30, 30));
 	bulbrotator.translate(35.56f, 26.3f, -1.31f);
 	bulbrotator.world = glm::rotate(bulbrotator.world, 0.8f*glm::pi<float>(), glm::vec3(bulbrotator.world[1]));

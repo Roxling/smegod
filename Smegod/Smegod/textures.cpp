@@ -232,8 +232,8 @@ ArrayTexture::ArrayTexture(string tmpl, int num, const unsigned int width, const
 	glBindTexture(layout, glId);
 	GL_CHECK_ERRORS();
 
-	glTexParameteri(layout, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(layout, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(layout, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(layout, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(layout, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(layout, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

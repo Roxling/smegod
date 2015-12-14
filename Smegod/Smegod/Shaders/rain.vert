@@ -3,13 +3,13 @@ layout (location = 0) in vec3 a_pos;
 layout (location = 1) in vec3 a_seed;
 layout (location = 2) in vec3 a_speed;
 layout (location = 3) in float a_random;
-layout (location = 4) in uint a_type;
+layout (location = 4) in float a_type;
 
 out vec3 vs_pos;
 out vec3 vs_seed;
 out vec3 vs_speed;
 out float vs_random;
-flat out uint vs_type;
+out float vs_type;
 
 void main()
 {

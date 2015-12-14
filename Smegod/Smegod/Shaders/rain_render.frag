@@ -14,22 +14,22 @@ struct Light{
 	float quadratic;
 };
 #define saturate(a) clamp( a, 0.0, 1.0 )
-#define NUM_LIGHTS (6)
+#define NUM_LIGHTS (5)
 uniform Light lights[NUM_LIGHTS];
 
 in vec2 gs_tex;
 in vec3 gs_pos;
-flat in uint gs_type;
+in float gs_type;
 in float gs_random;
+
 
 float ambient = 0.6;
 void main()
 {
-	
-    vec4 color = texture(rainTextureArray, vec3(gs_tex,gs_type)) + texture(rainTextureArray, vec3(gs_tex,gs_random));
-	color = normalize(color);
-	color.a = 1;
-	gRain = ambient * color;
+
+    vec4 texture = texture(rainTextureArray, vec3(gs_tex,gs_type));
+
+	vec4 light = vec4(0);
 	for(int i = 0; i < NUM_LIGHTS; i++){
 		vec3 rD = normalize( lights[i].position - gs_pos );
 
@@ -42,13 +42,10 @@ void main()
 		float dist =  distance(lights[i].position, gs_pos);
 		float attenuation = 1.0 / (1.0 + la * dist + qa * (dist * dist));
 
-	
-		gRain += intensity * attenuation * color * lights[i].color;
+		light += intensity * attenuation * vec4(lights[i].color,1) * texture;
 
 	}
-
-	
-
+	gRain = light + ambient * texture;
 
 	
 }

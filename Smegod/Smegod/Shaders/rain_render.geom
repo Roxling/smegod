@@ -15,6 +15,7 @@ flat in uint vs_type[];
 //out vec3 gs_camVec;
 
 out vec2 gs_tex;
+out vec3 gs_pos;
 flat out uint gs_type;
 out float gs_random;
 
@@ -30,7 +31,8 @@ void main()
 {
 	gs_type = vs_type[0];
     gs_random = vs_random[0];
-       
+    gs_pos = vs_pos[0];
+	   
 	vec3 velVec = vs_speed[0]/30 + g_TotalVel;
 
 	float height = g_SpriteSize/2.0;

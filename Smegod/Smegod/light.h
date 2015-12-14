@@ -17,6 +17,8 @@ public:
 	
 	glm::mat4 getLightSpaceMatrix();
 
+	void bindUniform(shared_ptr<ShaderGroup> shader, string prefix);
+
 private:
 	void renderSelf();
 	glm::mat4 m_light_projection;

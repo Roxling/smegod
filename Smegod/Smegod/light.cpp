@@ -38,16 +38,7 @@ void SpotLight::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> sha
 
 	shader->setUniform("u_world", combined_transform);
 
-	shader->setUniform("u_light.position", glm::vec3(combined_transform[3]));
-	shader->setUniform("u_light.direction", glm::vec3(combined_transform[2]));
-	shader->setUniform("u_light.color", m_color);
-
-	shader->setUniform("u_light.cutOff", m_cutoff);
-	shader->setUniform("u_light.outerCutOff", m_outer_cutoff);
-
-	shader->setUniform("u_light.linear", m_linear_attenuation);
-	shader->setUniform("u_light.quadratic", m_quadratic_attenuation);
-
+	bindUniform(shader, "u_light");
 	renderSelf();
 }
 
@@ -56,6 +47,19 @@ glm::mat4 SpotLight::getLightSpaceMatrix()
 	glm::mat4 light_view = glm::inverse(combined_world);
 	glm::mat4 light_space_matrix = m_light_projection * light_view;
 	return light_space_matrix;
+}
+
+void SpotLight::bindUniform(shared_ptr<ShaderGroup> shader, string prefix)
+{
+	shader->setUniform(prefix + ".position", glm::vec3(combined_world[3]));
+	shader->setUniform(prefix + ".direction", glm::vec3(combined_world[2]));
+	shader->setUniform(prefix + ".color", m_color);
+
+	shader->setUniform(prefix + ".cutOff", m_cutoff);
+	shader->setUniform(prefix + ".outerCutOff", m_outer_cutoff);
+
+	shader->setUniform(prefix + ".linear", m_linear_attenuation);
+	shader->setUniform(prefix + ".quadratic", m_quadratic_attenuation);
 }
 
 void SpotLight::renderSelf()

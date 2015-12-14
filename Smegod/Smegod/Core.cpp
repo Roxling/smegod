@@ -354,6 +354,12 @@ void main_loop(GLFWwindow* window) {
 		//rain_render_shader->setUniform("g_mProjection", cam->projection);
 
 		//rain_render_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
+
+		for (int i = 0; i < lights.size(); i++) {
+			shared_ptr<SpotLight> sl = lights[i];
+			string prefix = "lights[" + to_string(i) + "]";
+			sl->bindUniform(rain_render_shader, prefix);
+		}
 		rain_render_shader->setUniform("g_TotalVel", glm::vec3(0, -0.35, 0));
 		rain_render_shader->setUniform("g_SpriteSize", 1.f);
 		//rain_render_shader->setUniform("dirLightPos", moon);
@@ -566,8 +572,8 @@ void main_loop(GLFWwindow* window) {
 		lh_top->rotate(-90, 70, 0);
 		
 
-		lh->translate(1.7f, 3, 0);
-		lh->rotate(-90, 20, 0);
+		lh->translate(1.7f, 0, 0);
+		lh->rotate(-90, 25, 0);
 		PERF_PRINT();
 
 

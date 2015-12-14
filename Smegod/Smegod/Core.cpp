@@ -298,13 +298,7 @@ void main_loop(GLFWwindow* window) {
 		glClearColor(0, 0, 0, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-		// skybox
-		skyboxBuffer.activate();
-		skybox_shader->use();
-		skybox_shader->setUniform("projection", cam->projection);
-		skybox_shader->setUniform("view", cam->view);
-		skybox_shader->bindCubemap("skybox", 0, *cubemap.get());
-		skybox->render(ident, skybox_shader, false);
+
 
 		//geometry
 		gBuffer.activate();
@@ -328,7 +322,15 @@ void main_loop(GLFWwindow* window) {
 		water.render(water.world, water_shader, true);
 		GL_CHECK_ERRORS_MSG("After water render");
 
-		
+		// skybox
+		skyboxBuffer.activate();
+		glDepthFunc(GL_LEQUAL);
+		skybox_shader->use();
+		skybox_shader->setUniform("projection", cam->projection);
+		skybox_shader->setUniform("view", cam->view);
+		skybox_shader->bindCubemap("skybox", 0, *cubemap.get());
+		skybox->render(ident, skybox_shader, false);
+		glDepthFunc(GL_LESS);
 
 		rainBuffer.activate();
 		glClear(GL_COLOR_BUFFER_BIT);

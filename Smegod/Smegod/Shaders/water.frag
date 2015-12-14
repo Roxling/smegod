@@ -31,7 +31,7 @@ vec3 animateBump(float bump_time, float scalef, float speedf)
     return texture(bump, bump_coord).rgb * 2 - 1;
 }
 
-const float ambient = 0.0;
+const float ambient = 0.01;
 void main()
 {
     float bump_time = mod(time, 100.0);
@@ -47,7 +47,7 @@ void main()
     N = BTN * n_bump;
 
     float fresnel = R0 + (1-R0) * pow(1 - dot(V,N), 5) + 0.1;
-
+	fresnel = clamp(fresnel,0,1);
     vec3 R = normalize(reflect(-V,N));
 	
     vec4 color_water = mix(color_deep, color_shallow, 1-max(dot(V,N),0));

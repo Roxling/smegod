@@ -1,11 +1,11 @@
 #version 420 core
 
-uniform mat4 model_to_clip_matrix;
-uniform mat4 world;
+uniform mat4 u_world_to_light;
+uniform mat4 u_world;
 
 layout (location = 0) in vec3 position;
 
 void main()
 {
-	gl_Position = model_to_clip_matrix * world * vec4(position, 1.0);
+	gl_Position = u_world_to_light * u_world * vec4(position, 1.0);
 }

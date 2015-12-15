@@ -21,9 +21,8 @@ Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGr
 	m_isFirst = true;
 
 	float g_radiusRange = 150;
-	float g_heightRange = 15;
+	float g_heightRange = 35;
 
-	//TODO: Init data
 	vector<particle_t> particles;
 
 	for (int i = 0; i < NUM_RAIN; i++)
@@ -31,7 +30,9 @@ Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGr
 		particle_t pt;
 		particles.push_back(pt);
 		float SeedX;
+		float SeedY = random()*g_heightRange;
 		float SeedZ;
+
 		bool pointIsInside = false;
 		while (!pointIsInside)
 		{
@@ -43,26 +44,17 @@ Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGr
 		//save these random locations for reinitializing rain particles that have fallen out of bounds
 		SeedX *= g_radiusRange;
 		SeedZ *= g_radiusRange;
-		float SeedY = random()*g_heightRange;
+		
 		particles[i].seed = glm::vec3(SeedX, SeedY, SeedZ);
 
-		//add some random speed to the particles, to prevent all the particles from following exactly the same trajectory
-		//additionally, random speeds in the vertical direction ensure that temporal aliasing is minimized
 		float SpeedX = 40.0f*(random() / 10.0f);
 		float SpeedZ = 40.0f*(random() / -10.0f);
 		float SpeedY = -40.0f*(random() / 10.0f);
+
 		particles[i].speed = glm::vec3(SpeedX, SpeedY, SpeedZ);
-
-		//move the rain particles to a random positions in a cylinder above the camera
-		float x = SeedX;// +g_vecEye.x;
-		float z = SeedZ;// +g_vecEye.z;
-		float y = SeedY;// +g_vecEye.y;
-		particles[i].pos = glm::vec3(x, y, z);
-
-		//get an integer between 1 and 8 inclusive to decide which of the 8 types of rain textures the particle will use
+		particles[i].pos = glm::vec3(SeedX, SeedY, SeedZ);
 		particles[i].type = floor(random() * 6 + 1);
-		
-		particles[i].random = random();
+		particles[i].random = 0.5f + random()*0.5f;
 	}
 
 	glGenVertexArrays(2, m_vao);

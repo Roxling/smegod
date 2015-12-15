@@ -181,7 +181,6 @@
     <None Include="Shaders\gbuffer.vert" />
     <None Include="Shaders\laccbuffer.frag" />
     <None Include="Shaders\laccbuffer.vert" />
-    <None Include="Shaders\rain_render_old.frag" />
     <None Include="Shaders\rain_update.frag" />
     <None Include="Shaders\rain_update.geom" />
     <None Include="Shaders\rain.vert" />

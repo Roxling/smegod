@@ -23,7 +23,7 @@ in float gs_type;
 in float gs_random;
 
 
-float ambient = 0.6;
+#define AMBIENT (0.8)
 void main()
 {
 
@@ -45,7 +45,7 @@ void main()
 		light += intensity * attenuation * vec4(lights[i].color,1) * texture;
 
 	}
-	gRain = light + ambient * texture;
+	gRain = light + AMBIENT * texture * gs_random;
 
 	
 }

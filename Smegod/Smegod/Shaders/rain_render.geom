@@ -10,22 +10,15 @@ in vec3 vs_speed[];
 in float vs_random[];
 in float vs_type[];
 
-//out vec3 gs_lightDir;
-//out vec3 gs_pointLightDir;
-//out vec3 gs_camVec;
-
 out vec2 gs_tex;
 out vec3 gs_pos;
 out float gs_type;
 out float gs_random;
 
-uniform vec3 g_TotalVel;
-uniform mat4 view_projection;
-uniform vec3 camera_pos;
-
-uniform float g_SpriteSize;
-
-//uniform vec3 dirLightPos;
+uniform vec3 u_total_vel;
+uniform mat4 u_view_projection;
+uniform vec3 u_camera_pos;
+uniform float u_sprite_size;
 
 void main()
 {
@@ -33,39 +26,36 @@ void main()
     gs_random = vs_random[0];
     gs_pos = vs_pos[0];
 	   
-	vec3 velVec = vs_speed[0]/30 + g_TotalVel;
+	vec3 vel_vec = normalize(vs_speed[0]/30 + u_total_vel);
 
-	float height = g_SpriteSize/2.0;
+	float height = u_sprite_size/2.0;
     float width = height/10.0;
 
-    velVec = normalize(velVec);
-    vec3 camVec = camera_pos - vs_pos[0];
-    vec3 camOnVelVecPlane = camera_pos - ((dot(camVec, velVec)) * velVec);
-    vec3 projectedCamVec = camOnVelVecPlane - vs_pos[0];
-    vec3 sideVec = normalize(cross(projectedCamVec, velVec));
+    vec3 cam_vec = u_camera_pos - vs_pos[0];
+    vec3 cam_vel_vec_plane = u_camera_pos - ((dot(cam_vec, vel_vec)) * vel_vec);
+    vec3 projected_cam_vec = cam_vel_vec_plane - vs_pos[0];
+    vec3 side_vec = normalize(cross(projected_cam_vec, vel_vec));
     
     vec3 pos[4];
-    pos[0] = vs_pos[0] - (sideVec * 0.5*width);
-    pos[1] = pos[0] + (velVec * height);
-    pos[2] = pos[0] + (sideVec * width);
-    pos[3] = pos[1] + (sideVec * width );
+    pos[0] = vs_pos[0] - (side_vec * 0.5*width);
+    pos[1] = pos[0] + (vel_vec * height);
+    pos[2] = pos[0] + (side_vec * width);
+    pos[3] = pos[1] + (side_vec * width );
 
-    gl_Position = view_projection * vec4(pos[0], 1.0);
+    gl_Position = u_view_projection * vec4(pos[0], 1.0);
     gs_tex = vec2(0.0, 0.0);
     EmitVertex();
 
-    gl_Position = view_projection * vec4(pos[1], 1.0);
+    gl_Position = u_view_projection * vec4(pos[1], 1.0);
     gs_tex = vec2(0.0, 1.0);
     EmitVertex();
 
-    gl_Position = view_projection * vec4(pos[2], 1.0);
+    gl_Position = u_view_projection * vec4(pos[2], 1.0);
     gs_tex = vec2(1.0, 0.0);
     EmitVertex();
 
-    gl_Position = view_projection * vec4(pos[3], 1.0);
+    gl_Position = u_view_projection * vec4(pos[3], 1.0);
     gs_tex = vec2(1.0, 1.0);
-	//gs_camVec =  camera_pos - pos[3];
-	//gs_lightDir = dirLightPos - pos[3];
     EmitVertex();
 
     EndPrimitive();

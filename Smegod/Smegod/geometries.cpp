@@ -2,7 +2,7 @@
 
 void Geometry::render(glm::mat4 combined_transform, shared_ptr<ShaderGroup> shader, bool renderMaterials)
 {
-	shader->setUniform("world", combined_transform);
+	shader->setUniform("u_world", combined_transform);
 	GL_CHECK_ERRORS_MSG("Geometry bind World matrix");
 	for (auto it = model->meshes.begin(); it != model->meshes.end(); ++it){
 		if (renderMaterials) {

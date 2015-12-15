@@ -14,23 +14,23 @@ out vec2 pass_texcoords;
 out vec3 tangent_view_position;
 out vec3 tangent_frag_position;
 
-uniform mat4 world;
-uniform mat4 view_projection;
+uniform mat4 u_world;
+uniform mat4 u_view_projection;
 uniform vec3 u_camera_pos;
 
 void main()
 {
-	mat4 worldIT = transpose(inverse(world));
+	mat4 worldIT = transpose(inverse(u_world));
     worldspace_normal   = normalize((worldIT * vec4(normal, 0.0)).xyz);
 	worldspace_tangent  = normalize((worldIT * vec4(tangent, 0.0)).xyz);
 	worldspace_binormal = normalize((worldIT * vec4(binormal, 0.0)).xyz);
     pass_texcoords = texture_coord.xy;
 
-	worldspace_position =  world * vec4(position, 1.0);
-    gl_Position = view_projection * worldspace_position;
+	worldspace_position =  u_world * vec4(position, 1.0);
+    gl_Position = u_view_projection * worldspace_position;
 
     mat3 TBN = transpose(mat3(worldspace_binormal, worldspace_tangent, worldspace_normal));
 
-    tangent_view_position  = TBN * (u_camera_pos - worldspace_position.xyz);
+    tangent_view_position  = TBN * u_camera_pos;
     tangent_frag_position  = TBN * worldspace_position.xyz;
 }

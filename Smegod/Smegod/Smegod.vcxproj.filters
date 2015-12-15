@@ -175,9 +175,6 @@
     <None Include="Shaders\rain_update.geom">
       <Filter>Shader\Rain</Filter>
     </None>
-    <None Include="Shaders\rain_render_old.frag">
-      <Filter>Shader\Rain</Filter>
-    </None>
     <None Include="Shaders\rain_render.frag">
       <Filter>Shader\Rain</Filter>
     </None>

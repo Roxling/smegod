@@ -5,17 +5,17 @@ uniform sampler2D light_buffer;
 uniform sampler2D bloom_buffer;
 uniform sampler2D rain_buffer;
 
-uniform vec2 invRes;
+uniform vec2 u_inv_res;
 uniform float u_lightning;
 
 out vec4 frag_color;
 
+#define GAMMA (2.0)
+
 void main()
 {
-    vec2 screen_coord = gl_FragCoord.xy * invRes; // [0,1]
+    vec2 screen_coord = gl_FragCoord.xy * u_inv_res; // [0,1]
     vec2 ndc = screen_coord * 2 - 1; // [-1,1]
-
-    const float gamma = 2.0;
 
     vec4 diffuse = texelFetch(diffuse_buffer, ivec2(gl_FragCoord.xy), 0);
 	diffuse.rgb *= diffuse.a;
@@ -30,7 +30,7 @@ void main()
     // Exposure tone mapping
     vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
     // Gamma correction 
-    mapped = pow(mapped, vec3(1.0 / gamma));
+    mapped = pow(mapped, vec3(1.0 / GAMMA));
   
     frag_color = vec4(mapped, 1.0);
 }

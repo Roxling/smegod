@@ -8,6 +8,8 @@ public:
 	static VertexArray createTorus(GLfloat radiusA, GLfloat radiusB, GLint res_theta, GLint res_phi);
 	static VertexArray createCube(GLfloat side, GLint res);
 	static VertexArray createBlock(GLfloat width, GLfloat height, GLfloat depth, GLint res);
+	static VertexArray createSurface(GLfloat width, GLfloat height, GLint xres, GLint yres);
+	static VertexArray createSurface(GLfloat width, GLfloat height);
 	static VertexArray createSurface(GLfloat width, GLfloat height, GLint res);
 	static VertexArray createInfSurface(GLfloat radius, GLint res_radius, GLint res_phi);
 	static VertexArray createInfSurface2(GLfloat side, GLint res);

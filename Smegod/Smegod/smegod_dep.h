@@ -10,9 +10,10 @@ using namespace std;
 
 class Globals {
 public:
-	static const GLsizei WIDTH = 1280, HEIGHT = 720;
+	static const GLsizei WIDTH = 1920, HEIGHT = 1080;
+	//static const GLsizei WIDTH = 1280, HEIGHT = 720;
 	static const GLsizei SHADOW_WIDTH = 720, SHADOW_HEIGHT = 480;
-	static const bool FULLSCREEN = false;
+	static const bool FULLSCREEN = true;
 
 	static bool WIREFRAME;
 

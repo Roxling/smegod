@@ -273,8 +273,7 @@ VertexArray ParametricShapes::createBlock(GLfloat width, GLfloat height, GLfloat
 	return VertexArray::CreateVertexArray(vertices, indices);
 }
 
-VertexArray ParametricShapes::createSurface(GLfloat width, GLfloat height, GLint res)
-{
+VertexArray ParametricShapes::createSurface(GLfloat width, GLfloat height, GLint xres, GLint yres) {
 	shared_ptr<vector<Vertex>> vertices = make_shared<vector<Vertex>>();
 	shared_ptr<vector<Triangle>> indices = make_shared<vector<Triangle>>();
 
@@ -282,13 +281,13 @@ VertexArray ParametricShapes::createSurface(GLfloat width, GLfloat height, GLint
 	glm::vec3 binormal = { 1,0,0 };
 	glm::vec3 tangent = { 0,0,1 };
 
-	GLfloat dw = width / res;
-	GLfloat dh = height / res;
+	GLfloat dw = width / xres;
+	GLfloat dh = height / yres;
 
 	GLfloat W = 0;
 	GLfloat H = 0;
-	for (int i = 0; i < res + 1; ++i) {
-		for (int j = 0; j < res + 1; ++j) {
+	for (int i = 0; i < yres + 1; ++i) {
+		for (int j = 0; j < xres + 1; ++j) {
 			Vertex v;
 			v.x = W;
 			v.y = 0;
@@ -306,8 +305,8 @@ VertexArray ParametricShapes::createSurface(GLfloat width, GLfloat height, GLint
 			v.ty = tangent.y;
 			v.tz = tangent.z;
 
-			v.texx = (GLfloat)i / (res + 1);
-			v.texy = (GLfloat)j / (res + 1);
+			v.texx = (GLfloat)i*0.7f;
+			v.texy = (GLfloat)j*0.7f;
 			v.texz = 0;
 
 			vertices->push_back(v);
@@ -319,24 +318,33 @@ VertexArray ParametricShapes::createSurface(GLfloat width, GLfloat height, GLint
 	}
 
 
-	for (int i = 0; i < res; ++i) {
-		for (int j = 0; j < res; ++j) {
+	for (int i = 0; i < yres; ++i) {
+		for (int j = 0; j < xres; ++j) {
 			Triangle t1, t2;
-			auto curr = i*(res + 1) + j;
+			auto curr = i*(xres + 1) + j;
 			t1.a = curr;
-			t1.c = curr + res + 2;
-			t1.b = curr + res + 1;
+			t1.c = curr + xres + 2;
+			t1.b = curr + xres + 1;
 
 			t2.a = curr;
 			t2.c = curr + 1;
-			t2.b = curr + res + 2;
+			t2.b = curr + xres + 2;
 
 			indices->push_back(t1);
 			indices->push_back(t2);
 		}
 	}
-	
+
 	return VertexArray::CreateVertexArray(vertices, indices);
+}
+
+VertexArray ParametricShapes::createSurface(GLfloat width, GLfloat height)
+{
+	return ParametricShapes::createSurface(width, height, (int)floor(width), (int)floor(height));
+}
+VertexArray ParametricShapes::createSurface(GLfloat width, GLfloat height, GLint res)
+{
+	return ParametricShapes::createSurface(width, height, res, res);
 }
 
 VertexArray ParametricShapes::createInfSurface(GLfloat radius, GLint res_radius, GLint res_phi)

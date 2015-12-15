@@ -22,16 +22,16 @@ protected:
 
 	bool oldTakingCursorInput = false;
 
-	float translation_speed = 3.f;
-	float rotation_speed = 90.f;
-	float mouse_sensitivity = 45.f;
+
 
 	virtual void handleMouse(float delta);
 	virtual void handleKeyboard(float delta);
 
-	
+public:	
+	float translation_speed = 3.f;
+	float rotation_speed = 90.f;
+	float mouse_sensitivity = 45.f;
 
-public:
 	glm::mat4 view = glm::mat4();
 	glm::mat4 projection;
 	glm::mat4 view_projection;

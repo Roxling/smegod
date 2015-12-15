@@ -22,6 +22,7 @@ Node bulbrotator;
 void SponzaWorld::initiate()
 {
 	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 300.f);
+	active_camera->translation_speed = 2.0f;
 	//active_camera->translate(-35, 40, 50);
 	//active_camera->updateRotation(45, -30);
 
@@ -33,29 +34,27 @@ void SponzaWorld::initiate()
 	lighthouse->scale(10);
 	head->attach(lighthouse);
 
-	shared_ptr<Texture> bD = Texture::loadFromFile("parallax/bricks2.jpg");
-	shared_ptr<Texture> bDisp = Texture::loadFromFile("parallax/bricks2_disp.jpg");
-	shared_ptr<Texture> bB = Texture::loadFromFile("parallax/bricks2_normal.jpg");
-	auto surf = make_shared<Geometry>(ParametricShapes::createSurface(1,1,1));
+	//shared_ptr<Texture> bD = Texture::loadFromFile("parallax/bricks2.jpg");
+	//shared_ptr<Texture> bDisp = Texture::loadFromFile("parallax/bricks2_disp.jpg");
+	//shared_ptr<Texture> bB = Texture::loadFromFile("parallax/bricks2_normal.jpg");
+	shared_ptr<Texture> bD = Texture::loadFromFile("parallax/diffuse.png", true, true);
+	shared_ptr<Texture> bDisp = Texture::loadFromFile("parallax/height.png");
+	shared_ptr<Texture> bB = Texture::loadFromFile("parallax/normal.png");
+	shared_ptr<Texture> bS = Texture::loadFromFile("parallax/specular.png");
+	auto surf = make_shared<Geometry>(ParametricShapes::createSurface(40, 6));
 	surf->model->meshes[0].material->textures.push_back({ "diffuse_texture", bD });
 	surf->model->meshes[0].material->textures.push_back({ "normal_texture", bB });
 	surf->model->meshes[0].material->textures.push_back({ "displacement_texture", bDisp });
-	surf->model->meshes[0].material->textures.push_back({ "specular_texture", Texture::getDefaults()->spec });
+	surf->model->meshes[0].material->textures.push_back({ "specular_texture", bS });
 
-	surf->translate(-15, 3, 0);
+	surf->translate(-7.3f, 1.98f, -3.0f);
 	head->attach(surf);
 
-	shared_ptr<Texture> bt = Texture::loadFromFile("Models/bridge/textures/bridge_color_ll_4.png",false,true);
 	auto bridge = make_shared<Node>();
 	auto p1 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	auto p2 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	p2->translate(7.18f, 0, 0);
-	for (int i = 0; i < 0; i++) {
-		auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
-		//p3->model->meshes[0].material->textures.push_back({ "diffuse_texture", bt });
-		p3->translate(-7.18f -(7.18f*i), 0, 0);
-		bridge->attach(p3);
-	}
+
 	//p3->scale(10);
 	bridge->attach(p1);
 	bridge->attach(p2);

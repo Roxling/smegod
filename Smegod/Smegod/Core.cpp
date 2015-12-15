@@ -270,7 +270,6 @@ void main_loop(GLFWwindow* window) {
 	raineffecting_lights.push_back(sl4);
 	raineffecting_lights.push_back(lh);
 
-
 	Quad output;
 
 	//Init debug quads
@@ -294,7 +293,8 @@ void main_loop(GLFWwindow* window) {
 	while (!glfwWindowShouldClose(window)) {
 		if (Globals::UNIFORM_REFRESH) {
 			resolve_shader->use();
-			resolve_shader->setUniform("invRes", invRes);
+			resolve_shader->setUniform("u_inv_res", invRes);
+
 			laccbuff_shader->use();
 			laccbuff_shader->setUniform("u_inv_res", invRes);
 			laccbuff_shader->setUniform("u_shadow_texelsize", shadowMapTexelSize);
@@ -302,9 +302,10 @@ void main_loop(GLFWwindow* window) {
 			gbuffer_shader->use();
 			gbuffer_shader->setUniform("u_KsDir", 2.0f);
 			gbuffer_shader->setUniform("u_splash_offset", glm::vec2(random() * 2, random() * 2));
+			gbuffer_shader->setUniform("u_height_scale", 0.055f);
+
 			gbuffer_shader->bindTexture("splash_bump_texture", 3, rainSplashBump);
 			gbuffer_shader->bindTexture("splash_texture", 4, rainSplashDiffuse);
-			gbuffer_shader->setUniform("u_height_scale", 0.1f);
 
 			Globals::UNIFORM_REFRESH = false;
 		}
@@ -343,7 +344,7 @@ void main_loop(GLFWwindow* window) {
 			timeCycle = 0;
 			gbuffer_shader->setUniform("u_splash_offset", glm::vec2(random() * 2, random() * 2));
 		}
-		gbuffer_shader->setUniform("view_projection", cam->view_projection);
+		gbuffer_shader->setUniform("u_view_projection", cam->view_projection);
 		gbuffer_shader->setUniform("u_camera_pos", glm::vec3(cam->combined_world[3]));
 		
 		world->render(gbuffer_shader);
@@ -367,8 +368,8 @@ void main_loop(GLFWwindow* window) {
 		skyboxBuffer.activate();
 		glDepthFunc(GL_LEQUAL);
 		skybox_shader->use();
-		skybox_shader->setUniform("projection", cam->projection);
-		skybox_shader->setUniform("view", cam->view);
+		skybox_shader->setUniform("u_projection", cam->projection);
+		skybox_shader->setUniform("u_view", cam->view);
 		skybox_shader->bindCubemap("skybox", 0, *cubemap.get());
 		skybox->render(ident, skybox_shader, false);
 		glDepthFunc(GL_LESS);
@@ -377,11 +378,11 @@ void main_loop(GLFWwindow* window) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		//move rain
 		rain_update_shader->use();
-		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
-		rain_update_shader->setUniform("g_TotalVel", glm::vec3(0, -8, 0));
-		rain_update_shader->setUniform("g_heightRange", 35.0f);
-		rain_update_shader->setUniform("moveParticles", Globals::TIME_NOT_FROZEN);
-		rain_update_shader->setUniform("g_FrameRate", (float)1 / (float)time_delta);
+		rain_update_shader->setUniform("u_camera_pos", glm::vec3(cam->combined_world[3]));
+		rain_update_shader->setUniform("u_total_vel", glm::vec3(0, -8, 0));
+		rain_update_shader->setUniform("u_height_range", 35.0f);
+		rain_update_shader->setUniform("u_move_particles", Globals::TIME_NOT_FROZEN);
+		rain_update_shader->setUniform("u_framerate", (float)1 / (float)time_delta);
 		rain.update();
 
 		//render
@@ -393,10 +394,10 @@ void main_loop(GLFWwindow* window) {
 			string prefix = "lights[" + to_string(i) + "]";
 			sl->bindUniform(rain_render_shader, prefix);
 		}
-		rain_render_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
-		rain_render_shader->setUniform("g_TotalVel", glm::vec3(0, -0.35, 0));
-		rain_render_shader->setUniform("g_SpriteSize", 1.f);
-		rain_render_shader->setUniform("view_projection", cam->view_projection);
+		rain_render_shader->setUniform("u_camera_pos", glm::vec3(cam->combined_world[3]));
+		rain_render_shader->setUniform("u_total_vel", glm::vec3(0, -0.35, 0));
+		rain_render_shader->setUniform("u_sprite_size", 1.f);
+		rain_render_shader->setUniform("u_view_projection", cam->view_projection);
 		rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
 
 
@@ -438,14 +439,10 @@ void main_loop(GLFWwindow* window) {
 
 
 			//unable to bind 0 to u_specular_power
-
-			glm::mat4 model_to_clip_matrix = sl->getLightSpaceMatrix();
-			shadow_shader->setUniform("model_to_clip_matrix", model_to_clip_matrix);
+			glm::mat4 world_to_light = sl->getLightSpaceMatrix();
+			shadow_shader->setUniform("u_world_to_light", world_to_light);
 
 			world->render(shadow_shader, false);
-			//glCullFace(GL_BACK);
-			//water.render(water.world, shadow_shader);
-			//glCullFace(GL_FRONT);
 
 			// 2.2 blend light
 			laccbuff_shader->use();
@@ -453,7 +450,7 @@ void main_loop(GLFWwindow* window) {
 			laccbuff_shader->bindTexture("normalAndSpecularBuffer", 1, gNormal);
 			laccbuff_shader->bindTexture("shadowMap", 2, shadowMap);
 			laccbuff_shader->bindTexture("diffuseBuffer", 3, gDiffuse);
-			laccbuff_shader->setUniform("u_world_to_light", model_to_clip_matrix);
+			laccbuff_shader->setUniform("u_world_to_light", world_to_light);
 			laccbuff_shader->setUniform("u_specular_power", 100.f);
 
 			lBuffer.activate();
@@ -594,10 +591,6 @@ void main_loop(GLFWwindow* window) {
 #endif
 
 		//Update world!
-
-		//lg.world = glm::translate(ident, glm::vec3(10*glm::sin(glfwGetTime()*0.1), 2 * glm::sin(glfwGetTime()*0.3)+ 2, 0));
-		//lg.world = glm::rotate(ident,(float) glfwGetTime(), glm::vec3(lg.world[1]));
-
 		lh->world = glm::rotate(lhRotator.world,(float) glfwGetTime()*0.4f, glm::vec3(lhRotator.world[1]));
 		lh_top->world = lh->world;
 		lh_top->translate(0.9f, .5f, 0);

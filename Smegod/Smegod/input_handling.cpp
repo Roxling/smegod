@@ -26,7 +26,6 @@ const int InputHandler::getKeystate(int key)
 	return (*keystate)[key];
 }
 
-
 //mouse screen x,y callback
 double InputHandler::oldx = 0;
 double InputHandler::dx = 0;

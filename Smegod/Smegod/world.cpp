@@ -22,8 +22,11 @@ Node bulbrotator;
 void SponzaWorld::initiate()
 {
 	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 300.f);
-	active_camera->translate(-35, 40, 50);
-	active_camera->updateRotation(45, -30);
+	//active_camera->translate(-35, 40, 50);
+	//active_camera->updateRotation(45, -30);
+
+	active_camera->translate(-15, 5, 0);
+	active_camera->updateRotation(135,10);
 
 	auto lighthouse = make_shared<Geometry>(Model("lighthouse/lighthouse.obj"));
 	lighthouse->translate(7.18f * 5.3f, 0, 0);
@@ -35,9 +38,9 @@ void SponzaWorld::initiate()
 	auto p1 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	auto p2 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	p2->translate(7.18f, 0, 0);
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 0; i++) {
 		auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
-		p3->model->meshes[0].material->textures.push_back({ "diffuse_texture", bt });
+		//p3->model->meshes[0].material->textures.push_back({ "diffuse_texture", bt });
 		p3->translate(-7.18f -(7.18f*i), 0, 0);
 		bridge->attach(p3);
 	}

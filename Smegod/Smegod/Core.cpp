@@ -209,7 +209,7 @@ void main_loop(GLFWwindow* window) {
 	glBindTexture(rainSplashDiffuse->getTarget(), 0);
 
 	//rain
-	shared_ptr<ArrayTexture> rainTexs = make_shared<ArrayTexture>("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_SRGB8_ALPHA8);
+	shared_ptr<ArrayTexture> rainTexs = make_shared<ArrayTexture>("rainTextures/cv0_vPositive_%.4d.png", 10, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_SRGB8_ALPHA8);
 
 	shared_ptr<Texture> tex = Texture::loadFromFile("notex.png");
 
@@ -247,7 +247,7 @@ void main_loop(GLFWwindow* window) {
 	
 	Node lhRotator;
 	lhRotator.translate(35.56f, 26.3f, -1.31f);
-	shared_ptr<SpotLight> lh = make_shared<SpotLight>(glm::vec3{ 5.f, 5.f, 4.f }, 30.f, 45.f, 0.02f, 0.001f,0.35f);
+	shared_ptr<SpotLight> lh = make_shared<SpotLight>(glm::vec3{ 5.f, 5.f, 4.f }, 25.f, 30.f, 0.02f, 0.001f,0.35f);
 
 	shared_ptr<SpotLight> lh_top = make_shared<SpotLight>(glm::vec3{7.f, 7.f, 2.0f }, 30.f, 45.f, 2.f, 3.f,0.4f);
 	lh_top->translate(35.56f, 26.3f+2.f, -1.31f);

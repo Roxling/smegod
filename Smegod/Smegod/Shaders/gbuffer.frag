@@ -56,9 +56,9 @@ void main()
 
 	// Diffuse color
 	geometry_diffuse = texture(diffuse_texture, pass_texcoords);
-	if (geometry_diffuse.a < 0.2) discard;
-    else if (geometry_diffuse.a < 0.5) {
-        bloom_filter = vec4(geometry_diffuse.rgb*10,1);
+	//if (geometry_diffuse.a < 0.2) discard;
+    if (geometry_diffuse.a < 0.5) {
+        bloom_filter = vec4(geometry_diffuse.rgb*20,1);
     }
 	geometry_diffuse.a = ambient;
 }

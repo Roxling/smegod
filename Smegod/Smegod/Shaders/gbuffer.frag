@@ -16,7 +16,7 @@ in vec3 tangent_frag_position;
 uniform sampler2D diffuse_texture;
 uniform sampler2D specular_texture;
 uniform sampler2D normal_texture;
-uniform sampler2D displacment_texture;
+uniform sampler2D displacement_texture;
 
 uniform sampler3D splash_bump_texture;
 uniform sampler3D splash_texture;
@@ -33,7 +33,7 @@ uniform float u_height_scale;
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 { 
-    float height =  texture(displacment_texture, texCoords).r;     
+    float height =  texture(displacement_texture, texCoords).r;     
     return texCoords - viewDir.xy / viewDir.z * (height * u_height_scale); 
 } 
 

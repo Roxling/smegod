@@ -34,7 +34,8 @@ public:
 class Model {
 public:
 	Model(string file);
-	Model(VertexArray va);
+	Model(VertexArray va, bool addDefaultTextures = false);
+	void addDefaultsTextures(Mesh & mesh);
 	vector<Mesh> meshes;
 private:
 	const string FOLDER = "Models/";

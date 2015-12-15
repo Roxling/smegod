@@ -28,10 +28,11 @@ void Geometry::bindTexture(string glslName, shared_ptr<Texture> tex)
 	}
 }
 
-Geometry::Geometry(VertexArray va) : WorldObject()
+Geometry::Geometry(VertexArray va, bool addDefaultTextures) : WorldObject()
 {
-	model = make_unique<Model>(va);
+	model = make_unique<Model>(va, addDefaultTextures);
 }
+
 
 Geometry::Geometry(Model m) : WorldObject()
 {

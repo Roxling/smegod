@@ -64,16 +64,22 @@ Model::Model(string file)
 	
 }
 
-Model::Model(VertexArray va)
+Model::Model(VertexArray va, bool defaults)
 {
 	Mesh mesh;
 	mesh.va = va;
-	/*
+	
+	meshes.push_back(mesh);
+
+	if (defaults)
+		addDefaultsTextures(mesh);
+}
+
+void Model::addDefaultsTextures(Mesh &mesh) {
 	mesh.material->textures.push_back({ "diffuse_texture", Texture::getDefaults()->texture });
 	mesh.material->textures.push_back({ "normal_texture", Texture::getDefaults()->bump });
 	mesh.material->textures.push_back({ "specular_texture", Texture::getDefaults()->spec });
-	mesh.material->textures.push_back({ "displacement_texture", Texture::getDefaults()->texture }); */
-	meshes.push_back(mesh);
+	mesh.material->textures.push_back({ "displacement_texture", Texture::getDefaults()->texture });
 }
 
 void Model::processNode(aiNode * node, const aiScene * scene)

@@ -9,7 +9,7 @@
 
 class Geometry : public WorldObject {
 public:
-	Geometry(VertexArray va);
+	Geometry(VertexArray va, bool addDefaultTextures = false);
 	Geometry(Model model);
 	
 	virtual void renderSelf(Mesh &mesh);

@@ -232,8 +232,13 @@ void ShaderGroup::compile()
 void ShaderGroup::bindMaterial(shared_ptr<Material> material)
 {
 	GL_CHECK_SHADER_BOUND(glId);
+
+	//Super quickfix! For some reason we get a texture slot collsion causing (somewhat undefined?) behaviour..
+	int slotoffset = 5;
+
 	for (int i = 0; i < material->textures.size(); ++i) {
-		bindTexture(material->textures[i].first, i, material->textures[i].second);
+		bindTexture(material->textures[i].first, i+slotoffset, material->textures[i].second);
+		GL_CHECK_ERRORS();
 	}
 }
 

@@ -6,7 +6,7 @@ typedef struct particle_t
 	glm::vec3 seed;
 	glm::vec3 speed;
 	GLfloat random;
-	GLuint type;
+	GLfloat type;
 } particle_t;
 
 #define NUM_RAIN (1000000)
@@ -60,13 +60,9 @@ Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGr
 		particles[i].pos = glm::vec3(x, y, z);
 
 		//get an integer between 1 and 8 inclusive to decide which of the 8 types of rain textures the particle will use
-		particles[i].type = int(floor(random() * 8 + 1));
-
-		//this number is used to randomly increase the brightness of some rain particles
-		particles[i].random = 1;
-		float randomIncrease = random();
-		if (randomIncrease > 0.8)
-			particles[i].random += randomIncrease;
+		particles[i].type = floor(random() * 6 + 1);
+		
+		particles[i].random = random();
 	}
 
 	glGenVertexArrays(2, m_vao);
@@ -83,7 +79,7 @@ Particles::Particles(shared_ptr<ShaderGroup> m_updateShader, shared_ptr<ShaderGr
 				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(3 * sizeof GLfloat));   // vec3 seed
 				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(6 * sizeof GLfloat));   // vec3 speed
 				glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(9 * sizeof GLfloat));   // float random
-				glVertexAttribPointer(4, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(10 * sizeof GLfloat));  // unsigned int type
+				glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(particle_t), (const GLvoid*)(10 * sizeof GLfloat));  // int type
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);

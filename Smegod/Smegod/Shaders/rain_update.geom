@@ -14,13 +14,13 @@ in vec3 vs_pos[];
 in vec3 vs_seed[];
 in vec3 vs_speed[];
 in float vs_random[];
-flat in uint vs_type[];
+in float vs_type[];
 
 layout (location = 0) out vec3 gs_pos;
 layout (location = 1) out vec3 gs_seed;
 layout (location = 2) out vec3 gs_speed;
 layout (location = 3) out float gs_random;
-layout (location = 4) flat out uint gs_type;
+layout (location = 4) out float gs_type;
 
 void main()
 {

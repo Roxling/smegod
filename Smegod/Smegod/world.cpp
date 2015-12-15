@@ -22,28 +22,34 @@ Node bulbrotator;
 void SponzaWorld::initiate()
 {
 	active_camera = make_shared<Camera>(45.f, Globals::WIDTH, Globals::HEIGHT, 0.1f, 300.f);
-	active_camera->translate(-35, 40, 50);
-	active_camera->updateRotation(45, -30);
+	//active_camera->translate(-35, 40, 50);
+	//active_camera->updateRotation(45, -30);
+
+	active_camera->translate(-15, 5, 0);
+	active_camera->updateRotation(135,10);
 
 	auto lighthouse = make_shared<Geometry>(Model("lighthouse/lighthouse.obj"));
 	lighthouse->translate(7.18f * 5.3f, 0, 0);
 	lighthouse->scale(10);
 	head->attach(lighthouse);
 
-
+	shared_ptr<Texture> bt = Texture::loadFromFile("Models/bridge/textures/bridge_color_ll_4.png",false,true);
 	auto bridge = make_shared<Node>();
 	auto p1 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	auto p2 = make_shared<Geometry>(Model("bridge/bridge.obj"));
 	p2->translate(7.18f, 0, 0);
-	//auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
-	//p3->translate(0, -6, -30);
+	for (int i = 0; i < 0; i++) {
+		auto p3 = make_shared<Geometry>(Model("bridge/bridge.obj"));
+		//p3->model->meshes[0].material->textures.push_back({ "diffuse_texture", bt });
+		p3->translate(-7.18f -(7.18f*i), 0, 0);
+		bridge->attach(p3);
+	}
 	//p3->scale(10);
 	bridge->attach(p1);
 	bridge->attach(p2);
-	//bridge->attach(p3);
 
+	
 	shared_ptr<Texture> glow = Texture::loadFromFile("glow_stripe.png");
-
 	lh_bulb = make_shared<Geometry>(ParametricShapes::createSphere(.76f, 30, 30));
 	bulbrotator.translate(35.56f, 26.3f, -1.31f);
 	bulbrotator.world = glm::rotate(bulbrotator.world, 0.8f*glm::pi<float>(), glm::vec3(bulbrotator.world[1]));

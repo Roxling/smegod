@@ -20,7 +20,7 @@ float lightning_offset = 0;
 float lightning_intensity() {
 	float lightning = 0;
 	if (glfwGetTime() > lightning_time + 2) {
-		float nextLightning = ((float)rand() / (float)RAND_MAX) * 30 + 2; //(2-30s) between lightnings
+		float nextLightning = ((float)rand() / (float)RAND_MAX) * 10 + 2; //(2-30s) between lightnings
 		lightning_type = (int)rand() % LIGHTNING_TYPES;
 		lightning_time = glfwGetTime() + nextLightning;
 		cout << "Next lightning in " << nextLightning << "s, type: " << lightning_type << endl;
@@ -209,7 +209,7 @@ void main_loop(GLFWwindow* window) {
 	glBindTexture(rainSplashDiffuse->getTarget(), 0);
 
 	//rain
-	shared_ptr<ArrayTexture> rainTexs = make_shared<ArrayTexture>("rainTextures/cv0_vPositive_%.4d.png", 370, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_SRGB8_ALPHA8);
+	shared_ptr<ArrayTexture> rainTexs = make_shared<ArrayTexture>("rainTextures/cv0_vPositive_%.4d.png", 10, 16, 526, GL_RGBA, GL_UNSIGNED_BYTE, GL_SRGB8_ALPHA8);
 
 	shared_ptr<Texture> tex = Texture::loadFromFile("notex.png");
 
@@ -247,7 +247,7 @@ void main_loop(GLFWwindow* window) {
 	
 	Node lhRotator;
 	lhRotator.translate(35.56f, 26.3f, -1.31f);
-	shared_ptr<SpotLight> lh = make_shared<SpotLight>(glm::vec3{ 5.f, 5.f, 4.f }, 30.f, 45.f, 0.02f, 0.001f,0.35f);
+	shared_ptr<SpotLight> lh = make_shared<SpotLight>(glm::vec3{ 5.f, 5.f, 4.f }, 25.f, 30.f, 0.02f, 0.001f,0.35f);
 
 	shared_ptr<SpotLight> lh_top = make_shared<SpotLight>(glm::vec3{7.f, 7.f, 2.0f }, 30.f, 45.f, 2.f, 3.f,0.4f);
 	lh_top->translate(35.56f, 26.3f+2.f, -1.31f);
@@ -262,6 +262,14 @@ void main_loop(GLFWwindow* window) {
 
 	lights.push_back(lh_top);
 	lights.push_back(lh);
+
+	vector<shared_ptr<SpotLight>> raineffecting_lights;
+	raineffecting_lights.push_back(sl1);
+	raineffecting_lights.push_back(sl2);
+	raineffecting_lights.push_back(sl3);
+	raineffecting_lights.push_back(sl4);
+	raineffecting_lights.push_back(lh);
+
 
 	Quad output;
 
@@ -371,36 +379,27 @@ void main_loop(GLFWwindow* window) {
 		rain_update_shader->use();
 		rain_update_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 		rain_update_shader->setUniform("g_TotalVel", glm::vec3(0, -8, 0));
-		rain_update_shader->setUniform("g_heightRange", 25.0f);
+		rain_update_shader->setUniform("g_heightRange", 35.0f);
 		rain_update_shader->setUniform("moveParticles", Globals::TIME_NOT_FROZEN);
 		rain_update_shader->setUniform("g_FrameRate", (float)1 / (float)time_delta);
 		rain.update();
 
 		//render
 		rain_render_shader->use();
-		rain_render_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
-		//rain_render_shader->setUniform("g_Near", cam->getNear());
-		//rain_render_shader->setUniform("g_Far", cam->getFar());
 
-		//rain_render_shader->setUniform("g_mWorldView", cam->view * ident); //TODO: ident?
-		//rain_render_shader->setUniform("g_mWorldViewProj", cam->view_projection * ident);
-		//rain_render_shader->setUniform("g_mProjection", cam->projection);
 
-		//rain_render_shader->setUniform("g_FrameRate", (float)1/(float)time_delta);
-
-		for (int i = 0; i < lights.size(); i++) {
-			shared_ptr<SpotLight> sl = lights[i];
+		for (int i = 0; i < raineffecting_lights.size(); i++) {
+			shared_ptr<SpotLight> sl = raineffecting_lights[i];
 			string prefix = "lights[" + to_string(i) + "]";
 			sl->bindUniform(rain_render_shader, prefix);
 		}
+		rain_render_shader->setUniform("camera_pos", glm::vec3(cam->combined_world[3]));
 		rain_render_shader->setUniform("g_TotalVel", glm::vec3(0, -0.35, 0));
 		rain_render_shader->setUniform("g_SpriteSize", 1.f);
-		//rain_render_shader->setUniform("dirLightPos", moon);
-
 		rain_render_shader->setUniform("view_projection", cam->view_projection);
-
 		rain_render_shader->bindTexture("rainTextureArray", 0, rainTexs);
-		//rain_render_shader->bindTexture("gRain", 0, gRain);
+
+
 		glEnable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -630,7 +629,7 @@ int main() {
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 
-	GLFWwindow *window = glfwCreateWindow(Globals::WIDTH, Globals::HEIGHT, name.c_str(), nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(Globals::WIDTH, Globals::HEIGHT, name.c_str(), Globals::FULLSCREEN ? glfwGetPrimaryMonitor() : nullptr, nullptr);
 
 	if (window == nullptr) {
 		cerr << "Failed to create window" << endl;

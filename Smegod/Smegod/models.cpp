@@ -68,6 +68,11 @@ Model::Model(VertexArray va)
 {
 	Mesh mesh;
 	mesh.va = va;
+	/*
+	mesh.material->textures.push_back({ "diffuse_texture", Texture::getDefaults()->texture });
+	mesh.material->textures.push_back({ "normal_texture", Texture::getDefaults()->bump });
+	mesh.material->textures.push_back({ "specular_texture", Texture::getDefaults()->spec });
+	mesh.material->textures.push_back({ "displacement_texture", Texture::getDefaults()->texture }); */
 	meshes.push_back(mesh);
 }
 
@@ -190,7 +195,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		else {
 			new_mesh.material->textures.push_back({ "displacement_texture", Texture::getDefaults()->disp });
 		}
-
+		
 		
 	}
 	

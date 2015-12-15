@@ -33,6 +33,18 @@ void SponzaWorld::initiate()
 	lighthouse->scale(10);
 	head->attach(lighthouse);
 
+	shared_ptr<Texture> bD = Texture::loadFromFile("parallax/bricks2.jpg");
+	shared_ptr<Texture> bDisp = Texture::loadFromFile("parallax/bricks2_disp.jpg");
+	shared_ptr<Texture> bB = Texture::loadFromFile("parallax/bricks2_normal.jpg");
+	auto surf = make_shared<Geometry>(ParametricShapes::createSurface(1,1,1));
+	surf->model->meshes[0].material->textures.push_back({ "diffuse_texture", bD });
+	surf->model->meshes[0].material->textures.push_back({ "normal_texture", bB });
+	surf->model->meshes[0].material->textures.push_back({ "displacement_texture", bDisp });
+	surf->model->meshes[0].material->textures.push_back({ "specular_texture", Texture::getDefaults()->spec });
+
+	surf->translate(-15, 3, 0);
+	head->attach(surf);
+
 	shared_ptr<Texture> bt = Texture::loadFromFile("Models/bridge/textures/bridge_color_ll_4.png",false,true);
 	auto bridge = make_shared<Node>();
 	auto p1 = make_shared<Geometry>(Model("bridge/bridge.obj"));

@@ -9,10 +9,11 @@ class Texture;
 
 class DefaultTextures {
 public:
-	DefaultTextures(shared_ptr<Texture> t, shared_ptr<Texture> b, shared_ptr<Texture> s) : texture(t), bump(b), spec(s) {}
+	DefaultTextures(shared_ptr<Texture> t, shared_ptr<Texture> b, shared_ptr<Texture> s, shared_ptr<Texture> d) : texture(t), bump(b), spec(s), disp(d) {}
 	shared_ptr<Texture> texture;
 	shared_ptr<Texture> bump;
 	shared_ptr<Texture> spec;
+	shared_ptr<Texture> disp;
 };
 
 class Texture : public GLResource {

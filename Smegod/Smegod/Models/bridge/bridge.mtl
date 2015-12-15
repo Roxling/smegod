@@ -10,8 +10,9 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-map_Ka textures\bridge_color_ll_3.png
-map_Kd textures\bridge_color_ll_3.png
-map_Ks textures\bridge_spec.png
-map_bump textures\bridge_bump.png
-bump textures\bridge_bump.png
+map_Ka textures\bridge_color_ll_parallax.png
+map_Kd textures\bridge_color_ll_parallax.png
+map_Ks textures\bridge_spec_parallax.png
+map_bump textures\bridge_bump_parallax.png
+bump textures\bridge_bump_parallax.png
+map_d textures\bridge_disp_parallax.png

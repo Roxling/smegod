@@ -13,6 +13,7 @@ in vec2 pass_texcoords;
 uniform sampler2D diffuse_texture;
 uniform sampler2D specular_texture;
 uniform sampler2D normal_texture;
+uniform sampler2D displacement_texture;
 
 uniform sampler3D splash_bump_texture;
 uniform sampler3D splash_texture;
@@ -55,7 +56,7 @@ void main()
 	geometry_normal_and_specular.a = texture(specular_texture, pass_texcoords).r + splashDiffuse;
 
 	// Diffuse color
-	geometry_diffuse = texture(diffuse_texture, pass_texcoords);
+	geometry_diffuse = texture(displacement_texture, pass_texcoords);
 	//if (geometry_diffuse.a < 0.2) discard;
     if (geometry_diffuse.a < 0.5) {
         bloom_filter = vec4(geometry_diffuse.rgb*20,1);

@@ -10,7 +10,8 @@ shared_ptr<DefaultTextures> Texture::getDefaults()
 		shared_ptr<Texture> def = Texture::loadFromFile("notex.png", true, true);
 		shared_ptr<Texture> def_bump = Texture::loadFromFile("nobump.png", true, false);
 		shared_ptr<Texture> def_spec = Texture::loadFromFile("nospec.png", true, false);
-		Texture::defaultInstance = make_shared<DefaultTextures>(def, def_bump, def_spec);
+		shared_ptr<Texture> def_disp = Texture::loadFromFile("nodisp.png", true, false);
+		Texture::defaultInstance = make_shared<DefaultTextures>(def, def_bump, def_spec, def_disp);
 	}
 	return Texture::defaultInstance;
 }

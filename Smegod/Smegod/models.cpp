@@ -182,6 +182,16 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		else {
 			new_mesh.material->textures.push_back({ "specular_texture", Texture::getDefaults()->spec });
 		}
+
+		if (material->GetTexture(aiTextureType_OPACITY, 0, &str) == AI_SUCCESS) { //Opacity for displacement (depth)
+			shared_ptr<Texture> disp = Texture::loadFromFile(path + str.C_Str(), false, false);
+			new_mesh.material->textures.push_back({ "displacement_texture", disp });
+		}
+		else {
+			new_mesh.material->textures.push_back({ "displacement_texture", Texture::getDefaults()->texture });
+		}
+
+		
 	}
 	
 	new_mesh.va = VertexArray::CreateVertexArray(vertices, indices);

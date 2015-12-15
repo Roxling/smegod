@@ -10,15 +10,18 @@ in vec3 worldspace_binormal;
 in vec3 worldspace_tangent;
 in vec2 pass_texcoords;
 
+in vec3 tangent_view_position;
+in vec3 tangent_frag_position;
+
 uniform sampler2D diffuse_texture;
 uniform sampler2D specular_texture;
 uniform sampler2D normal_texture;
+uniform sampler2D displacment_texture;
 
 uniform sampler3D splash_bump_texture;
 uniform sampler3D splash_texture;
 
 const float ambient = 0.08;
-
 
 uniform float u_KsDir;
 uniform float u_timeCycle;
@@ -26,8 +29,21 @@ uniform vec2 u_splash_offset;
 
 #define saturate(a) clamp( a, 0.0, 1.0 )
 
+uniform float u_height_scale;
+
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
+{ 
+    float height =  texture(displacment_texture, texCoords).r;     
+    return texCoords - viewDir.xy / viewDir.z * (height * u_height_scale); 
+} 
+
 void main()
 {
+    // Offset texture coordinates with Parallax Mapping
+    vec3 viewDir = normalize(tangent_view_position - tangent_frag_position);
+    vec2 texCoords = ParallaxMapping(pass_texcoords,  viewDir);
+
+
 	vec3 tangent = normalize(worldspace_tangent);
 	vec3 binormal = normalize(worldspace_binormal);
 	vec3 normal = normalize(worldspace_normal);
@@ -46,7 +62,7 @@ void main()
 	//AddressV = Mirror;
 	float wetSurf = saturate(u_KsDir/2.0*saturate(normal.y));
 	
-	vec3 splash_coord = vec3(position.x/2.0 + u_splash_offset.x, position.z/2.0 + u_splash_offset.y, u_timeCycle));
+	vec3 splash_coord = vec3(position.x/2.0 + u_splash_offset.x, position.z/2.0 + u_splash_offset.y, u_timeCycle);
 	vec4 spash_bump = texture(splash_bump_texture, splash_coord) - 0.5;
     N += wetSurf * 3 * (spash_bump.x * tangent + spash_bump.y * binormal);
 	N = normalize(N);

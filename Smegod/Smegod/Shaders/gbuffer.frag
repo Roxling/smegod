@@ -26,22 +26,19 @@ const float ambient = 0.08;
 uniform float u_KsDir;
 uniform float u_timeCycle;
 uniform vec2 u_splash_offset;
+uniform vec3 u_camera_pos;
 
 #define saturate(a) clamp( a, 0.0, 1.0 )
 
 uniform float u_height_scale;
-
-vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
-{ 
-    float height =  texture(displacement_texture, texCoords).r;     
-    return texCoords - viewDir.xy / viewDir.z * (height * u_height_scale); 
-} 
+ 
 
 void main()
 {
     // Offset texture coordinates with Parallax Mapping
     vec3 viewDir = normalize(tangent_view_position - tangent_frag_position);
-    vec2 texCoords = ParallaxMapping(pass_texcoords,  viewDir);
+	float height =  texture(displacement_texture, pass_texcoords).r;     
+    vec2 texCoords = pass_texcoords - viewDir.xz  * (height * u_height_scale * 0.3); 
 
 
 	vec3 tangent = normalize(worldspace_tangent);
@@ -53,7 +50,7 @@ void main()
 	//geometry_normal_and_specular.xyz = texture(normal_texture, pass_texcoords).rgb;
     vec3 bump = texture(normal_texture, pass_texcoords).rgb;
 	bump = bump * 2 - 1;
-	vec3 N =  tangent * bump.x + binormal * bump.y + normal * bump.z;
+	vec3 N = tangent * bump.x + binormal * bump.y + normal * bump.z;
     N = normalize(N);
 
 	//Spash mapping
@@ -69,15 +66,15 @@ void main()
     float splashDiffuse = wetSurf * texture(splash_texture, splash_coord).r;
 
 
-	geometry_normal_and_specular.xyz = (N*0.5 + 0.5);
+	//geometry_normal_and_specular.xyz = (N*0.5 + 0.5);
 	// Specularity
 	geometry_normal_and_specular.a = texture(specular_texture, pass_texcoords).r + splashDiffuse;
 
 	// Diffuse color
-	geometry_diffuse = texture(diffuse_texture, pass_texcoords);
-	if (geometry_diffuse.a < 0.2) discard;
-    if (geometry_diffuse.a < 0.5) {
-        bloom_filter = vec4(20, 20, 2, 1);
+	geometry_diffuse = texture(diffuse_texture, texCoords);
+	//geometry_diffuse = vec4(vec3(height), 1.0);
+	if (geometry_diffuse.a < 0.5) {
+        bloom_filter = vec4(geometry_diffuse.rgb*20,1);
     }
 	geometry_diffuse.a = ambient;
 }

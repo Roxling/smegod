@@ -610,7 +610,8 @@ void main_loop(GLFWwindow* window) {
 
 
 #if DEBUG_LEVEL >= 1
-		ShaderGroup::checkUniforms();
+		if (!Globals::UNIFORM_REFRESH)
+			ShaderGroup::checkUniforms();
 #endif
 	}
 }

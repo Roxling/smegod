@@ -29,8 +29,8 @@ void main()
 	worldspace_position =  world * vec4(position, 1.0);
     gl_Position = view_projection * worldspace_position;
 
-    mat3 TBN = transpose(mat3(worldspace_tangent, worldspace_binormal, worldspace_normal));
+    mat3 TBN = transpose(mat3(worldspace_binormal, worldspace_tangent, worldspace_normal));
 
-    tangent_view_position  = TBN * u_camera_pos;
-    tangent_frag_position  = TBN * vec3(worldspace_position);
+    tangent_view_position  = TBN * (u_camera_pos - worldspace_position.xyz);
+    tangent_frag_position  = TBN * worldspace_position.xyz;
 }

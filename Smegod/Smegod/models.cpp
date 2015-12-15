@@ -188,7 +188,7 @@ void Model::processMesh(aiMesh * mesh, const aiScene * scene)
 			new_mesh.material->textures.push_back({ "displacement_texture", disp });
 		}
 		else {
-			new_mesh.material->textures.push_back({ "displacement_texture", Texture::getDefaults()->texture });
+			new_mesh.material->textures.push_back({ "displacement_texture", Texture::getDefaults()->disp });
 		}
 
 		

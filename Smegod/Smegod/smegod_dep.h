@@ -8,12 +8,18 @@
 
 using namespace std;
 
+#define RUN_FULLSCREEN
+
 class Globals {
 public:
+#ifdef RUN_FULLSCREEN
 	static const GLsizei WIDTH = 1920, HEIGHT = 1080;
-	//static const GLsizei WIDTH = 1280, HEIGHT = 720;
-	static const GLsizei SHADOW_WIDTH = 720, SHADOW_HEIGHT = 480;
 	static const bool FULLSCREEN = true;
+#else
+	static const GLsizei WIDTH = 1280, HEIGHT = 720;
+	static const bool FULLSCREEN = false;
+#endif
+	static const GLsizei SHADOW_WIDTH = 720, SHADOW_HEIGHT = 480;
 
 	static bool WIREFRAME;
 
@@ -40,3 +46,5 @@ public:
 		return f.good();
 	}
 };
+
+#undef RUN_FULLSCREEN

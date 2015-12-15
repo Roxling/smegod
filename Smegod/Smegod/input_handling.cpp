@@ -63,6 +63,7 @@ void InputHandler::mouse_callback(GLFWwindow * window, double x, double y)
 
 //mouse button callback
 unique_ptr<vector<int>> InputHandler::mouse_buttonstate = make_unique<vector<int>>(GLFW_MOUSE_BUTTON_LAST, GLFW_RELEASE);
+int InputHandler::key_mods = 0;
 
 void InputHandler::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
@@ -139,7 +140,6 @@ void CommandHandler::print_help()
 void CommandHandler::handle(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
 	if (action == GLFW_PRESS && (*toggle_state)[key].first) {
-
 		switch (key)
 		{
 		case GLFW_KEY_1:
@@ -164,7 +164,10 @@ void CommandHandler::handle(GLFWwindow * window, int key, int scancode, int acti
 			break;
 		}
 		(*toggle_state)[key].second = !(*toggle_state)[key].second;
+		
 	}
+
+	InputHandler::key_mods = mods;
 
 	(*toggle_state)[key].first = (action == GLFW_RELEASE);
 }

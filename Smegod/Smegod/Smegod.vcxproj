@@ -93,6 +93,7 @@
     </Link>
     <PostBuildEvent>
       <Command>Xcopy Shaders $(TargetDir)\Shaders\ /e /y /I</Command>
+      <Command>Xcopy ..\external\assimp-3.1.1-win-binaries\bin64\assimp.dll $(TargetDir) /e /y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -66,6 +66,11 @@ void Camera::handleKeyboard(float delta)
 
 	float trans_factor = translation_speed * delta;
 
+	int slow = InputHandler::key_mods & GLFW_MOD_SHIFT;
+	if (slow == GLFW_MOD_SHIFT) {
+		trans_factor *= 0.3f;
+	}
+
 	translateLocal((moveLeft + moveRight)*trans_factor, 0, (moveForward + moveBackward)*trans_factor);
 
 	int rotateLeft = InputHandler::getKeystate(GLFW_KEY_LEFT) != GLFW_RELEASE ? -1 : 0;

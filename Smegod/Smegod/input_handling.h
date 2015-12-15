@@ -19,6 +19,7 @@ public:
 private: //keyboard callback
 	static unique_ptr<vector<int>> keystate;
 public:
+	static int key_mods;
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static const int getKeystate(int key);
 

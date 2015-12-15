@@ -304,6 +304,7 @@ void main_loop(GLFWwindow* window) {
 			gbuffer_shader->setUniform("u_splash_offset", glm::vec2(random() * 2, random() * 2));
 			gbuffer_shader->bindTexture("splash_bump_texture", 3, rainSplashBump);
 			gbuffer_shader->bindTexture("splash_texture", 4, rainSplashDiffuse);
+			gbuffer_shader->setUniform("u_height_scale", 0.1f);
 
 			Globals::UNIFORM_REFRESH = false;
 		}
@@ -343,6 +344,7 @@ void main_loop(GLFWwindow* window) {
 			gbuffer_shader->setUniform("u_splash_offset", glm::vec2(random() * 2, random() * 2));
 		}
 		gbuffer_shader->setUniform("view_projection", cam->view_projection);
+		gbuffer_shader->setUniform("u_camera_pos", glm::vec3(cam->combined_world[3]));
 		
 		world->render(gbuffer_shader);
 
@@ -608,7 +610,8 @@ void main_loop(GLFWwindow* window) {
 
 
 #if DEBUG_LEVEL >= 1
-		ShaderGroup::checkUniforms();
+		if (!Globals::UNIFORM_REFRESH)
+			ShaderGroup::checkUniforms();
 #endif
 	}
 }

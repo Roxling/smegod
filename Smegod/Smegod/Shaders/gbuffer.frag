@@ -30,6 +30,7 @@ uniform float u_height_scale;
 #define AMBIENT (0.08);
 #define MIN_LAYERS (20)
 #define MAX_LAYERS (40)
+#define MAX_ITER (100)
 
 #define saturate(a) clamp( a, 0.0, 1.0 )
 
@@ -44,8 +45,9 @@ vec2 ParallaxMappingOcc(vec3 view_dir)
   
     vec2 current_texcoords = pass_texcoords - floor(pass_texcoords);
     float current_depth = texture(displacement_texture, current_texcoords).r;
-      
-    while(current_layer_depth < current_depth)
+    
+	int i = 0;
+    while(current_layer_depth < current_depth && i++ < MAX_ITER )
     {
         current_texcoords -= delta_texcoords;
         current_depth = texture(displacement_texture, current_texcoords).r;  

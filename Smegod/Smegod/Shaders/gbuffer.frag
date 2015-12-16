@@ -42,7 +42,7 @@ vec2 ParallaxMappingOcc(vec3 view_dir)
     vec2 P = view_dir.xy / view_dir.z * u_height_scale; 
     vec2 delta_texcoords = P / num_layers;
   
-    vec2 current_texcoords = pass_texcoords;
+    vec2 current_texcoords = pass_texcoords - floor(pass_texcoords);
     float current_depth = texture(displacement_texture, current_texcoords).r;
       
     while(current_layer_depth < current_depth)
@@ -74,7 +74,7 @@ void main()
 	// Bump mapping
     vec3 bump = texture(normal_texture, texCoords).rgb;
 	bump = bump * 2 - 1;
-	vec3 N = binormal * bump.x + tangent * bump.y + normal * bump.z;
+	vec3 N = tangent * bump.x + binormal * bump.y + normal * bump.z;
     N = normalize(N);
 
 	//Spash mapping

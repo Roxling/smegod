@@ -337,7 +337,7 @@ void main_loop(GLFWwindow* window) {
 		gbuffer_shader->use();
 		static float timeCycle = 0;
 		if (Globals::TIME_NOT_FROZEN)
-			timeCycle += (float)fps/(16.f*4.f);
+			timeCycle +=(float) time_delta * 6.f;
 		gbuffer_shader->setUniform("u_timeCycle", timeCycle);
 		if (timeCycle >= 0.7f)
 		{

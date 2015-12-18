@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define RUN_FULLSCREEN
+//#define RUN_FULLSCREEN
 
 class Globals {
 public:
